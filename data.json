@@ -12,29 +12,47 @@
     {
       "id": 2,
       "name": "英国",
-      "type": "country", 
+      "type": "country",
       "price": 1.50,
       "stock": 30,
       "active": true,
       "flag": "https://flagcdn.com/w80/gb.png"
     },
     {
-      "id": 3, 
+      "id": 3,
+      "name": "中国",
+      "type": "country", 
+      "price": 0.80,
+      "stock": 100,
+      "active": true,
+      "flag": "https://flagcdn.com/w80/cn.png"
+    },
+    {
+      "id": 4,
       "name": "WhatsApp",
       "type": "app",
       "price": 1.50,
-      "stock": 100,
+      "stock": 80,
       "active": true,
       "icon": "fab fa-whatsapp"
     },
     {
-      "id": 4,
+      "id": 5,
       "name": "Telegram",
       "type": "app",
       "price": 1.20,
-      "stock": 80, 
+      "stock": 60,
       "active": true,
       "icon": "fab fa-telegram"
+    },
+    {
+      "id": 6,
+      "name": "Google",
+      "type": "app",
+      "price": 1.80,
+      "stock": 90,
+      "active": true,
+      "icon": "fab fa-google"
     }
   ],
   "paymentMethods": [
@@ -45,7 +63,7 @@
     },
     {
       "name": "ERC20 USDT",
-      "address": "0x742EfB6e8B6c6b7c6c7D8e9f0a1b2c3d4e5f6a7b8", 
+      "address": "0x742EfB6e8B6c6b7c6c7D8e9f0a1b2c3d4e5f6a7b8",
       "active": true
     },
     {
@@ -54,11 +72,5 @@
       "active": true
     }
   ],
-  "users": [
-    {
-      "email": "user@example.com",
-      "balance": 50.00,
-      "createdAt": "2024-01-01"
-    }
-  ]
+  "users": []
 }
