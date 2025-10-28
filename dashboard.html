@@ -1,1 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户面板 - 7SIM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        /* 复用index.html的样式，但简化布局 */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4bb543;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f5f7fb; color: var(--dark); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* 导航栏 */
+        header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        
+        .wallet-info { display: flex; align-items: center; background: var(--light); padding: 8px 15px; border-radius: 20px; margin-right: 15px; }
+        .btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
+        .btn-primary { background: var(--primary); color: white; }
+        
+        /* 搜索栏 */
+        .search-section { padding: 40px 0; background: white; }
+        .search-bar { position: relative; max-width: 600px; margin: 0 auto 20px; }
+        .search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #6c757d; }
+        .search-bar input { width: 100%; padding: 12px 15px 12px 45px; border: 2px solid #e9ecef; border-radius: 25px; font-size: 1rem; }
+        
+        /* 服务网格 */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 40px 0; }
+        .service-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); text-align: center; }
+        .service-flag { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; margin-bottom: 15px; }
+        .service-icon { width: 60px; height: 60px; border-radius: 12px; background: #e9ecef; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--primary); }
+        .service-name { font-weight: 600; margin-bottom: 5px; }
+        .service-price { color: var(--success); font-weight: 500; margin-bottom: 15px; }
+        
+        /* 模态框 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 8px; width: 90%; max-width: 500px; padding: 30px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        
+        .payment-methods { display: grid; gap: 15px; margin: 20px 0; }
+        .payment-method { border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; text-align: center; }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="dashboard.html" class="logo">
+                    <i class="fas fa-sim-card"></i>
+                    <span>7SIM</span>
+                </a>
+                <div style="display: flex; align-items: center;">
+                    <div class="wallet-info">
+                        <i class="fas fa-wallet"></i>
+                        <span id="balanceAmount">¥0.00</span>
+                    </div>
+                    <button class="btn btn-primary" id="rechargeBtn">充值</button>
+                    <div style="margin-left: 15px;">
+                        <button class="btn" onclick="logout()">退出</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
+    <!-- 搜索区域 -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="serviceSearch" placeholder="搜索国家或应用...">
+            </div>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="btn btn-primary" data-filter="all">全部</button>
+                <button class="btn" data-filter="country">国家</button>
+                <button class="btn" data-filter="app">应用</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务区域 -->
+    <section class="container">
+        <div class="services-grid" id="servicesGrid">
+            <!-- 服务卡片会动态加载 -->
+        </div>
+    </section>
+
+    <!-- 充值模态框 -->
+    <div class="modal" id="rechargeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>账户充值</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div>
+                <div style="margin-bottom: 20px;">
+                    <label>选择充值金额</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+                        <div class="amount-option" data-amount="10">¥10</div>
+                        <div class="amount-option" data-amount="50">¥50</div>
+                        <div class="amount-option" data-amount="100">¥100</div>
+                        <div class="amount-option" data-amount="200">¥200</div>
+                        <div class="amount-option" data-amount="500">¥500</div>
+                        <div class="amount-option" data-amount="1000">¥1000</div>
+                    </div>
+                </div>
+                <div>
+                    <label>选择支付方式</label>
+                    <div class="payment-methods" id="paymentMethodsList">
+                        <!-- 支付方式动态加载 -->
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" id="confirmRecharge">确认充值</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase配置（与index.html相同）
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKcWEdi_Zd-CAJYtEiwkbNNs7ibOp6HG4",
+            authDomain: "sim-platform-fa8dd.firebaseapp.com",
+            projectId: "sim-platform-fa8dd",
+            storageBucket: "sim-platform-fa8dd.firebasestorage.app",
+            messagingSenderId: "276606433877",
+            appId: "1:276606433877:web:ac217c829ffdc735fff2dc"
+        };
+
+        // 初始化Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 检查登录状态
+        auth.onAuthStateChanged((user) => {
+            if (user && user.emailVerified) {
+                // 用户已登录且验证，加载数据
+                loadUserData(user.uid);
+                loadServices();
+                loadPaymentMethods();
+            } else {
+                // 未登录或未验证，跳回首页
+                window.location.href = 'index.html';
+            }
+        });
+
+        // 加载用户数据
+        function loadUserData(uid) {
+            db.collection('users').doc(uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        document.getElementById('balanceAmount').textContent = `¥${userData.balance.toFixed(2)}`;
+                    }
+                });
+        }
+
+        // 加载服务数据
+        async function loadServices() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                const servicesGrid = document.getElementById('servicesGrid');
+                servicesGrid.innerHTML = '';
+
+                data.services.filter(service => service.active).forEach(service => {
+                    const card = document.createElement('div');
+                    card.className = 'service-card';
+                    card.innerHTML = `
+                        ${service.type === 'country' ? 
+                            `<img src="${service.flag}" alt="${service.name}" class="service-flag">` :
+                            `<div class="service-icon"><i class="${service.icon}"></i></div>`
+                        }
+                        <div class="service-name">${service.name}</div>
+                        <div class="service-price">¥${service.price}/条</div>
+                        <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 15px;">库存: ${service.stock}个号码</div>
+                        <button class="btn btn-primary" onclick="selectService(${service.id})">选择号码</button>
+                    `;
+                    servicesGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('加载服务失败:', error);
+            }
+        }
+
+        // 加载支付方式
+        async function loadPaymentMethods() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                const container = document.getElementById('paymentMethodsList');
+                container.innerHTML = '';
+
+                data.paymentMethods.filter(method => method.active).forEach(method => {
+                    const methodElement = document.createElement('div');
+                    methodElement.className = 'payment-method';
+                    methodElement.innerHTML = `
+                        <div style="font-size: 2rem; margin-bottom: 10px; color: var(--primary);">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        <div style="font-weight: 600;">${method.name}</div>
+                        <div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">${method.address}</div>
+                    `;
+                    container.appendChild(methodElement);
+                });
+            } catch (error) {
+                console.error('加载支付方式失败:', error);
+            }
+        }
+
+        // 选择服务
+        function selectService(serviceId) {
+            const user = auth.currentUser;
+            if (user) {
+                // 这里实现选择服务的逻辑
+                alert(`选择服务 ID: ${serviceId}\n功能开发中...`);
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        // 充值功能
+        document.getElementById('rechargeBtn').addEventListener('click', function() {
+            document.getElementById('rechargeModal').style.display = 'flex';
+        });
+
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('rechargeModal').style.display = 'none';
+            });
+        });
+
+        // 金额选择
+        document.querySelectorAll('.amount-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.amount-option').forEach(o => o.style.background = '');
+                this.style.background = 'rgba(67, 97, 238, 0.1)';
+            });
+        });
+
+        // 搜索功能
+        document.getElementById('serviceSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filterServices(searchTerm);
+        });
+
+        // 筛选功能
+        document.querySelectorAll('[data-filter]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                document.querySelectorAll('[data-filter]').forEach(b => b.className = 'btn');
+                this.className = 'btn btn-primary';
+                filterServices('', filter);
+            });
+        });
+
+        function filterServices(searchTerm = '', filter = 'all') {
+            const cards = document.querySelectorAll('.service-card');
+            cards.forEach(card => {
+                const serviceName = card.querySelector('.service-name').textContent.toLowerCase();
+                const serviceType = card.innerHTML.includes('service-flag') ? 'country' : 'app';
+                
+                const matchesSearch = serviceName.includes(searchTerm);
+                const matchesFilter = filter === 'all' || serviceType === filter;
+                
+                card.style.display = (matchesSearch && matchesFilter) ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
