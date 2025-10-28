@@ -1,1 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员后台 - 7SIM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root { 
+            --primary: #4361ee; --secondary: #3f37c9; --success: #4bb543; 
+            --danger: #e74c3c; --warning: #f39c12; --sidebar: #2c3e50; 
+        }
+        
+        body { display: flex; background: #f8f9fa; min-height: 100vh; }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 250px; background: var(--sidebar); color: white; 
+            height: 100vh; position: fixed; left: 0; top: 0; padding: 20px 0;
+        }
+        
+        .sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid #34495e; margin-bottom: 20px; }
+        .sidebar-header h2 { font-size: 1.2rem; }
+        .sidebar-header .admin-name { color: #bdc3c7; font-size: 0.9rem; }
+        
+        .nav-item {
+            padding: 15px 20px; cursor: pointer; transition: background 0.3s;
+            border-left: 3px solid transparent; display: flex; align-items: center;
+        }
+        .nav-item:hover { background: #34495e; }
+        .nav-item.active { background: #34495e; border-left-color: var(--primary); }
+        .nav-item i { width: 20px; margin-right: 10px; }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-left: 250px; padding: 30px; width: calc(100% - 250px);
+        }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 { color: #2c3e50; }
+        
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 500; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        
+        /* 内容卡片 */
+        .content-card {
+            background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px; display: none;
+        }
+        .content-card.active { display: block; }
+        
+        /* 表格样式 */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
+        th { background: #f8f9fa; font-weight: 600; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        
+        .crypto-method { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+        .action-buttons { display: flex; gap: 5px; }
+        .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+        
+        /* 统计卡片 */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { color: #6c757d; }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>7SIM 管理后台</h2>
+            <div class="admin-name" id="currentAdmin">管理员</div>
+        </div>
+        <div class="nav-item active" data-tab="products">
+            <i class="fas fa-box"></i> 产品设置
+        </div>
+        <div class="nav-item" data-tab="users">
+            <i class="fas fa-users"></i> 用户列表
+        </div>
+        <div class="nav-item" data-tab="wallet">
+            <i class="fas fa-wallet"></i> 钱包设置
+        </div>
+        <div class="nav-item" data-tab="crypto">
+            <i class="fas fa-coins"></i> 加密货币转账
+        </div>
+        <div class="nav-item" onclick="adminLogout()" style="margin-top: 20px; border-top: 1px solid #34495e; padding-top: 20px;">
+            <i class="fas fa-sign-out-alt"></i> 退出登录
+        </div>
+    </div>
 
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <div class="header">
+            <h1 id="pageTitle">产品设置</h1>
+            <div>欢迎, <span id="adminWelcome"></span> | <span id="currentTime"></span></div>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">总用户数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalServices">0</div>
+                <div class="stat-label">服务数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRevenue">¥0</div>
+                <div class="stat-label">总收入</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeServices">0</div>
+                <div class="stat-label">活跃服务</div>
+            </div>
+        </div>
+
+        <!-- 产品设置 -->
+        <div class="content-card active" id="products">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3><i class="fas fa-cog"></i> 接码服务管理</h3>
+                <button class="btn btn-primary" onclick="showAddServiceModal()">
+                    <i class="fas fa-plus"></i> 添加服务
+                </button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>价格 (¥)</th>
+                        <th>库存</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="servicesTable">
+                    <!-- 动态加载 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 用户列表 -->
+        <div class="content-card" id="users">
+            <h3><i class="fas fa-users"></i> 用户管理</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>邮箱</th>
+                        <th>余额</th>
+                        <th>注册时间</th>
+                        <th>最后登录</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <!-- 动态加载 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 钱包设置 -->
+        <div class="content-card" id="wallet">
+            <h3><i class="fas fa-wallet"></i> 支付方式配置</h3>
+            
+            <div class="crypto-method">
+                <h4>TRC20 USDT</h4>
+                <div class="form-group">
+                    <label>收款地址</label>
+                    <input type="text" class="form-control" id="trc20Address" placeholder="TRC20 USDT 收款地址">
+                </div>
+                <div class="form-group">
+                    <label>网络</label>
+                    <input type="text" class="form-control" value="TRC20" readonly>
+                </div>
+            </div>
+            
+            <div class="crypto-method">
+                <h4>ERC20 USDT</h4>
+                <div class="form-group">
+                    <label>收款地址</label>
+                    <input type="text" class="form-control" id="erc20usdtAddress" placeholder="ERC20 USDT 收款地址">
+                </div>
+                <div class="form-group">
+                    <label>网络</label>
+                    <input type="text" class="form-control" value="ERC20" readonly>
+                </div>
+            </div>
+            
+            <div class="crypto-method">
+                <h4>ERC20 USDC</h4>
+                <div class="form-group">
+                    <label>收款地址</label>
+                    <input type="text" class="form-control" id="erc20usdcAddress" placeholder="ERC20 USDC 收款地址">
+                </div>
+                <div class="form-group">
+                    <label>网络</label>
+                    <input type="text" class="form-control" value="ERC20" readonly>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="savePaymentConfig()">保存支付配置</button>
+        </div>
+
+        <!-- 加密货币转账 -->
+        <div class="content-card" id="crypto">
+            <h3><i class="fas fa-exchange-alt"></i> 加密货币转账</h3>
+            
+            <div class="form-group">
+                <label>选择用户</label>
+                <select class="form-control" id="transferUser">
+                    <option value="">选择用户...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>转账金额 (USDT)</label>
+                <input type="number" class="form-control" id="transferAmount" placeholder="输入转账金额" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label>收款地址</label>
+                <input type="text" class="form-control" id="transferToAddress" placeholder="输入收款钱包地址">
+            </div>
+            
+            <div class="form-group">
+                <label>选择网络</label>
+                <select class="form-control" id="transferNetwork">
+                    <option value="trc20">TRC20</option>
+                    <option value="erc20">ERC20</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" onclick="processCryptoTransfer()">
+                <i class="fas fa-paper-plane"></i> 执行转账
+            </button>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                <h4>转账记录</h4>
+                <div id="transferHistory">
+                    <div style="padding: 10px; background: white; margin: 5px 0; border-radius: 3px; font-size: 0.9rem;">
+                        暂无转账记录
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加服务模态框 -->
+    <div class="modal" id="addServiceModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>添加接码服务</h3>
+                <button class="close-modal" onclick="closeModal('addServiceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addServiceForm">
+                    <div class="form-group">
+                        <label>服务名称</label>
+                        <input type="text" class="form-control" id="serviceName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>服务类型</label>
+                        <select class="form-control" id="serviceType" required>
+                            <option value="country">国家</option>
+                            <option value="app">应用</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>价格 (¥)</label>
+                            <input type="number" class="form-control" id="servicePrice" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>库存数量</label>
+                            <input type="number" class="form-control" id="serviceStock" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="iconLabel">国旗URL</label>
+                        <input type="text" class="form-control" id="serviceIcon" placeholder="输入国旗图片URL或图标类名">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="text-align: right;">
+                <button class="btn" onclick="closeModal('addServiceModal')">取消</button>
+                <button class="btn btn-primary" onclick="addService()">添加服务</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查管理员登录状态
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+
+        // 显示当前管理员
+        const currentAdmin = sessionStorage.getItem('adminUsername') || '管理员';
+        document.getElementById('currentAdmin').textContent = currentAdmin;
+        document.getElementById('adminWelcome').textContent = currentAdmin;
+
+        // Firebase配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKcWEdi_Zd-CAJYtEiwkbNNs7ibOp6HG4",
+            authDomain: "sim-platform-fa8dd.firebaseapp.com",
+            projectId: "sim-platform-fa8dd",
+            storageBucket: "sim-platform-fa8dd.firebasestorage.app",
+            messagingSenderId: "276606433877",
+            appId: "1:276606433877:web:ac217c829ffdc735fff2dc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let appData = {
+            services: [],
+            paymentMethods: [],
+            users: []
+        };
+
+        // 退出登录
+        function adminLogout() {
+            sessionStorage.clear();
+            window.location.href = 'admin-login.html';
+        }
+
+        // 更新时间
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString('zh-CN');
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 侧边栏切换
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (this.dataset.tab) {
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    document.querySelectorAll('.content-card').forEach(card => card.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab).classList.add('active');
+                    document.getElementById('pageTitle').textContent = this.textContent.trim();
+                    
+                    loadTabData(this.dataset.tab);
+                }
+            });
+        });
+
+        // 加载数据
+        async function loadAppData() {
+            try {
+                const response = await fetch('data.json');
+                appData = await response.json();
+                return appData;
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                return { services: [], paymentMethods: [], users: [] };
+            }
+        }
+
+        // 保存数据到data.json（模拟）
+        function saveAppData() {
+            // 在实际应用中，这里应该通过GitHub API或服务器保存
+            console.log('保存数据:', appData);
+            alert('数据已更新（在实际应用中会保存到服务器）');
+            
+            // 模拟保存到localStorage供测试
+            localStorage.setItem('appData', JSON.stringify(appData));
+        }
+
+        // 加载标签页数据
+        async function loadTabData(tab) {
+            await loadAppData();
+            
+            switch(tab) {
+                case 'products':
+                    loadServices();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'wallet':
+                    loadWalletConfig();
+                    break;
+                case 'crypto':
+                    loadTransferUsers();
+                    break;
+            }
+            updateStats();
+        }
+
+        // 加载服务列表
+        function loadServices() {
+            const tbody = document.getElementById('servicesTable');
+            tbody.innerHTML = '';
+            
+            appData.services.forEach(service => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${service.name}</td>
+                        <td>${service.type === 'country' ? '国家' : '应用'}</td>
+                        <td>¥${service.price}</td>
+                        <td>${service.stock}</td>
+                        <td>${service.active ? '启用' : '禁用'}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editService(${service.id})">编辑</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 加载用户列表
+        async function loadUsers() {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = '';
+            
+            // 从Firebase加载真实用户数据
+            const snapshot = await db.collection('users').get();
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>¥${user.balance || 0}</td>
+                        <td>${user.createdAt?.toDate?.().toLocaleDateString() || '未知'}</td>
+                        <td>${user.lastLogin?.toDate?.().toLocaleDateString() || '未知'}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editUserBalance('${doc.id}')">调整余额</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 加载钱包配置
+        function loadWalletConfig() {
+            const paymentMethod = appData.paymentMethods.find(m => m.name === 'TRC20 USDT');
+            if (paymentMethod) {
+                document.getElementById('trc20Address').value = paymentMethod.address;
+            }
+            
+            const erc20usdt = appData.paymentMethods.find(m => m.name === 'ERC20 USDT');
+            if (erc20usdt) {
+                document.getElementById('erc20usdtAddress').value = erc20usdt.address;
+            }
+            
+            const erc20usdc = appData.paymentMethods.find(m => m.name === 'ERC20 USDC');
+            if (erc20usdc) {
+                document.getElementById('erc20usdcAddress').value = erc20usdc.address;
+            }
+        }
+
+        // 加载转账用户列表
+        async function loadTransferUsers() {
+            const select = document.getElementById('transferUser');
+            select.innerHTML = '<option value="">选择用户...</option>';
+            
+            const snapshot = await db.collection('users').get();
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                select.innerHTML += `<option value="${doc.id}">${user.email} (余额: ¥${user.balance || 0})</option>`;
+            });
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('totalServices').textContent = appData.services.length;
+            document.getElementById('activeServices').textContent = appData.services.filter(s => s.active).length;
+            
+            // 从Firebase获取用户统计
+            db.collection('users').get().then(snapshot => {
+                document.getElementById('totalUsers').textContent = snapshot.size;
+            });
+        }
+
+        // 添加服务功能
+        function showAddServiceModal() {
+            document.getElementById('addServiceModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function addService() {
+            const name = document.getElementById('serviceName').value;
+            const type = document.getElementById('serviceType').value;
+            const price = parseFloat(document.getElementById('servicePrice').value);
+            const stock = parseInt(document.getElementById('serviceStock').value);
+            const icon = document.getElementById('serviceIcon').value;
+            
+            const newService = {
+                id: Date.now(),
+                name,
+                type,
+                price,
+                stock,
+                active: true,
+                [type === 'country' ? 'flag' : 'icon']: icon || (type === 'country' ? 'https://flagcdn.com/w80/us.png' : 'fas fa-mobile-alt')
+            };
+            
+            appData.services.push(newService);
+            saveAppData();
+            loadServices();
+            closeModal('addServiceModal');
+            alert('服务添加成功！');
+        }
+
+        // 保存支付配置
+        function savePaymentConfig() {
+            appData.paymentMethods = [
+                {
+                    name: 'TRC20 USDT',
+                    address: document.getElementById('trc20Address').value,
+                    active: true
+                },
+                {
+                    name: 'ERC20 USDT',
+                    address: document.getElementById('erc20usdtAddress').value,
+                    active: true
+                },
+                {
+                    name: 'ERC20 USDC', 
+                    address: document.getElementById('erc20usdcAddress').value,
+                    active: true
+                }
+            ];
+            
+            saveAppData();
+            alert('支付配置已保存！');
+        }
+
+        // 加密货币转账
+        function processCryptoTransfer() {
+            const userId = document.getElementById('transferUser').value;
+            const amount = document.getElementById('transferAmount').value;
+            const toAddress = document.getElementById('transferToAddress').value;
+            const network = document.getElementById('transferNetwork').value;
+            
+            if (!userId || !amount || !toAddress) {
+                alert('请填写完整信息');
+                return;
+            }
+            
+            // 模拟转账记录
+            const history = document.getElementById('transferHistory');
+            const timestamp = new Date().toLocaleString('zh-CN');
+            history.innerHTML = `
+                <div style="padding: 10px; background: white; margin: 5px 0; border-radius: 3px; font-size: 0.9rem;">
+                    <strong>${timestamp}</strong><br>
+                    转账 ${amount} USDT 到 ${toAddress} (${network.toUpperCase()})<br>
+                    <small style="color: var(--success);">状态: 已完成</small>
+                </div>
+            ` + history.innerHTML;
+            
+            alert(`转账成功！\n金额: ${amount} USDT\n收款地址: ${toAddress}\n网络: ${network}`);
+            
+            // 清空表单
+            document.getElementById('transferAmount').value = '';
+            document.getElementById('transferToAddress').value = '';
+        }
+
+        // 初始化加载产品数据
+        loadTabData('products');
+
+        // 服务类型切换时更新标签
+        document.getElementById('serviceType').addEventListener('change', function() {
+            const label = document.getElementById('iconLabel');
+            label.textContent = this.value === 'country' ? '国旗URL' : '图标类名';
+        });
+    </script>
+</body>
+</html>
