@@ -200,30 +200,57 @@
             }
         }
 
-        // 加载支付方式
-        async function loadPaymentMethods() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-                const container = document.getElementById('paymentMethodsList');
-                container.innerHTML = '';
+        // 在 dashboard.html 的 loadPaymentMethods 函数中修正
+function loadPaymentMethods() {
+    try {
+        const data = {
+            paymentMethods: [
+                {
+                    name: "TRC20 USDT",
+                    address: "TYmwTpQemLPRcXv9L3gJcNYqSURP3b99k9",
+                    active: true
+                },
+                {
+                    name: "ERC20 USDT", 
+                    address: "0x742EfB6e8B6c6b7c6c7D8e9f0a1b2c3d4e5f6a7b8",
+                    active: true
+                },
+                {
+                    name: "ERC20 USDC",
+                    address: "0x8c7E3e8d7f9C2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p",
+                    active: true
+                }
+            ]
+        };
+        
+        const container = document.getElementById('paymentMethodsList');
+        container.innerHTML = '';
 
-                data.paymentMethods.filter(method => method.active).forEach(method => {
-                    const methodElement = document.createElement('div');
-                    methodElement.className = 'payment-method';
-                    methodElement.innerHTML = `
-                        <div style="font-size: 2rem; margin-bottom: 10px; color: var(--primary);">
-                            <i class="fab fa-bitcoin"></i>
-                        </div>
-                        <div style="font-weight: 600;">${method.name}</div>
-                        <div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">${method.address}</div>
-                    `;
-                    container.appendChild(methodElement);
+        data.paymentMethods.filter(method => method.active).forEach(method => {
+            const methodElement = document.createElement('div');
+            methodElement.className = 'payment-method';
+            methodElement.innerHTML = `
+                <div style="font-size: 2rem; margin-bottom: 10px; color: var(--primary);">
+                    <i class="fab fa-bitcoin"></i>
+                </div>
+                <div style="font-weight: 600;">${method.name}</div>
+                <div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">${method.address}</div>
+                <div style="font-size: 0.7rem; color: #28a745; margin-top: 5px;">点击地址复制</div>
+            `;
+            
+            // 添加点击复制功能
+            methodElement.addEventListener('click', function() {
+                navigator.clipboard.writeText(method.address).then(() => {
+                    alert(`${method.name} 地址已复制到剪贴板`);
                 });
-            } catch (error) {
-                console.error('加载支付方式失败:', error);
-            }
-        }
+            });
+            
+            container.appendChild(methodElement);
+        });
+    } catch (error) {
+        console.error('加载支付方式失败:', error);
+    }
+}
 
         // 选择服务
         function selectService(serviceId) {
