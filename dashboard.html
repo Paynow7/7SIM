@@ -961,24 +961,6 @@ const servicesData = {
         { id: 2, name: "PremiumSMS", numbers: "52,341", price: 0.00 }
     ]
 };
-
-
-// 在页面加载时更新用户信息
-document.addEventListener('DOMContentLoaded', function() {
-    updateUserDropdown();
-    initDefaultCountries();  // 先初始化国家数据
-    renderServices();
-    renderCountries();
-    renderOperators();
-    setupEventListeners();
-});
-
-
-// 全局变量
-let selectedService = null;
-let selectedCountry = null;
-let selectedOperator = null;
-
 // 初始化默认国家数据
 function initDefaultCountries() {
     const defaultCountries = [
@@ -1046,6 +1028,24 @@ function initDefaultCountries() {
     
     console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
 }
+
+// 在页面加载时更新用户信息
+document.addEventListener('DOMContentLoaded', function() {
+    updateUserDropdown();
+    initDefaultCountries();  // 先初始化国家数据
+    renderServices();
+    renderCountries();
+    renderOperators();
+    setupEventListeners();
+});
+
+
+// 全局变量
+let selectedService = null;
+let selectedCountry = null;
+let selectedOperator = null;
+
+
 
        // 渲染服务列表
 function renderServices() {
