@@ -595,19 +595,37 @@
     <a href="#">API</a>
     <a href="#">怎么购买？</a>
     <a href="#">博客</a>
-    <!-- 添加管理员链接 -->
-    <a href="admin.html" style="color: var(--danger);">
-        <i class="fas fa-cog"></i> 管理员
-    </a>
 </div>
                 
-                <div style="display: flex; align-items: center;">
-                    <div class="wallet-info">
-                        <i class="fas fa-wallet"></i>
-                        <span id="balanceAmount">$15.80</span>
-                    </div>
-                    <button class="btn btn-primary" id="rechargeBtn" style="margin-right: 10px;">充值</button>
-                </div>
+               <div style="display: flex; align-items: center;">
+    <div class="wallet-info">
+        <i class="fas fa-wallet"></i>
+        <span id="balanceAmount">$0</span>
+    </div>
+    <button class="btn btn-primary" id="rechargeBtn" style="margin-right: 10px;">充值</button>
+    
+    <!-- 用户菜单 -->
+    <div class="user-menu" style="position: relative;">
+        <div class="user-avatar" id="userAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--light-gray); display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 15px;">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="user-dropdown" id="userDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; min-width: 200px; z-index: 1000; margin-top: 10px;">
+            <div class="user-dropdown-item" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;">
+                <i class="fas fa-id-card" style="margin-right: 10px;"></i>
+                <span>用户ID: <span id="dropdownUserId">-</span></span>
+            </div>
+            <div class="user-dropdown-item" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;">
+                <i class="fas fa-wallet" style="margin-right: 10px;"></i>
+                <span>余额: $<span id="dropdownBalance">0.00</span></span>
+            </div>
+            <div style="height: 1px; background: var(--light-gray); margin: 5px 0;"></div>
+            <div class="user-dropdown-item" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;" onclick="userLogout()">
+                <i class="fas fa-sign-out-alt" style="margin-right: 10px;"></i>
+                <span>退出登录</span>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </header>
@@ -890,6 +908,40 @@
     </div>
 
     <script>
+        // 用户菜单功能
+document.getElementById('userAvatar').addEventListener('click', function() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+// 点击其他地方关闭下拉菜单
+window.addEventListener('click', function(e) {
+    if (!e.target.matches('#userAvatar') && !e.target.closest('#userDropdown')) {
+        document.getElementById('userDropdown').style.display = 'none';
+    }
+});
+
+// 更新用户下拉菜单信息
+function updateUserDropdown() {
+    // 这里应该从实际的用户数据获取
+    document.getElementById('dropdownUserId').textContent = 'USER123456';
+    document.getElementById('dropdownBalance').textContent = '15.80';
+}
+
+// 用户退出登录
+function userLogout() {
+    if (confirm('确定要退出登录吗？')) {
+        // 清除用户登录状态
+        sessionStorage.removeItem('userLoggedIn');
+        sessionStorage.removeItem('userData');
+        window.location.href = 'index.html';
+    }
+}
+
+// 在页面加载时更新用户信息
+document.addEventListener('DOMContentLoaded', function() {
+    updateUserDropdown();
+});
         // 服务数据 - 基于市场价格
         const servicesData = {
             services: [
@@ -934,29 +986,45 @@
             setupEventListeners();
         });
 
-        // 渲染服务列表
-        function renderServices() {
-            const servicesList = document.getElementById('servicesList');
-            servicesList.innerHTML = '';
-            
-            servicesData.services.forEach(service => {
-                const item = document.createElement('div');
-                item.className = 'service-item';
-                item.dataset.id = service.id;
-                item.innerHTML = `
-                    <div class="service-info">
-                        <div class="service-icon-small">
-                            <i class="${service.icon}"></i>
-                        </div>
-                        <div class="service-name">${service.name}</div>
-                    </div>
-                    <div class="service-numbers">${service.numbers}</div>
-                    <div class="service-price">$${service.price.toFixed(2)}</div>
-                `;
-                item.addEventListener('click', () => selectService(service));
-                servicesList.appendChild(item);
-            });
+       // 渲染服务列表
+function renderServices() {
+    const servicesList = document.getElementById('servicesList');
+    servicesList.innerHTML = '';
+    
+    // 首先尝试从 localStorage 加载管理员添加的服务
+    const savedData = localStorage.getItem('appData');
+    let servicesToRender = servicesData.services;
+    
+    if (savedData) {
+        try {
+            const adminData = JSON.parse(savedData);
+            if (adminData.services && adminData.services.length > 0) {
+                servicesToRender = adminData.services;
+                console.log('使用管理员添加的服务数据:', servicesToRender);
+            }
+        } catch (error) {
+            console.error('解析管理员数据失败:', error);
         }
+    }
+    
+    servicesToRender.forEach(service => {
+        const item = document.createElement('div');
+        item.className = 'service-item';
+        item.dataset.id = service.id;
+        item.innerHTML = `
+            <div class="service-info">
+                <div class="service-icon-small">
+                    <i class="${service.icon || 'fas fa-mobile-alt'}"></i>
+                </div>
+                <div class="service-name">${service.name}</div>
+            </div>
+            <div class="service-numbers">${service.numbers || '0'}</div>
+            <div class="service-price">$${service.price.toFixed(2)}</div>
+        `;
+        item.addEventListener('click', () => selectService(service));
+        servicesList.appendChild(item);
+    });
+}
 
         // 渲染国家列表
         function renderCountries() {
