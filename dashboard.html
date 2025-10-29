@@ -36,7 +36,7 @@
         }
         
         .container { 
-            max-width: 1400px; 
+            max-width: 1200px; 
             margin: 0 auto; 
             padding: 0 20px; 
         }
@@ -182,213 +182,261 @@
         
         /* 主内容区域 */
         .main-content {
-            display: flex;
-            flex: 1;
-            padding: 20px 0;
+            padding: 30px 0;
         }
         
-        /* 左侧边栏 */
-        .sidebar {
-            width: 300px;
+        /* 步骤指示器 */
+        .steps-container {
+            display: flex;
+            margin-bottom: 30px;
             background: white;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            margin-right: 20px;
-            height: fit-content;
         }
         
-        .sidebar-section {
-            margin-bottom: 25px;
-        }
-        
-        .sidebar-section h3 {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            color: var(--dark);
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .search-bar {
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
             position: relative;
-            margin-bottom: 15px;
         }
         
-        .search-bar i {
+        .step:not(:last-child)::after {
+            content: '';
             position: absolute;
-            left: 12px;
             top: 50%;
+            right: 0;
+            width: 50%;
+            height: 2px;
+            background: var(--light-gray);
             transform: translateY(-50%);
-            color: var(--gray);
         }
         
-        .search-bar input {
-            width: 100%;
-            padding: 10px 10px 10px 35px;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
+        .step.active:not(:last-child)::after {
+            background: var(--primary);
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 600;
+        }
+        
+        .step.active .step-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .step-title {
+            font-weight: 500;
             font-size: 0.9rem;
         }
         
-        .category-list {
-            list-style: none;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .category-item {
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        
-        .category-item:hover {
-            background: var(--light);
-        }
-        
-        .category-item.active {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-            font-weight: 500;
-        }
-        
-        .category-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            background: var(--light);
+        .step.active .step-title {
             color: var(--primary);
         }
         
-        .country-flag {
-            width: 24px;
-            height: 16px;
-            margin-right: 10px;
-            border-radius: 2px;
-            object-fit: cover;
-        }
-        
-        /* 右侧内容区域 */
-        .content-area {
-            flex: 1;
+        /* 选择区域 */
+        .selection-area {
             background: white;
             border-radius: 8px;
-            padding: 20px;
+            padding: 30px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
         }
         
-        .content-header {
+        .selection-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 25px;
         }
         
-        .content-header h2 {
+        .selection-title {
             font-size: 1.5rem;
-            color: var(--dark);
+            font-weight: 600;
         }
         
-        .service-info {
+        .selected-item {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
             background: var(--light);
-            border-radius: 8px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
         }
         
-        .service-icon-large {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+        .selected-item-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .selected-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            color: var(--primary);
             margin-right: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: var(--primary);
+            font-size: 1.2rem;
         }
         
-        .service-details h3 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-        }
-        
-        .service-details p {
-            color: var(--gray);
-            margin-bottom: 5px;
-        }
-        
-        .price-tag {
-            color: var(--success);
-            font-weight: 500;
-        }
-        
-        /* 运营商标签 */
-        .operators-section {
-            margin-top: 25px;
-        }
-        
-        .operators-section h3 {
-            margin-bottom: 15px;
+        .selected-item-name {
+            font-weight: 600;
             font-size: 1.1rem;
         }
         
-        .operators-grid {
+        .remove-selection {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .remove-selection:hover {
+            color: var(--danger);
+            background: rgba(231, 76, 60, 0.1);
+        }
+        
+        /* 服务网格 */
+        .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 15px;
         }
         
-        .operator-card {
-            background: var(--light);
+        .service-card {
+            border: 2px solid var(--light-gray);
             border-radius: 8px;
-            padding: 15px;
-            text-align: center;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.3s;
-            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .service-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .service-card.selected {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .service-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .service-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .service-stats {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .service-price {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* 运营商卡片 */
+        .operator-card {
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
         }
         
         .operator-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border-color: var(--primary);
+            transform: translateY(-2px);
         }
         
-        .operator-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--primary);
+        .operator-card.selected {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .operator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
         
         .operator-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .operator-success-rate {
+            background: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
             font-weight: 500;
-            margin-bottom: 5px;
+        }
+        
+        .operator-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .operator-price {
             color: var(--success);
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 1.3rem;
         }
         
         .operator-stock {
             color: var(--gray);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .operator-sms-type {
+            color: var(--gray);
+            font-size: 0.9rem;
             margin-top: 5px;
         }
         
@@ -434,26 +482,6 @@
             color: var(--gray);
         }
         
-        .payment-methods { 
-            display: grid; 
-            gap: 15px; 
-            margin: 20px 0; 
-        }
-        
-        .payment-method { 
-            border: 1px solid var(--light-gray); 
-            border-radius: 8px; 
-            padding: 15px; 
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .payment-method:hover {
-            border-color: var(--primary);
-            background: var(--light);
-        }
-        
         .insufficient-balance {
             text-align: center;
             padding: 20px;
@@ -475,40 +503,23 @@
             margin-bottom: 20px;
         }
         
-        /* API密钥模态框 */
-        .api-key-section {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--light);
-            border-radius: 8px;
-        }
-        
-        .api-key-display {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
-        .api-key-value {
-            flex-grow: 1;
-            padding: 10px;
-            background-color: white;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            font-family: monospace;
-            margin-right: 10px;
-        }
-        
         /* 响应式设计 */
-        @media (max-width: 992px) {
-            .main-content {
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps-container {
                 flex-direction: column;
             }
             
-            .sidebar {
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 20px;
+            .step:not(:last-child)::after {
+                width: 2px;
+                height: 50%;
+                top: auto;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
     </style>
@@ -560,97 +571,78 @@
 
     <!-- 主内容区域 -->
     <div class="container main-content">
-        <!-- 左侧边栏 -->
-        <div class="sidebar">
-            <div class="sidebar-section">
-                <h3>搜索服务</h3>
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="serviceSearch" placeholder="搜索服务...">
-                </div>
+        <!-- 步骤指示器 -->
+        <div class="steps-container">
+            <div class="step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-title">选择服务</div>
             </div>
-            
-            <div class="sidebar-section">
-                <h3>热门应用</h3>
-                <ul class="category-list" id="appsList">
-                    <!-- 应用列表会动态加载 -->
-                </ul>
+            <div class="step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-title">选择国家</div>
             </div>
-            
-            <div class="sidebar-section">
-                <h3>选择国家</h3>
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="countrySearch" placeholder="搜索国家...">
-                </div>
-                <ul class="category-list" id="countriesList">
-                    <!-- 国家列表会动态加载 -->
-                </ul>
+            <div class="step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-title">选择运营商</div>
             </div>
         </div>
-        
-        <!-- 右侧内容区域 -->
-        <div class="content-area">
-            <div class="content-header">
-                <h2 id="selectedServiceTitle">选择服务</h2>
-                <div class="btn-group">
-                    <button class="btn btn-outline" id="viewByApp">按应用</button>
-                    <button class="btn btn-primary" id="viewByCountry">按国家</button>
-                </div>
-            </div>
-            
-            <div id="serviceSelectionView">
-                <div class="service-info">
-                    <div class="service-icon-large">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <div class="service-details">
-                        <h3>欢迎使用7SIM</h3>
-                        <p>请在左侧选择您需要的服务或国家，查看可用的虚拟号码</p>
-                        <p class="price-tag">价格从 ¥0.80 起</p>
-                    </div>
-                </div>
-                
-                <div class="operators-section">
-                    <h3>推荐运营商</h3>
-                    <div class="operators-grid">
-                        <!-- 运营商卡片会动态加载 -->
-                    </div>
-                </div>
-            </div>
-            
-            <div id="serviceDetailView" style="display: none;">
-                <!-- 选择具体服务后显示的内容 -->
-            </div>
-        </div>
-    </div>
 
-    <!-- 充值模态框 -->
-    <div class="modal" id="rechargeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>账户充值</h2>
-                <button class="close-modal">&times;</button>
+        <!-- 步骤1: 选择服务 -->
+        <div class="selection-area" id="step1-content">
+            <div class="selection-header">
+                <div class="selection-title">1. 选择服务</div>
             </div>
-            <div>
-                <div style="margin-bottom: 20px;">
-                    <label>选择充值金额</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
-                        <div class="amount-option" data-amount="10">¥10</div>
-                        <div class="amount-option" data-amount="50">¥50</div>
-                        <div class="amount-option" data-amount="100">¥100</div>
-                        <div class="amount-option" data-amount="200">¥200</div>
-                        <div class="amount-option" data-amount="500">¥500</div>
-                        <div class="amount-option" data-amount="1000">¥1000</div>
+            
+            <!-- 已选择的服务 -->
+            <div class="selected-item" id="selectedServiceItem" style="display: none;">
+                <div class="selected-item-content">
+                    <div class="selected-item-icon" id="selectedServiceIcon">
+                        <i class="fab fa-amazon"></i>
                     </div>
+                    <div class="selected-item-name" id="selectedServiceName">Amazon</div>
                 </div>
-                <div>
-                    <label>选择支付方式</label>
-                    <div class="payment-methods" id="paymentMethodsList">
-                        <!-- 支付方式动态加载 -->
+                <button class="remove-selection" id="removeServiceSelection">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="services-grid" id="servicesGrid">
+                <!-- 服务卡片会动态加载 -->
+            </div>
+        </div>
+
+        <!-- 步骤2: 选择国家 -->
+        <div class="selection-area" id="step2-content" style="display: none;">
+            <div class="selection-header">
+                <div class="selection-title">2. 选择国家</div>
+            </div>
+            
+            <!-- 已选择的国家 -->
+            <div class="selected-item" id="selectedCountryItem" style="display: none;">
+                <div class="selected-item-content">
+                    <div class="selected-item-icon" id="selectedCountryIcon">
+                        <img src="" alt="" style="width: 100%; height: 100%; border-radius: 6px;">
                     </div>
+                    <div class="selected-item-name" id="selectedCountryName">英国</div>
                 </div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" id="confirmRecharge">确认充值</button>
+                <button class="remove-selection" id="removeCountrySelection">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="services-grid" id="countriesGrid">
+                <!-- 国家卡片会动态加载 -->
+            </div>
+        </div>
+
+        <!-- 步骤3: 选择运营商 -->
+        <div class="selection-area" id="step3-content" style="display: none;">
+            <div class="selection-header">
+                <div class="selection-title">3. 选择运营商</div>
+            </div>
+            
+            <div id="operatorsList">
+                <!-- 运营商卡片会动态加载 -->
             </div>
         </div>
     </div>
@@ -667,49 +659,6 @@
                 <h3>您的账户余额不足</h3>
                 <p>购买此服务需要 <span id="requiredAmount">¥0.00</span>，您当前余额为 <span id="currentBalance">¥0.00</span></p>
                 <button class="btn btn-primary" id="goToRecharge">立即充值</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- API密钥模态框 -->
-    <div class="modal" id="apiKeyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>API密钥</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="api-key-section">
-                <p>您的API密钥用于访问7SIM服务。请妥善保管，不要泄露给他人。</p>
-                <div class="api-key-display">
-                    <div class="api-key-value" id="apiKeyValue">************************</div>
-                    <button class="btn btn-outline" id="showApiKey">显示</button>
-                    <button class="btn btn-outline" id="copyApiKey">复制</button>
-                </div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" id="generateApiKey">生成新的API密钥</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 个人资料模态框 -->
-    <div class="modal" id="profileModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>个人资料</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>电子邮箱</label>
-                    <input type="email" id="profileEmail" class="form-control" readonly>
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>注册时间</label>
-                    <input type="text" id="profileCreatedAt" class="form-control" readonly>
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>最后登录</label>
-                    <input type="text" id="profileLastLogin" class="form-control" readonly>
-                </div>
             </div>
         </div>
     </div>
@@ -733,10 +682,9 @@
         // 全局变量
         let currentUser = null;
         let currentBalance = 0;
-        let servicesData = [];
         let selectedService = null;
         let selectedCountry = null;
-        let viewMode = 'country'; // 'country' 或 'app'
+        let selectedOperator = null;
 
         // 检查登录状态
         auth.onAuthStateChanged((user) => {
@@ -744,25 +692,10 @@
                 currentUser = user;
                 loadUserData(user.uid);
                 loadServices();
-                loadPaymentMethods();
-                
-                // 更新用户头像显示
-                updateUserAvatar(user);
             } else {
-                // 未登录或未验证，跳回首页
                 window.location.href = 'index.html';
             }
         });
-
-        // 更新用户头像显示
-        function updateUserAvatar(user) {
-            const userAvatar = document.getElementById('userAvatar');
-            if (user.email) {
-                // 如果有用户头像URL，可以在这里设置
-                // 否则使用默认图标
-                userAvatar.innerHTML = `<i class="fas fa-user"></i>`;
-            }
-        }
 
         // 加载用户数据
         function loadUserData(uid) {
@@ -772,13 +705,6 @@
                         const userData = doc.data();
                         currentBalance = userData.balance || 0;
                         document.getElementById('balanceAmount').textContent = `¥${currentBalance.toFixed(2)}`;
-                        
-                        // 更新个人资料信息
-                        document.getElementById('profileEmail').value = userData.email || currentUser.email;
-                        document.getElementById('profileCreatedAt').value = userData.createdAt ? 
-                            new Date(userData.createdAt).toLocaleString() : '未知';
-                        document.getElementById('profileLastLogin').value = userData.lastLogin ? 
-                            new Date(userData.lastLogin).toLocaleString() : '刚刚';
                     }
                 })
                 .catch((error) => {
@@ -787,388 +713,239 @@
         }
 
         // 加载服务数据
-        async function loadServices() {
-            try {
-                // 这里应该从API或Firestore获取数据
-                // 为了演示，我们使用静态数据
-                servicesData = {
-                    apps: [
-                        { id: 1, name: "WhatsApp", icon: "fab fa-whatsapp", price: 1.50, active: true },
-                        { id: 2, name: "Telegram", icon: "fab fa-telegram", price: 1.20, active: true },
-                        { id: 3, name: "Facebook", icon: "fab fa-facebook", price: 2.00, active: true },
-                        { id: 4, name: "Google", icon: "fab fa-google", price: 1.80, active: true },
-                        { id: 5, name: "Twitter", icon: "fab fa-twitter", price: 1.60, active: true },
-                        { id: 6, name: "Instagram", icon: "fab fa-instagram", price: 1.70, active: true }
-                    ],
-                    countries: [
-                        { id: 1, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 1.20, active: true },
-                        { id: 2, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 1.50, active: true },
-                        { id: 3, name: "中国", flag: "https://flagcdn.com/w40/cn.png", price: 0.80, active: true },
-                        { id: 4, name: "俄罗斯", flag: "https://flagcdn.com/w40/ru.png", price: 1.00, active: true },
-                        { id: 5, name: "日本", flag: "https://flagcdn.com/w40/jp.png", price: 1.30, active: true },
-                        { id: 6, name: "德国", flag: "https://flagcdn.com/w40/de.png", price: 1.40, active: true }
-                    ],
-                    operators: [
-                        { id: 1, name: "中国移动", icon: "fas fa-signal", price: 0.80, stock: 125 },
-                        { id: 2, name: "中国联通", icon: "fas fa-broadcast-tower", price: 0.85, stock: 98 },
-                        { id: 3, name: "中国电信", icon: "fas fa-satellite-dish", price: 0.90, stock: 76 },
-                        { id: 4, name: "Verizon", icon: "fas fa-wifi", price: 1.20, stock: 45 },
-                        { id: 5, name: "AT&T", icon: "fas fa-network-wired", price: 1.30, stock: 32 },
-                        { id: 6, name: "T-Mobile", icon: "fas fa-bluetooth", price: 1.25, stock: 28 }
-                    ]
-                };
+        function loadServices() {
+            // 模拟数据
+            const servicesData = {
+                services: [
+                    { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
+                    { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true },
+                    { id: 3, name: "Telegram", icon: "fab fa-telegram", numbers: "2,674,379", price: 8.00, active: true },
+                    { id: 4, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "2,805,483", price: 5.00, active: true },
+                    { id: 5, name: "Google/YouTube", icon: "fab fa-google", numbers: "1,912,079", price: 2.90, active: true },
+                    { id: 6, name: "Microsoft", icon: "fab fa-microsoft", numbers: "4,477,709", price: 1.00, active: true },
+                    { id: 7, name: "Twitter", icon: "fab fa-twitter", numbers: "4,093,117", price: 0.85, active: true },
+                    { id: 8, name: "Instagram", icon: "fab fa-instagram", numbers: "4,125,808", price: 1.00, active: true }
+                ],
+                countries: [
+                    { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
+                    { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true },
+                    { id: 3, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 6.0, numbers: "77,106", active: true },
+                    { id: 4, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 5.0, numbers: "25,000", active: true },
+                    { id: 5, name: "中国香港", flag: "https://flagcdn.com/w40/hk.png", price: 8.0, numbers: "34,727", active: true }
+                ],
+                operators: [
+                    { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
+                ]
+            };
 
-                renderAppsList();
-                renderCountriesList();
-                renderOperators();
-            } catch (error) {
-                console.error('加载服务失败:', error);
-            }
+            renderServices(servicesData.services);
+            renderCountries(servicesData.countries);
+            renderOperators(servicesData.operators);
         }
 
-        // 渲染应用列表
-        function renderAppsList() {
-            const appsList = document.getElementById('appsList');
-            appsList.innerHTML = '';
+        // 渲染服务
+        function renderServices(services) {
+            const servicesGrid = document.getElementById('servicesGrid');
+            servicesGrid.innerHTML = '';
             
-            servicesData.apps.filter(app => app.active).forEach(app => {
-                const item = document.createElement('li');
-                item.className = 'category-item';
-                item.dataset.id = app.id;
-                item.dataset.type = 'app';
-                item.innerHTML = `
-                    <div class="category-icon">
-                        <i class="${app.icon}"></i>
+            services.filter(service => service.active).forEach(service => {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.dataset.id = service.id;
+                card.innerHTML = `
+                    <div class="service-header">
+                        <div class="service-icon">
+                            <i class="${service.icon}"></i>
+                        </div>
+                        <div class="service-name">${service.name}</div>
                     </div>
-                    <span>${app.name}</span>
+                    <div class="service-stats">
+                        <span>${service.numbers}</span>
+                        <span>手机号码</span>
+                    </div>
+                    <div class="service-price">${service.price} ⓑ 起</div>
                 `;
-                item.addEventListener('click', () => selectCategory(app, 'app'));
-                appsList.appendChild(item);
+                card.addEventListener('click', () => selectService(service));
+                servicesGrid.appendChild(card);
             });
         }
 
-        // 渲染国家列表
-        function renderCountriesList() {
-            const countriesList = document.getElementById('countriesList');
-            countriesList.innerHTML = '';
+        // 渲染国家
+        function renderCountries(countries) {
+            const countriesGrid = document.getElementById('countriesGrid');
+            countriesGrid.innerHTML = '';
             
-            servicesData.countries.filter(country => country.active).forEach(country => {
-                const item = document.createElement('li');
-                item.className = 'category-item';
-                item.dataset.id = country.id;
-                item.dataset.type = 'country';
-                item.innerHTML = `
-                    <img src="${country.flag}" alt="${country.name}" class="country-flag">
-                    <span>${country.name}</span>
+            countries.filter(country => country.active).forEach(country => {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.dataset.id = country.id;
+                card.innerHTML = `
+                    <div class="service-header">
+                        <div class="service-icon">
+                            <img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">
+                        </div>
+                        <div class="service-name">${country.name}</div>
+                    </div>
+                    <div class="service-stats">
+                        <span>${country.numbers}</span>
+                        <span>个手机号码</span>
+                    </div>
+                    <div class="service-price">${country.price} ⓑ</div>
                 `;
-                item.addEventListener('click', () => selectCategory(country, 'country'));
-                countriesList.appendChild(item);
+                card.addEventListener('click', () => selectCountry(country));
+                countriesGrid.appendChild(card);
             });
         }
 
         // 渲染运营商
-        function renderOperators(service = null) {
-            const operatorsGrid = document.querySelector('.operators-grid');
-            operatorsGrid.innerHTML = '';
+        function renderOperators(operators) {
+            const operatorsList = document.getElementById('operatorsList');
+            operatorsList.innerHTML = '';
             
-            let operators = servicesData.operators;
-            
-            // 如果有特定服务，可以过滤运营商
-            if (service) {
-                // 这里可以根据服务类型过滤运营商
-                // 例如：某些运营商可能不支持某些服务
-            }
-            
-            operators.forEach(operator => {
+            operators.filter(operator => operator.active).forEach(operator => {
                 const card = document.createElement('div');
                 card.className = 'operator-card';
                 card.dataset.id = operator.id;
                 card.innerHTML = `
-                    <div class="operator-icon">
-                        <i class="${operator.icon}"></i>
+                    <div class="operator-header">
+                        <div class="operator-name">${operator.name}</div>
+                        <div class="operator-success-rate">${operator.successRate}</div>
                     </div>
-                    <div class="operator-name">${operator.name}</div>
-                    <div class="operator-price">¥${operator.price}/条</div>
-                    <div class="operator-stock">库存: ${operator.stock}个</div>
+                    <div class="operator-sms-type">${operator.smsType}</div>
+                    <div class="operator-details">
+                        <div class="operator-price">${operator.price} ⓑ</div>
+                        <div class="operator-stock">${operator.numbers} 个手机号码</div>
+                    </div>
                 `;
                 card.addEventListener('click', () => selectOperator(operator));
-                operatorsGrid.appendChild(card);
+                operatorsList.appendChild(card);
             });
         }
 
-        // 选择分类（应用或国家）
-        function selectCategory(item, type) {
-            // 移除所有活动状态
-            document.querySelectorAll('.category-item').forEach(el => {
-                el.classList.remove('active');
+        // 选择服务
+        function selectService(service) {
+            selectedService = service;
+            
+            // 更新UI
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('selected');
             });
+            event.currentTarget.classList.add('selected');
             
-            // 添加当前活动状态
-            event.currentTarget.classList.add('active');
+            // 显示已选择的服务
+            document.getElementById('selectedServiceIcon').innerHTML = `<i class="${service.icon}"></i>`;
+            document.getElementById('selectedServiceName').textContent = service.name;
+            document.getElementById('selectedServiceItem').style.display = 'flex';
             
-            // 更新选中项
-            if (type === 'app') {
-                selectedService = item;
-                selectedCountry = null;
-                viewMode = 'app';
-                document.getElementById('viewByApp').classList.add('btn-primary');
-                document.getElementById('viewByApp').classList.remove('btn-outline');
-                document.getElementById('viewByCountry').classList.add('btn-outline');
-                document.getElementById('viewByCountry').classList.remove('btn-primary');
-            } else {
-                selectedCountry = item;
-                selectedService = null;
-                viewMode = 'country';
-                document.getElementById('viewByCountry').classList.add('btn-primary');
-                document.getElementById('viewByCountry').classList.remove('btn-outline');
-                document.getElementById('viewByApp').classList.add('btn-outline');
-                document.getElementById('viewByApp').classList.remove('btn-primary');
-            }
-            
-            // 更新内容区域
-            updateContentArea();
+            // 进入下一步
+            setTimeout(() => {
+                showStep(2);
+            }, 300);
         }
 
-        // 更新内容区域
-        function updateContentArea() {
-            const serviceSelectionView = document.getElementById('serviceSelectionView');
-            const serviceDetailView = document.getElementById('serviceDetailView');
-            const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+        // 选择国家
+        function selectCountry(country) {
+            selectedCountry = country;
             
-            if (selectedService || selectedCountry) {
-                serviceSelectionView.style.display = 'block';
-                serviceDetailView.style.display = 'none';
-                
-                const serviceInfo = serviceSelectionView.querySelector('.service-info');
-                const serviceDetails = serviceInfo.querySelector('.service-details');
-                
-                if (selectedService) {
-                    selectedServiceTitle.textContent = selectedService.name;
-                    serviceInfo.querySelector('.service-icon-large').innerHTML = `<i class="${selectedService.icon}"></i>`;
-                    serviceDetails.querySelector('h3').textContent = selectedService.name;
-                    serviceDetails.querySelector('p').textContent = `用于接收 ${selectedService.name} 验证码的虚拟号码`;
-                    serviceDetails.querySelector('.price-tag').textContent = `价格从 ¥${selectedService.price} 起`;
-                } else if (selectedCountry) {
-                    selectedServiceTitle.textContent = selectedCountry.name;
-                    serviceInfo.querySelector('.service-icon-large').innerHTML = `<img src="${selectedCountry.flag}" alt="${selectedCountry.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
-                    serviceDetails.querySelector('h3').textContent = selectedCountry.name;
-                    serviceDetails.querySelector('p').textContent = `${selectedCountry.name} 虚拟号码，可用于各种服务`;
-                    serviceDetails.querySelector('.price-tag').textContent = `价格从 ¥${selectedCountry.price} 起`;
-                }
-                
-                // 更新运营商显示
-                renderOperators(selectedService || selectedCountry);
-            }
+            // 更新UI
+            document.querySelectorAll('#countriesGrid .service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // 显示已选择的国家
+            document.getElementById('selectedCountryIcon').innerHTML = `<img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
+            document.getElementById('selectedCountryName').textContent = country.name;
+            document.getElementById('selectedCountryItem').style.display = 'flex';
+            
+            // 进入下一步
+            setTimeout(() => {
+                showStep(3);
+            }, 300);
         }
 
         // 选择运营商
         function selectOperator(operator) {
-            // 检查余额是否足够
-            const requiredAmount = operator.price;
+            selectedOperator = operator;
             
+            // 更新UI
+            document.querySelectorAll('.operator-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // 检查余额
+            const requiredAmount = operator.price;
             if (currentBalance < requiredAmount) {
-                // 显示余额不足弹窗
-                document.getElementById('requiredAmount').textContent = `¥${requiredAmount.toFixed(2)}`;
-                document.getElementById('currentBalance').textContent = `¥${currentBalance.toFixed(2)}`;
+                document.getElementById('requiredAmount').textContent = `${requiredAmount} ⓑ`;
+                document.getElementById('currentBalance').textContent = `${currentBalance} ⓑ`;
                 document.getElementById('insufficientBalanceModal').style.display = 'flex';
                 return;
             }
             
-            // 如果余额足够，这里可以显示号码选择界面
-            // 根据需求，您可以选择直接显示号码或进行其他操作
-            alert(`选择了运营商: ${operator.name}\n价格: ¥${operator.price}\n功能开发中...`);
+            // 余额足够，可以继续购买流程
+            alert(`选择了运营商: ${operator.name}\n价格: ${operator.price} ⓑ\n功能开发中...`);
         }
 
-        // 加载支付方式
-        function loadPaymentMethods() {
-            try {
-                const data = {
-                    paymentMethods: [
-                        {
-                            name: "TRC20 USDT",
-                            address: "TYmwTpQemLPRcXv9L3gJcNYqSURP3b99k9",
-                            active: true
-                        },
-                        {
-                            name: "ERC20 USDT", 
-                            address: "0x742EfB6e8B6c6b7c6c7D8e9f0a1b2c3d4e5f6a7b8",
-                            active: true
-                        },
-                        {
-                            name: "ERC20 USDC",
-                            address: "0x8c7E3e8d7f9C2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p",
-                            active: true
-                        }
-                    ]
-                };
-                
-                const container = document.getElementById('paymentMethodsList');
-                container.innerHTML = '';
-
-                data.paymentMethods.filter(method => method.active).forEach(method => {
-                    const methodElement = document.createElement('div');
-                    methodElement.className = 'payment-method';
-                    methodElement.innerHTML = `
-                        <div style="font-size: 2rem; margin-bottom: 10px; color: var(--primary);">
-                            <i class="fab fa-bitcoin"></i>
-                        </div>
-                        <div style="font-weight: 600;">${method.name}</div>
-                        <div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">${method.address}</div>
-                        <div style="font-size: 0.7rem; color: #28a745; margin-top: 5px;">点击地址复制</div>
-                    `;
-                    
-                    // 添加点击复制功能
-                    methodElement.addEventListener('click', function() {
-                        navigator.clipboard.writeText(method.address).then(() => {
-                            alert(`${method.name} 地址已复制到剪贴板`);
-                        });
-                    });
-                    
-                    container.appendChild(methodElement);
-                });
-            } catch (error) {
-                console.error('加载支付方式失败:', error);
-            }
+        // 显示步骤
+        function showStep(stepNumber) {
+            // 隐藏所有步骤内容
+            document.getElementById('step1-content').style.display = 'none';
+            document.getElementById('step2-content').style.display = 'none';
+            document.getElementById('step3-content').style.display = 'none';
+            
+            // 重置步骤状态
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.remove('active');
+            
+            // 显示当前步骤
+            document.getElementById(`step${stepNumber}-content`).style.display = 'block';
+            document.getElementById(`step${stepNumber}`).classList.add('active');
         }
 
-        // 退出登录
-        function logout() {
-            auth.signOut().then(() => {
-                window.location.href = 'index.html';
+        // 移除服务选择
+        function removeServiceSelection() {
+            selectedService = null;
+            document.getElementById('selectedServiceItem').style.display = 'none';
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('selected');
             });
+            showStep(1);
         }
 
-        // 生成随机API密钥
-        function generateRandomApiKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '7sim_';
-            for (let i = 0; i < 32; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-
-        // 获取用户API密钥
-        function getUserApiKey(uid) {
-            return new Promise((resolve) => {
-                db.collection('users').doc(uid).get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            resolve(doc.data().apiKey);
-                        } else {
-                            resolve(null);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('获取API密钥失败:', error);
-                        resolve(null);
-                    });
+        // 移除国家选择
+        function removeCountrySelection() {
+            selectedCountry = null;
+            document.getElementById('selectedCountryItem').style.display = 'none';
+            document.querySelectorAll('#countriesGrid .service-card').forEach(card => {
+                card.classList.remove('selected');
             });
-        }
-
-        // 保存用户API密钥
-        function saveUserApiKey(uid, apiKey) {
-            return db.collection('users').doc(uid).update({
-                apiKey: apiKey
-            });
+            showStep(2);
         }
 
         // 事件监听
         document.addEventListener('DOMContentLoaded', function() {
-            // 用户头像点击事件
+            // 移除选择事件
+            document.getElementById('removeServiceSelection').addEventListener('click', removeServiceSelection);
+            document.getElementById('removeCountrySelection').addEventListener('click', removeCountrySelection);
+            
+            // 用户菜单事件
             document.getElementById('userAvatar').addEventListener('click', function() {
                 document.getElementById('userDropdown').classList.toggle('show');
             });
 
-            // 点击其他地方关闭用户下拉菜单
             window.addEventListener('click', function(e) {
                 if (!e.target.matches('#userAvatar') && !e.target.closest('#userDropdown')) {
                     document.getElementById('userDropdown').classList.remove('show');
                 }
             });
 
-            // 用户下拉菜单选项
-            document.getElementById('profileBtn').addEventListener('click', function() {
-                document.getElementById('profileModal').style.display = 'flex';
-                document.getElementById('userDropdown').classList.remove('show');
-            });
-
-            document.getElementById('walletBtn').addEventListener('click', function() {
-                // 这里可以跳转到钱包页面或显示钱包详情
-                alert('钱包功能开发中...');
-                document.getElementById('userDropdown').classList.remove('show');
-            });
-
-            document.getElementById('apiKeyBtn').addEventListener('click', function() {
-                document.getElementById('apiKeyModal').style.display = 'flex';
-                document.getElementById('userDropdown').classList.remove('show');
-                
-                // 加载API密钥
-                if (currentUser) {
-                    getUserApiKey(currentUser.uid).then(apiKey => {
-                        if (apiKey) {
-                            // 保存当前API密钥用于显示/隐藏功能
-                            document.getElementById('apiKeyValue').dataset.actualKey = apiKey;
-                        }
-                    });
-                }
-            });
-
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                logout();
-            });
-
-            // API密钥功能
-            document.getElementById('showApiKey').addEventListener('click', function() {
-                const apiKeyValue = document.getElementById('apiKeyValue');
-                const actualKey = apiKeyValue.dataset.actualKey;
-                
-                if (actualKey) {
-                    if (apiKeyValue.textContent === '************************') {
-                        apiKeyValue.textContent = actualKey;
-                        this.textContent = '隐藏';
-                    } else {
-                        apiKeyValue.textContent = '************************';
-                        this.textContent = '显示';
-                    }
-                } else {
-                    alert('您还没有生成API密钥');
-                }
-            });
-
-            document.getElementById('copyApiKey').addEventListener('click', function() {
-                const apiKeyValue = document.getElementById('apiKeyValue');
-                const actualKey = apiKeyValue.dataset.actualKey;
-                
-                if (actualKey && apiKeyValue.textContent !== '************************') {
-                    navigator.clipboard.writeText(actualKey).then(() => {
-                        alert('API密钥已复制到剪贴板');
-                    });
-                } else {
-                    alert('请先显示API密钥');
-                }
-            });
-
-            document.getElementById('generateApiKey').addEventListener('click', function() {
-                if (currentUser) {
-                    const newApiKey = generateRandomApiKey();
-                    saveUserApiKey(currentUser.uid, newApiKey)
-                        .then(() => {
-                            document.getElementById('apiKeyValue').dataset.actualKey = newApiKey;
-                            document.getElementById('apiKeyValue').textContent = newApiKey;
-                            document.getElementById('showApiKey').textContent = '隐藏';
-                            alert('新的API密钥已生成');
-                        })
-                        .catch(error => {
-                            console.error('生成API密钥失败:', error);
-                            alert('生成API密钥失败');
-                        });
-                }
-            });
-
-            // 充值功能
-            document.getElementById('rechargeBtn').addEventListener('click', function() {
-                document.getElementById('rechargeModal').style.display = 'flex';
+            // 余额不足弹窗
+            document.getElementById('goToRecharge').addEventListener('click', function() {
+                document.getElementById('insufficientBalanceModal').style.display = 'none';
+                // 这里可以跳转到充值页面
+                alert('充值功能开发中...');
             });
 
             // 关闭模态框
@@ -1179,80 +956,6 @@
                     });
                 });
             });
-
-            // 金额选择
-            document.querySelectorAll('.amount-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.amount-option').forEach(o => o.style.background = '');
-                    this.style.background = 'rgba(67, 97, 238, 0.1)';
-                });
-            });
-
-            // 余额不足弹窗中的充值按钮
-            document.getElementById('goToRecharge').addEventListener('click', function() {
-                document.getElementById('insufficientBalanceModal').style.display = 'none';
-                document.getElementById('rechargeModal').style.display = 'flex';
-            });
-
-            // 视图切换
-            document.getElementById('viewByApp').addEventListener('click', function() {
-                viewMode = 'app';
-                this.classList.add('btn-primary');
-                this.classList.remove('btn-outline');
-                document.getElementById('viewByCountry').classList.add('btn-outline');
-                document.getElementById('viewByCountry').classList.remove('btn-primary');
-                
-                // 重置选择
-                selectedService = null;
-                selectedCountry = null;
-                document.querySelectorAll('.category-item').forEach(el => {
-                    el.classList.remove('active');
-                });
-                
-                // 更新标题
-                document.getElementById('selectedServiceTitle').textContent = '选择服务';
-            });
-
-            document.getElementById('viewByCountry').addEventListener('click', function() {
-                viewMode = 'country';
-                this.classList.add('btn-primary');
-                this.classList.remove('btn-outline');
-                document.getElementById('viewByApp').classList.add('btn-outline');
-                document.getElementById('viewByApp').classList.remove('btn-primary');
-                
-                // 重置选择
-                selectedService = null;
-                selectedCountry = null;
-                document.querySelectorAll('.category-item').forEach(el => {
-                    el.classList.remove('active');
-                });
-                
-                // 更新标题
-                document.getElementById('selectedServiceTitle').textContent = '选择国家';
-            });
-
-            // 搜索功能
-            document.getElementById('serviceSearch').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                filterItems('appsList', searchTerm);
-            });
-
-            document.getElementById('countrySearch').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                filterItems('countriesList', searchTerm);
-            });
-
-            function filterItems(listId, searchTerm) {
-                const items = document.getElementById(listId).querySelectorAll('.category-item');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            }
         });
     </script>
 </body>
