@@ -1012,13 +1012,8 @@ function initDefaultCountries() {
         { id: 30, name: "荷兰", flag: "https://flagcdn.com/w40/nl.png", price: 0.11, numbers: "30,000" }
     ];
     
-    // 先清空国家数据
-    servicesData.countries = [];
-    
-    // 添加默认国家
-    defaultCountries.forEach(country => {
-        servicesData.countries.push(country);
-    });
+    // 直接赋值，不要清空
+    servicesData.countries = defaultCountries;
     
     // 合并管理员添加的国家
     const savedData = localStorage.getItem('appData');
@@ -1046,9 +1041,8 @@ function initDefaultCountries() {
             console.error('解析管理员数据失败:', error);
         }
     }
-   // 在这里添加调试信息
+    
     console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
-    console.log('国家列表:', servicesData.countries);
 }
 
        // 渲染服务列表
