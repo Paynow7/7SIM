@@ -963,16 +963,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 { id: 8, name: "马来西亚", flag: "https://flagcdn.com/w40/my.png", price: 0.07, numbers: "34,567" }
             ],
             operators: [
-                { id: 1, name: "Virtual59", numbers: "45,880", price: 0.00 },
-                { id: 2, name: "SMSHub", numbers: "38,765", price: 0.00 },
-                { id: 3, name: "GlobalSMS", numbers: "52,341", price: 0.00 }
-            ]
-        };
+    { id: 1, name: "Virtual59", numbers: "45,880", price: 0.00 },
+    { id: 2, name: "PremiumSMS", numbers: "52,341", price: 0.00 }
+]
+
+        // 初始化默认国家数据
+function initDefaultCountries() {
+    const defaultCountries = [
+        { id: 1, name: "中国", flag: "https://flagcdn.com/w40/cn.png", price: 0.10, numbers: "200,000" },
+        { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 0.15, numbers: "150,000" },
+        { id: 3, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 0.12, numbers: "120,000" },
+        { id: 4, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 0.13, numbers: "80,000" },
+        { id: 5, name: "澳大利亚", flag: "https://flagcdn.com/w40/au.png", price: 0.14, numbers: "70,000" },
+        { id: 6, name: "德国", flag: "https://flagcdn.com/w40/de.png", price: 0.11, numbers: "90,000" },
+        { id: 7, name: "法国", flag: "https://flagcdn.com/w40/fr.png", price: 0.11, numbers: "85,000" },
+        { id: 8, name: "俄罗斯", flag: "https://flagcdn.com/w40/ru.png", price: 0.08, numbers: "100,000" },
+        { id: 9, name: "日本", flag: "https://flagcdn.com/w40/jp.png", price: 0.16, numbers: "75,000" },
+        { id: 10, name: "韩国", flag: "https://flagcdn.com/w40/kr.png", price: 0.15, numbers: "65,000" },
+        { id: 11, name: "印度", flag: "https://flagcdn.com/w40/in.png", price: 0.05, numbers: "180,000" },
+        { id: 12, name: "印度尼西亚", flag: "https://flagcdn.com/w40/id.png", price: 0.06, numbers: "95,000" },
+        { id: 13, name: "马来西亚", flag: "https://flagcdn.com/w40/my.png", price: 0.07, numbers: "60,000" },
+        { id: 14, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 0.06, numbers: "55,000" },
+        { id: 15, name: "越南", flag: "https://flagcdn.com/w40/vn.png", price: 0.05, numbers: "50,000" },
+        { id: 16, name: "菲律宾", flag: "https://flagcdn.com/w40/ph.png", price: 0.05, numbers: "45,000" },
+        { id: 17, name: "巴西", flag: "https://flagcdn.com/w40/br.png", price: 0.09, numbers: "85,000" },
+        { id: 18, name: "墨西哥", flag: "https://flagcdn.com/w40/mx.png", price: 0.08, numbers: "40,000" },
+        { id: 19, name: "阿根廷", flag: "https://flagcdn.com/w40/ar.png", price: 0.07, numbers: "35,000" },
+        { id: 20, name: "土耳其", flag: "https://flagcdn.com/w40/tr.png", price: 0.08, numbers: "45,000" },
+        { id: 21, name: "沙特阿拉伯", flag: "https://flagcdn.com/w40/sa.png", price: 0.10, numbers: "30,000" },
+        { id: 22, name: "阿联酋", flag: "https://flagcdn.com/w40/ae.png", price: 0.12, numbers: "25,000" },
+        { id: 23, name: "南非", flag: "https://flagcdn.com/w40/za.png", price: 0.07, numbers: "20,000" },
+        { id: 24, name: "埃及", flag: "https://flagcdn.com/w40/eg.png", price: 0.06, numbers: "25,000" },
+        { id: 25, name: "尼日利亚", flag: "https://flagcdn.com/w40/ng.png", price: 0.05, numbers: "30,000" },
+        { id: 26, name: "乌克兰", flag: "https://flagcdn.com/w40/ua.png", price: 0.07, numbers: "40,000" },
+        { id: 27, name: "波兰", flag: "https://flagcdn.com/w40/pl.png", price: 0.09, numbers: "35,000" },
+        { id: 28, name: "意大利", flag: "https://flagcdn.com/w40/it.png", price: 0.10, numbers: "45,000" },
+        { id: 29, name: "西班牙", flag: "https://flagcdn.com/w40/es.png", price: 0.10, numbers: "50,000" },
+        { id: 30, name: "荷兰", flag: "https://flagcdn.com/w40/nl.png", price: 0.11, numbers: "30,000" }
+    ];
+    
+    // 合并国家数据
+    const savedData = localStorage.getItem('appData');
+    if (savedData) {
+        try {
+            const adminData = JSON.parse(savedData);
+            if (adminData.services && adminData.services.length > 0) {
+                const adminCountries = adminData.services.filter(service => service.type === 'country');
+                adminCountries.forEach(adminCountry => {
+                    const exists = servicesData.countries.some(defaultCountry => 
+                        defaultCountry.name === adminCountry.name
+                    );
+                    if (!exists) {
+                        servicesData.countries.push({
+                            id: adminCountry.id,
+                            name: adminCountry.name,
+                            flag: adminCountry.flag,
+                            price: adminCountry.price,
+                            numbers: adminCountry.stock + ""
+                        });
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('解析管理员数据失败:', error);
+        }
+    }
+}
 
         // 全局变量
         let selectedService = null;
         let selectedCountry = null;
         let selectedOperator = null;
+
 
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
@@ -1030,42 +1092,7 @@ function renderServices() {
     });
 }
     
-    // 首先尝试从 localStorage 加载管理员添加的服务
-    const savedData = localStorage.getItem('appData');
-    let servicesToRender = servicesData.services;
-    
-    if (savedData) {
-        try {
-            const adminData = JSON.parse(savedData);
-            if (adminData.services && adminData.services.length > 0) {
-                servicesToRender = adminData.services;
-                console.log('使用管理员添加的服务数据:', servicesToRender);
-            }
-        } catch (error) {
-            console.error('解析管理员数据失败:', error);
-        }
-    }
-    
-    servicesToRender.forEach(service => {
-        const item = document.createElement('div');
-        item.className = 'service-item';
-        item.dataset.id = service.id;
-        item.innerHTML = `
-            <div class="service-info">
-                <div class="service-icon-small">
-                    <i class="${service.icon || 'fas fa-mobile-alt'}"></i>
-                </div>
-                <div class="service-name">${service.name}</div>
-            </div>
-            <div class="service-numbers">${service.numbers || '0'}</div>
-            <div class="service-price">$${service.price.toFixed(2)}</div>
-        `;
-        item.addEventListener('click', () => selectService(service));
-        servicesList.appendChild(item);
-    });
-}
-
-        // 渲染国家列表
+   
         // 渲染国家列表
 function renderCountries() {
     const countriesList = document.getElementById('countriesList');
