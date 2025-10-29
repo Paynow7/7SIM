@@ -934,17 +934,7 @@ function userLogout() {
     }
 }
 
-// 在页面加载时更新用户信息
-document.addEventListener('DOMContentLoaded', function() {
-    updateUserDropdown();
-    initDefaultCountries();  // 先初始化国家数据
-    renderServices();
-    renderCountries();
-    renderOperators();
-    setupEventListeners();
-});
-
-// 检查用户是否已登录
+        // 检查用户是否已登录
 firebase.auth().onAuthStateChanged((user) => {
     if (user && user.emailVerified) {
         updateUIForUser(user);
@@ -971,6 +961,18 @@ const servicesData = {
         { id: 2, name: "PremiumSMS", numbers: "52,341", price: 0.00 }
     ]
 };
+
+
+// 在页面加载时更新用户信息
+document.addEventListener('DOMContentLoaded', function() {
+    updateUserDropdown();
+    initDefaultCountries();  // 先初始化国家数据
+    renderServices();
+    renderCountries();
+    renderOperators();
+    setupEventListeners();
+});
+
 
 // 全局变量
 let selectedService = null;
