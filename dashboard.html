@@ -180,90 +180,63 @@
             margin: 5px 0;
         }
         
-        /* 主内容区域 */
-        .main-content {
-            padding: 30px 0;
+        /* 仪表板布局 */
+        .dashboard-layout {
+            display: flex;
+            gap: 20px;
         }
         
-        /* 步骤指示器 */
-        .steps-container {
-            display: flex;
-            margin-bottom: 30px;
+        .sidebar {
+            width: 350px;
             background: white;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            height: fit-content;
         }
         
-        .step {
+        .content-area {
             flex: 1;
-            text-align: center;
-            padding: 15px;
-            position: relative;
-        }
-        
-        .step:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 0;
-            width: 50%;
-            height: 2px;
-            background: var(--light-gray);
-            transform: translateY(-50%);
-        }
-        
-        .step.active:not(:last-child)::after {
-            background: var(--primary);
-        }
-        
-        .step-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            font-weight: 600;
-        }
-        
-        .step.active .step-number {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .step-title {
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .step.active .step-title {
-            color: var(--primary);
-        }
-        
-        /* 选择区域 */
-        .selection-area {
             background: white;
             border-radius: 8px;
             padding: 30px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
         }
         
-        .selection-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .sidebar-section {
             margin-bottom: 25px;
         }
         
-        .selection-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .sidebar-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--dark);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--light-gray);
         }
         
+        .search-bar {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 10px 10px 35px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        /* 已选择项样式 */
         .selected-item {
             display: flex;
             align-items: center;
@@ -310,244 +283,6 @@
         .remove-selection:hover {
             color: var(--danger);
             background: rgba(231, 76, 60, 0.1);
-        }
-        
-        /* 服务网格 */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-        }
-        
-        .service-card {
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-        
-        .service-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .service-card.selected {
-            border-color: var(--primary);
-            background: rgba(67, 97, 238, 0.05);
-        }
-        
-        .service-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .service-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        
-        .service-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .service-stats {
-            display: flex;
-            justify-content: space-between;
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        
-        .service-price {
-            color: var(--success);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        /* 运营商卡片 */
-        .operator-card {
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
-        }
-        
-        .operator-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .operator-card.selected {
-            border-color: var(--primary);
-            background: rgba(67, 97, 238, 0.05);
-        }
-        
-        .operator-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .operator-name {
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-        
-        .operator-success-rate {
-            background: var(--success);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .operator-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .operator-price {
-            color: var(--success);
-            font-weight: 600;
-            font-size: 1.3rem;
-        }
-        
-        .operator-stock {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .operator-sms-type {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        
-        /* 模态框 */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.5); 
-            z-index: 1000; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        
-        .modal-content { 
-            background: white; 
-            border-radius: 8px; 
-            width: 90%; 
-            max-width: 500px; 
-            padding: 30px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-        
-        .modal-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-        }
-        
-        .modal-header h2 {
-            font-size: 1.5rem;
-        }
-        
-        .close-modal { 
-            background: none; 
-            border: none; 
-            font-size: 1.5rem; 
-            cursor: pointer; 
-            color: var(--gray);
-        }
-        
-        .insufficient-balance {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .insufficient-balance i {
-            font-size: 3rem;
-            color: var(--danger);
-            margin-bottom: 15px;
-        }
-        
-        .insufficient-balance h3 {
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-        
-        .insufficient-balance p {
-            color: var(--gray);
-            margin-bottom: 20px;
-        }
-
-        /* API密钥模态框 */
-        .api-key-section {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--light);
-            border-radius: 8px;
-        }
-        
-        .api-key-display {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
-        .api-key-value {
-            flex-grow: 1;
-            padding: 10px;
-            background-color: white;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            font-family: monospace;
-            margin-right: 10px;
-        }
-
-                /* 仪表板布局 */
-        .dashboard-layout {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .sidebar {
-            width: 350px;
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            height: fit-content;
-        }
-        
-        .content-area {
-            flex: 1;
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
         
         /* 服务列表 */
@@ -664,23 +399,251 @@
             line-height: 1.5;
         }
         
+        /* 运营商卡片 */
+        .operator-card {
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .operator-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .operator-card.selected {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .operator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .operator-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .operator-success-rate {
+            background: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .operator-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .operator-price {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+        
+        .operator-stock {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .operator-sms-type {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        /* 国家列表样式修复 */
+        .countries-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .country-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            cursor: pointer;
+            transition: background 0.3s;
+            gap: 12px;
+        }
+        
+        .country-item:hover {
+            background: var(--light);
+        }
+        
+        .country-item.selected {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .country-flag-small {
+            width: 24px;
+            height: 18px;
+            border-radius: 2px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .country-flag-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .country-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .country-name {
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .country-numbers {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        
+        .country-price {
+            color: var(--success);
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+        
+        /* 显示所有按钮 */
+        .show-all-countries {
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .show-all-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .show-all-btn:hover {
+            text-decoration: underline;
+        }
+        
+        /* 模态框 */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .modal-content { 
+            background: white; 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 500px; 
+            padding: 30px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .close-modal { 
+            background: none; 
+            border: none; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            color: var(--gray);
+        }
+        
+        .insufficient-balance {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .insufficient-balance i {
+            font-size: 3rem;
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+        
+        .insufficient-balance h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .insufficient-balance p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        /* API密钥模态框 */
+        .api-key-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+        
+        .api-key-display {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .api-key-value {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-family: monospace;
+            margin-right: 10px;
+        }
+        
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .steps-container {
+            .dashboard-layout {
                 flex-direction: column;
             }
             
-            .step:not(:last-child)::after {
-                width: 2px;
-                height: 50%;
-                top: auto;
-                bottom: 0;
-                left: 50%;
-                transform: translateX(-50%);
+            .sidebar {
+                width: 100%;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -730,7 +693,7 @@
         </div>
     </header>
 
-       <!-- 主内容区域 -->
+    <!-- 主内容区域 -->
     <div class="container main-content">
         <div class="dashboard-layout">
             <!-- 左侧边栏 -->
@@ -962,44 +925,285 @@
             return result;
         }
 
-               function showStep(stepNumber) {
+        // 加载服务数据 - 这里可以替换为真实的API调用
+        async function loadServices() {
+            try {
+                // 在实际部署中，这里应该调用您的后端API
+                const servicesData = {
+                    services: [
+                        { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
+                        { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true },
+                        { id: 3, name: "Telegram", icon: "fab fa-telegram", numbers: "2,674,379", price: 8.00, active: true },
+                        { id: 4, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "2,805,483", price: 5.00, active: true },
+                        { id: 5, name: "Google/YouTube", icon: "fab fa-google", numbers: "1,912,079", price: 2.90, active: true },
+                        { id: 6, name: "Microsoft", icon: "fab fa-microsoft", numbers: "4,477,709", price: 1.00, active: true },
+                        { id: 7, name: "Twitter", icon: "fab fa-twitter", numbers: "4,093,117", price: 0.85, active: true },
+                        { id: 8, name: "Instagram", icon: "fab fa-instagram", numbers: "4,125,808", price: 1.00, active: true },
+                        { id: 9, name: "Other", icon: "fas fa-ellipsis-h", numbers: "1,732,094", price: 2.00, active: true },
+                        { id: 10, name: "163com", icon: "fas fa-envelope", numbers: "729,592", price: 3.00, active: true },
+                        { id: 11, name: "1688", icon: "fas fa-shopping-cart", numbers: "797,477", price: 3.00, active: true }
+                    ],
+                    countries: [
+                        { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
+                        { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true },
+                        { id: 3, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 6.0, numbers: "77,106", active: true },
+                        { id: 4, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 5.0, numbers: "25,000", active: true },
+                        { id: 5, name: "中国香港", flag: "https://flagcdn.com/w40/hk.png", price: 8.0, numbers: "34,727", active: true },
+                        { id: 6, name: "印度尼西亚", flag: "https://flagcdn.com/w40/id.png", price: 4.5, numbers: "89,123", active: true },
+                        { id: 7, name: "菲律宾", flag: "https://flagcdn.com/w40/ph.png", price: 3.8, numbers: "67,890", active: true },
+                        { id: 8, name: "柬埔寨", flag: "https://flagcdn.com/w40/kh.png", price: 4.2, numbers: "45,678", active: true },
+                        { id: 9, name: "南非", flag: "https://flagcdn.com/w40/za.png", price: 5.5, numbers: "23,456", active: true },
+                        { id: 10, name: "印度", flag: "https://flagcdn.com/w40/in.png", price: 3.5, numbers: "156,789", active: true }
+                    ],
+                    operators: [
+                        { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
+                    ]
+                };
 
+                renderServices(servicesData.services);
+                renderCountries(servicesData.countries);
+                renderOperators(servicesData.operators);
+            } catch (error) {
+                console.error('加载服务失败:', error);
+                loadFallbackData();
+            }
+        }
 
-        // 显示步骤
-        function showStep(stepNumber) {
-            // 隐藏所有步骤内容
-            document.getElementById('step1-content').style.display = 'none';
-            document.getElementById('step2-content').style.display = 'none';
-            document.getElementById('step3-content').style.display = 'none';
+        // 备用数据
+        function loadFallbackData() {
+            const fallbackData = {
+                services: [
+                    { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
+                    { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true }
+                ],
+                countries: [
+                    { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
+                    { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true }
+                ],
+                operators: [
+                    { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
+                ]
+            };
             
-            // 重置步骤状态
-            document.getElementById('step1').classList.remove('active');
-            document.getElementById('step2').classList.remove('active');
-            document.getElementById('step3').classList.remove('active');
+            renderServices(fallbackData.services);
+            renderCountries(fallbackData.countries);
+            renderOperators(fallbackData.operators);
+        }
+
+        // 渲染服务列表
+        function renderServices(services) {
+            const servicesList = document.getElementById('servicesList');
+            servicesList.innerHTML = '';
             
-            // 显示当前步骤
-            document.getElementById(`step${stepNumber}-content`).style.display = 'block';
-            document.getElementById(`step${stepNumber}`).classList.add('active');
+            services.filter(service => service.active).forEach(service => {
+                const item = document.createElement('div');
+                item.className = 'service-item';
+                item.dataset.id = service.id;
+                item.innerHTML = `
+                    <div class="service-info">
+                        <div class="service-icon-small">
+                            <i class="${service.icon}"></i>
+                        </div>
+                        <div class="service-name">${service.name}</div>
+                    </div>
+                    <div class="service-numbers">${service.numbers} 个手机号码</div>
+                    <div class="service-price">${service.price} ⓑ</div>
+                `;
+                item.addEventListener('click', () => selectService(service));
+                servicesList.appendChild(item);
+            });
+        }
+
+        // 渲染国家列表
+        function renderCountries(countries) {
+            const countriesList = document.getElementById('countriesList');
+            countriesList.innerHTML = '';
+            
+            // 只显示前8个国家，其他需要点击显示
+            const displayCountries = countries.slice(0, 8);
+            const remainingCount = countries.length - 8;
+            
+            displayCountries.filter(country => country.active).forEach(country => {
+                const item = document.createElement('div');
+                item.className = 'country-item';
+                item.dataset.id = country.id;
+                item.innerHTML = `
+                    <div class="country-flag-small">
+                        <img src="${country.flag}" alt="${country.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE4IiBmaWxsPSIjZThlOGU4Ii8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LXNpemU9IjEwIj5mbGFnPC90ZXh0Pgo8L3N2Zz4K'">
+                    </div>
+                    <div class="country-info">
+                        <span class="country-name">${country.name}</span>
+                        <span class="country-numbers">${country.numbers}</span>
+                        <span class="country-price">${country.price} ⓑ</span>
+                    </div>
+                `;
+                item.addEventListener('click', () => selectCountry(country));
+                countriesList.appendChild(item);
+            });
+            
+            // 添加显示所有按钮
+            if (remainingCount > 0) {
+                const showAllDiv = document.createElement('div');
+                showAllDiv.className = 'show-all-countries';
+                showAllDiv.innerHTML = `
+                    <button class="show-all-btn" id="showAllCountries">
+                        显示所有 ${countries.length} 个国家 ▼
+                    </button>
+                `;
+                countriesList.appendChild(showAllDiv);
+                
+                document.getElementById('showAllCountries').addEventListener('click', function() {
+                    renderAllCountries(countries);
+                });
+            }
+        }
+        
+        // 渲染所有国家
+        function renderAllCountries(countries) {
+            const countriesList = document.getElementById('countriesList');
+            countriesList.innerHTML = '';
+            
+            countries.filter(country => country.active).forEach(country => {
+                const item = document.createElement('div');
+                item.className = 'country-item';
+                item.dataset.id = country.id;
+                item.innerHTML = `
+                    <div class="country-flag-small">
+                        <img src="${country.flag}" alt="${country.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE4IiBmaWxsPSIjZThlOGU4Ii8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LXNpemU9IjEwIj5mbGFnPC90ZXh0Pgo8L3N2Zz4K'">
+                    </div>
+                    <div class="country-info">
+                        <span class="country-name">${country.name}</span>
+                        <span class="country-numbers">${country.numbers}</span>
+                        <span class="country-price">${country.price} ⓑ</span>
+                    </div>
+                `;
+                item.addEventListener('click', () => selectCountry(country));
+                countriesList.appendChild(item);
+            });
+        }
+
+        // 渲染运营商
+        function renderOperators(operators) {
+            const operatorsList = document.getElementById('operatorsList');
+            operatorsList.innerHTML = '';
+            
+            operators.filter(operator => operator.active).forEach(operator => {
+                const card = document.createElement('div');
+                card.className = 'operator-card';
+                card.dataset.id = operator.id;
+                card.innerHTML = `
+                    <div class="operator-header">
+                        <div class="operator-name">${operator.name}</div>
+                        <div class="operator-success-rate">${operator.successRate}</div>
+                    </div>
+                    <div class="operator-sms-type">${operator.smsType}</div>
+                    <div class="operator-details">
+                        <div class="operator-price">${operator.price} ⓑ</div>
+                        <div class="operator-stock">${operator.numbers} 个手机号码</div>
+                    </div>
+                `;
+                card.addEventListener('click', () => selectOperator(operator));
+                operatorsList.appendChild(card);
+            });
+        }
+
+        // 选择服务
+        function selectService(service) {
+            selectedService = service;
+            
+            // 更新UI
+            document.querySelectorAll('.service-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // 显示已选择的服务
+            document.getElementById('selectedServiceIcon').innerHTML = `<i class="${service.icon}"></i>`;
+            document.getElementById('selectedServiceName').textContent = service.name;
+            document.getElementById('selectedServiceItem').style.display = 'flex';
+            
+            // 如果已经选择了国家，显示运营商
+            if (selectedCountry) {
+                showOperators();
+            }
+        }
+
+        // 选择国家
+        function selectCountry(country) {
+            selectedCountry = country;
+            
+            // 更新UI
+            document.querySelectorAll('.country-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // 显示已选择的国家
+            document.getElementById('selectedCountryIcon').innerHTML = `<img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
+            document.getElementById('selectedCountryName').textContent = country.name;
+            document.getElementById('selectedCountryItem').style.display = 'flex';
+            
+            // 如果已经选择了服务，显示运营商
+            if (selectedService) {
+                showOperators();
+            }
+        }
+
+        // 选择运营商
+        function selectOperator(operator) {
+            selectedOperator = operator;
+            
+            // 更新UI
+            document.querySelectorAll('.operator-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // 检查余额
+            const requiredAmount = operator.price;
+            if (currentBalance < requiredAmount) {
+                document.getElementById('requiredAmount').textContent = `${requiredAmount} ⓑ`;
+                document.getElementById('currentBalance').textContent = `${currentBalance} ⓑ`;
+                document.getElementById('insufficientBalanceModal').style.display = 'flex';
+                return;
+            }
+            
+            // 余额足够，可以继续购买流程
+            alert(`选择了运营商: ${operator.name}\n价格: ${operator.price} ⓑ\n功能开发中...`);
+        }
+
+        // 显示运营商
+        function showOperators() {
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('operatorsSection').style.display = 'block';
         }
 
         // 移除服务选择
         function removeServiceSelection() {
             selectedService = null;
             document.getElementById('selectedServiceItem').style.display = 'none';
-            document.querySelectorAll('.service-card').forEach(card => {
-                card.classList.remove('selected');
+            document.querySelectorAll('.service-item').forEach(item => {
+                item.classList.remove('selected');
             });
-            showStep(1);
+            checkSelectionState();
         }
 
         // 移除国家选择
         function removeCountrySelection() {
             selectedCountry = null;
             document.getElementById('selectedCountryItem').style.display = 'none';
-            document.querySelectorAll('#countriesGrid .service-card').forEach(card => {
-                card.classList.remove('selected');
+            document.querySelectorAll('.country-item').forEach(item => {
+                item.classList.remove('selected');
             });
-            showStep(2);
+            checkSelectionState();
+        }
+
+        // 检查选择状态
+        function checkSelectionState() {
+            if (!selectedService && !selectedCountry) {
+                document.getElementById('welcomeSection').style.display = 'block';
+                document.getElementById('operatorsSection').style.display = 'none';
+            }
         }
 
         // 事件监听
@@ -1059,6 +1263,56 @@
                 }
             });
 
+            // 搜索功能
+            document.getElementById('serviceSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterItems('servicesList', searchTerm);
+            });
+
+            document.getElementById('countrySearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterItems('countriesList', searchTerm);
+            });
+
+            function filterItems(listId, searchTerm) {
+                const items = document.getElementById(listId).querySelectorAll('.service-item, .country-item');
+                let hasVisibleItems = false;
+                
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // 如果没有匹配项，显示提示
+                if (!hasVisibleItems && searchTerm) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.textContent = '没有找到匹配的国家';
+                    noResults.style.padding = '20px';
+                    noResults.style.textAlign = 'center';
+                    noResults.style.color = 'var(--gray)';
+                    
+                    // 移除之前的提示
+                    const oldNoResults = document.getElementById(listId).querySelector('.no-results');
+                    if (oldNoResults) {
+                        oldNoResults.remove();
+                    }
+                    
+                    noResults.id = 'noResults';
+                    document.getElementById(listId).appendChild(noResults);
+                } else {
+                    const noResults = document.getElementById(listId).querySelector('.no-results');
+                    if (noResults) {
+                        noResults.remove();
+                    }
+                }
+            }
+
             // 余额不足弹窗
             document.getElementById('goToRecharge').addEventListener('click', function() {
                 document.getElementById('insufficientBalanceModal').style.display = 'none';
@@ -1074,29 +1328,6 @@
                     });
                 });
             });
-
-                       // 搜索功能
-            document.getElementById('serviceSearch').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                filterItems('servicesList', searchTerm);
-            });
-
-            document.getElementById('countrySearch').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                filterItems('countriesList', searchTerm);
-            });
-
-            function filterItems(listId, searchTerm) {
-                const items = document.getElementById(listId).querySelectorAll('.service-item, .country-item');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            }
 
             // 退出登录
             document.getElementById('logoutBtn').addEventListener('click', function() {
