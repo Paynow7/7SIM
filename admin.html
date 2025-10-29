@@ -1003,7 +1003,42 @@ async function loadTabData(tab) {
                 document.getElementById('totalUsers').textContent = snapshot.size;
             });
         }
+        // 删除服务
+function deleteService(serviceId) {
+    if (confirm('确定要删除这个服务吗？此操作不可恢复！')) {
+        // 从服务列表中移除
+        appData.services = appData.services.filter(service => service.id !== serviceId);
+        
+        // 同时删除相关的价格规则
+        pricingRules = pricingRules.filter(rule => 
+            rule.serviceId !== serviceId && rule.countryId !== serviceId
+        );
+        
+        saveAppData();
+        savePricingData();
+        loadServices();
+        alert('服务删除成功！');
+    }
+}
 
+// 编辑服务（占位函数，需要您后续实现）
+function editService(serviceId) {
+    const service = appData.services.find(s => s.id === serviceId);
+    if (service) {
+        // 填充模态框数据
+        document.getElementById('serviceName').value = service.name;
+        document.getElementById('serviceType').value = service.type;
+        document.getElementById('servicePrice').value = service.price;
+        document.getElementById('serviceStock').value = service.stock;
+        document.getElementById('serviceIcon').value = service.icon || service.flag || '';
+        
+        // 显示编辑模态框
+        document.getElementById('addServiceModal').style.display = 'flex';
+        
+        // 这里可以添加编辑模式的逻辑
+        alert('编辑功能开发中...');
+    }
+}
         // 模态框功能
         function showAddServiceModal() {
             document.getElementById('addServiceModal').style.display = 'flex';
