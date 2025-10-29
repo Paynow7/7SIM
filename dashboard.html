@@ -937,6 +937,11 @@ function userLogout() {
 // 在页面加载时更新用户信息
 document.addEventListener('DOMContentLoaded', function() {
     updateUserDropdown();
+    initDefaultCountries();  // 先初始化国家数据
+    renderServices();
+    renderCountries();
+    renderOperators();
+    setupEventListeners();
 });
 
 // 检查用户是否已登录
@@ -1044,15 +1049,6 @@ function initDefaultCountries() {
     
     console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
 }
-
-// 初始化页面
-document.addEventListener('DOMContentLoaded', function() {
-    initDefaultCountries();  // 先初始化国家数据
-    renderServices();
-    renderCountries();
-    renderOperators();
-    setupEventListeners();
-});
 
        // 渲染服务列表
 function renderServices() {
@@ -1339,10 +1335,6 @@ function calculateServicePriceRange(serviceId) {
                 });
             }
         }
-    </script>
-</body>
-</html>
-        console.log('7SIM平台初始化完成');
     </script>
 </body>
 </html>
