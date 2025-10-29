@@ -526,6 +526,143 @@
             font-family: monospace;
             margin-right: 10px;
         }
+
+                /* 仪表板布局 */
+        .dashboard-layout {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+        
+        .content-area {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        /* 服务列表 */
+        .services-list, .countries-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .service-item, .country-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .service-item:hover, .country-item:hover {
+            background: var(--light);
+        }
+        
+        .service-item.selected, .country-item.selected {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .service-info, .country-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .service-icon-small, .country-flag-small {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .country-flag-small img {
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+            object-fit: cover;
+        }
+        
+        .service-name, .country-name {
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .service-numbers, .country-numbers {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+        
+        .service-price, .country-price {
+            color: var(--success);
+            font-weight: 600;
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        /* 欢迎区域 */
+        .welcome-section h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--dark);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            padding: 25px;
+            background: var(--light);
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
         
         /* 响应式设计 */
         @media (max-width: 768px) {
@@ -593,80 +730,118 @@
         </div>
     </header>
 
-    <!-- 主内容区域 -->
+       <!-- 主内容区域 -->
     <div class="container main-content">
-        <!-- 步骤指示器 -->
-        <div class="steps-container">
-            <div class="step active" id="step1">
-                <div class="step-number">1</div>
-                <div class="step-title">选择服务</div>
-            </div>
-            <div class="step" id="step2">
-                <div class="step-number">2</div>
-                <div class="step-title">选择国家</div>
-            </div>
-            <div class="step" id="step3">
-                <div class="step-number">3</div>
-                <div class="step-title">选择运营商</div>
-            </div>
-        </div>
-
-        <!-- 步骤1: 选择服务 -->
-        <div class="selection-area" id="step1-content">
-            <div class="selection-header">
-                <div class="selection-title">1. 选择服务</div>
-            </div>
-            
-            <!-- 已选择的服务 -->
-            <div class="selected-item" id="selectedServiceItem" style="display: none;">
-                <div class="selected-item-content">
-                    <div class="selected-item-icon" id="selectedServiceIcon">
-                        <i class="fab fa-amazon"></i>
+        <div class="dashboard-layout">
+            <!-- 左侧边栏 -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3>选择服务</h3>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="serviceSearch" placeholder="寻找网站或者APP">
                     </div>
-                    <div class="selected-item-name" id="selectedServiceName">Amazon</div>
-                </div>
-                <button class="remove-selection" id="removeServiceSelection">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="services-grid" id="servicesGrid">
-                <!-- 服务卡片会动态加载 -->
-            </div>
-        </div>
-
-        <!-- 步骤2: 选择国家 -->
-        <div class="selection-area" id="step2-content" style="display: none;">
-            <div class="selection-header">
-                <div class="selection-title">2. 选择国家</div>
-            </div>
-            
-            <!-- 已选择的国家 -->
-            <div class="selected-item" id="selectedCountryItem" style="display: none;">
-                <div class="selected-item-content">
-                    <div class="selected-item-icon" id="selectedCountryIcon">
-                        <img src="" alt="" style="width: 100%; height: 100%; border-radius: 6px;">
+                    
+                    <!-- 已选择的服务 -->
+                    <div class="selected-item" id="selectedServiceItem" style="display: none;">
+                        <div class="selected-item-content">
+                            <div class="selected-item-icon" id="selectedServiceIcon">
+                                <i class="fab fa-amazon"></i>
+                            </div>
+                            <div class="selected-item-name" id="selectedServiceName">Amazon</div>
+                        </div>
+                        <button class="remove-selection" id="removeServiceSelection">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <div class="selected-item-name" id="selectedCountryName">英国</div>
+                    
+                    <div class="services-list" id="servicesList">
+                        <!-- 服务列表会动态加载 -->
+                    </div>
                 </div>
-                <button class="remove-selection" id="removeCountrySelection">
-                    <i class="fas fa-times"></i>
-                </button>
+                
+                <div class="sidebar-section">
+                    <h3>选择国家</h3>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="countrySearch" placeholder="寻找国家">
+                    </div>
+                    
+                    <!-- 已选择的国家 -->
+                    <div class="selected-item" id="selectedCountryItem" style="display: none;">
+                        <div class="selected-item-content">
+                            <div class="selected-item-icon" id="selectedCountryIcon">
+                                <img src="" alt="" style="width: 100%; height: 100%; border-radius: 6px;">
+                            </div>
+                            <div class="selected-item-name" id="selectedCountryName">英国</div>
+                        </div>
+                        <button class="remove-selection" id="removeCountrySelection">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="countries-list" id="countriesList">
+                        <!-- 国家列表会动态加载 -->
+                    </div>
+                </div>
             </div>
             
-            <div class="services-grid" id="countriesGrid">
-                <!-- 国家卡片会动态加载 -->
-            </div>
-        </div>
-
-        <!-- 步骤3: 选择运营商 -->
-        <div class="selection-area" id="step3-content" style="display: none;">
-            <div class="selection-header">
-                <div class="selection-title">3. 选择运营商</div>
-            </div>
-            
-            <div id="operatorsList">
-                <!-- 运营商卡片会动态加载 -->
+            <!-- 右侧内容区域 -->
+            <div class="content-area">
+                <div class="welcome-section" id="welcomeSection">
+                    <h2>欢迎使用7SIM</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h3>全球覆盖</h3>
+                            <p>有50多万个来自180个国家的手机号码同时在线</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-sync"></i>
+                            </div>
+                            <h3>实时更新</h3>
+                            <p>天天添加新的虚拟号码，确保号码新鲜度</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <h3>价格实惠</h3>
+                            <p>一个号码的价格从1网站而起，无需支付移动运营商月费</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <h3>重复使用</h3>
+                            <p>使用手机号码一次并重复接收短信</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3>24/7服务</h3>
+                            <p>全天候获取手机号码，平台完全自动化运行</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>API支持</h3>
+                            <p>面向开发者和用户的完整API接口</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="operators-section" id="operatorsSection" style="display: none;">
+                    <h2>选择运营商</h2>
+                    <div id="operatorsList">
+                        <!-- 运营商列表会动态加载 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -787,211 +962,8 @@
             return result;
         }
 
-        // 加载服务数据 - 这里可以替换为真实的API调用
-        async function loadServices() {
-            try {
-                // 在实际部署中，这里应该调用您的后端API
-                // 示例：const response = await fetch('/api/services');
-                // const servicesData = await response.json();
-                
-                // 目前使用模拟数据
-                const servicesData = {
-                    services: [
-                        { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
-                        { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true },
-                        { id: 3, name: "Telegram", icon: "fab fa-telegram", numbers: "2,674,379", price: 8.00, active: true },
-                        { id: 4, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "2,805,483", price: 5.00, active: true },
-                        { id: 5, name: "Google/YouTube", icon: "fab fa-google", numbers: "1,912,079", price: 2.90, active: true },
-                        { id: 6, name: "Microsoft", icon: "fab fa-microsoft", numbers: "4,477,709", price: 1.00, active: true },
-                        { id: 7, name: "Twitter", icon: "fab fa-twitter", numbers: "4,093,117", price: 0.85, active: true },
-                        { id: 8, name: "Instagram", icon: "fab fa-instagram", numbers: "4,125,808", price: 1.00, active: true }
-                    ],
-                    countries: [
-                        { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
-                        { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true },
-                        { id: 3, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 6.0, numbers: "77,106", active: true },
-                        { id: 4, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 5.0, numbers: "25,000", active: true },
-                        { id: 5, name: "中国香港", flag: "https://flagcdn.com/w40/hk.png", price: 8.0, numbers: "34,727", active: true }
-                    ],
-                    operators: [
-                        { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
-                    ]
-                };
+               function showStep(stepNumber) {
 
-                renderServices(servicesData.services);
-                renderCountries(servicesData.countries);
-                renderOperators(servicesData.operators);
-            } catch (error) {
-                console.error('加载服务失败:', error);
-                // 如果API调用失败，使用备用数据
-                loadFallbackData();
-            }
-        }
-
-        // 备用数据
-        function loadFallbackData() {
-            const fallbackData = {
-                services: [
-                    { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
-                    { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true }
-                ],
-                countries: [
-                    { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
-                    { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true }
-                ],
-                operators: [
-                    { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
-                ]
-            };
-            
-            renderServices(fallbackData.services);
-            renderCountries(fallbackData.countries);
-            renderOperators(fallbackData.operators);
-        }
-
-        // 渲染服务
-        function renderServices(services) {
-            const servicesGrid = document.getElementById('servicesGrid');
-            servicesGrid.innerHTML = '';
-            
-            services.filter(service => service.active).forEach(service => {
-                const card = document.createElement('div');
-                card.className = 'service-card';
-                card.dataset.id = service.id;
-                card.innerHTML = `
-                    <div class="service-header">
-                        <div class="service-icon">
-                            <i class="${service.icon}"></i>
-                        </div>
-                        <div class="service-name">${service.name}</div>
-                    </div>
-                    <div class="service-stats">
-                        <span>${service.numbers}</span>
-                        <span>手机号码</span>
-                    </div>
-                    <div class="service-price">${service.price} ⓑ 起</div>
-                `;
-                card.addEventListener('click', () => selectService(service));
-                servicesGrid.appendChild(card);
-            });
-        }
-
-        // 渲染国家
-        function renderCountries(countries) {
-            const countriesGrid = document.getElementById('countriesGrid');
-            countriesGrid.innerHTML = '';
-            
-            countries.filter(country => country.active).forEach(country => {
-                const card = document.createElement('div');
-                card.className = 'service-card';
-                card.dataset.id = country.id;
-                card.innerHTML = `
-                    <div class="service-header">
-                        <div class="service-icon">
-                            <img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">
-                        </div>
-                        <div class="service-name">${country.name}</div>
-                    </div>
-                    <div class="service-stats">
-                        <span>${country.numbers}</span>
-                        <span>个手机号码</span>
-                    </div>
-                    <div class="service-price">${country.price} ⓑ</div>
-                `;
-                card.addEventListener('click', () => selectCountry(country));
-                countriesGrid.appendChild(card);
-            });
-        }
-
-        // 渲染运营商
-        function renderOperators(operators) {
-            const operatorsList = document.getElementById('operatorsList');
-            operatorsList.innerHTML = '';
-            
-            operators.filter(operator => operator.active).forEach(operator => {
-                const card = document.createElement('div');
-                card.className = 'operator-card';
-                card.dataset.id = operator.id;
-                card.innerHTML = `
-                    <div class="operator-header">
-                        <div class="operator-name">${operator.name}</div>
-                        <div class="operator-success-rate">${operator.successRate}</div>
-                    </div>
-                    <div class="operator-sms-type">${operator.smsType}</div>
-                    <div class="operator-details">
-                        <div class="operator-price">${operator.price} ⓑ</div>
-                        <div class="operator-stock">${operator.numbers} 个手机号码</div>
-                    </div>
-                `;
-                card.addEventListener('click', () => selectOperator(operator));
-                operatorsList.appendChild(card);
-            });
-        }
-
-        // 选择服务
-        function selectService(service) {
-            selectedService = service;
-            
-            // 更新UI
-            document.querySelectorAll('.service-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            
-            // 显示已选择的服务
-            document.getElementById('selectedServiceIcon').innerHTML = `<i class="${service.icon}"></i>`;
-            document.getElementById('selectedServiceName').textContent = service.name;
-            document.getElementById('selectedServiceItem').style.display = 'flex';
-            
-            // 进入下一步
-            setTimeout(() => {
-                showStep(2);
-            }, 300);
-        }
-
-        // 选择国家
-        function selectCountry(country) {
-            selectedCountry = country;
-            
-            // 更新UI
-            document.querySelectorAll('#countriesGrid .service-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            
-            // 显示已选择的国家
-            document.getElementById('selectedCountryIcon').innerHTML = `<img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
-            document.getElementById('selectedCountryName').textContent = country.name;
-            document.getElementById('selectedCountryItem').style.display = 'flex';
-            
-            // 进入下一步
-            setTimeout(() => {
-                showStep(3);
-            }, 300);
-        }
-
-        // 选择运营商
-        function selectOperator(operator) {
-            selectedOperator = operator;
-            
-            // 更新UI
-            document.querySelectorAll('.operator-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            
-            // 检查余额
-            const requiredAmount = operator.price;
-            if (currentBalance < requiredAmount) {
-                document.getElementById('requiredAmount').textContent = `${requiredAmount} ⓑ`;
-                document.getElementById('currentBalance').textContent = `${currentBalance} ⓑ`;
-                document.getElementById('insufficientBalanceModal').style.display = 'flex';
-                return;
-            }
-            
-            // 余额足够，可以继续购买流程
-            alert(`选择了运营商: ${operator.name}\n价格: ${operator.price} ⓑ\n功能开发中...`);
-        }
 
         // 显示步骤
         function showStep(stepNumber) {
@@ -1102,6 +1074,29 @@
                     });
                 });
             });
+
+                       // 搜索功能
+            document.getElementById('serviceSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterItems('servicesList', searchTerm);
+            });
+
+            document.getElementById('countrySearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterItems('countriesList', searchTerm);
+            });
+
+            function filterItems(listId, searchTerm) {
+                const items = document.getElementById(listId).querySelectorAll('.service-item, .country-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
 
             // 退出登录
             document.getElementById('logoutBtn').addEventListener('click', function() {
