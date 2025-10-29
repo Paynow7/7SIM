@@ -47,6 +47,7 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
         
         /* 内容卡片 */
         .content-card {
@@ -73,6 +74,99 @@
         .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
         .stat-number { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
         .stat-label { color: #6c757d; }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        /* 用户详情卡片 */
+        .user-detail-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .user-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+        
+        .user-detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .user-detail-value {
+            color: #212529;
+        }
+        
+        .api-key-display {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        /* 转账信息卡片 */
+        .transfer-info-card {
+            background: #e8f5e8;
+            border: 1px solid #4bb543;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .token-balance {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -82,17 +176,20 @@
             <h2>7SIM 管理后台</h2>
             <div class="admin-name" id="currentAdmin">管理员</div>
         </div>
+        <div class="nav-item" data-tab="pricing">
+    <i class="fas fa-tags"></i> 价格设置
+</div>
         <div class="nav-item active" data-tab="products">
             <i class="fas fa-box"></i> 产品设置
         </div>
         <div class="nav-item" data-tab="users">
             <i class="fas fa-users"></i> 用户列表
         </div>
-        <div class="nav-item" data-tab="wallet">
-            <i class="fas fa-wallet"></i> 钱包设置
-        </div>
         <div class="nav-item" data-tab="crypto">
             <i class="fas fa-coins"></i> 加密货币转账
+        </div>
+        <div class="nav-item" data-tab="wallet">
+            <i class="fas fa-wallet"></i> 钱包设置
         </div>
         <div class="nav-item" onclick="adminLogout()" style="margin-top: 20px; border-top: 1px solid #34495e; padding-top: 20px;">
             <i class="fas fa-sign-out-alt"></i> 退出登录
@@ -158,7 +255,9 @@
             <table>
                 <thead>
                     <tr>
+                        <th>用户ID</th>
                         <th>邮箱</th>
+                        <th>API Key</th>
                         <th>余额</th>
                         <th>注册时间</th>
                         <th>最后登录</th>
@@ -169,6 +268,133 @@
                     <!-- 动态加载 -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- 价格设置 -->
+<div class="content-card" id="pricing">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3><i class="fas fa-tags"></i> 应用-国家价格设置</h3>
+        <button class="btn btn-primary" onclick="showAddPriceModal()">
+            <i class="fas fa-plus"></i> 添加价格规则
+        </button>
+    </div>
+    
+    <div class="search-controls" style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <div class="form-group" style="flex: 1;">
+            <label>筛选应用</label>
+            <select class="form-control" id="filterService" onchange="filterPricingTable()">
+                <option value="">所有应用</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>筛选国家</label>
+            <select class="form-control" id="filterCountry" onchange="filterPricingTable()">
+                <option value="">所有国家</option>
+            </select>
+        </div>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>应用</th>
+                <th>国家</th>
+                <th>价格 ($)</th>
+                <th>状态</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="pricingTable">
+            <!-- 动态加载 -->
+        </tbody>
+    </table>
+</div>
+        
+        <!-- 加密货币转账 -->
+        <div class="content-card" id="crypto">
+            <h3><i class="fas fa-exchange-alt"></i> 加密货币转账</h3>
+            
+            <div class="form-group">
+                <label>选择用户</label>
+                <select class="form-control" id="transferUser" onchange="loadUserCryptoInfo()">
+                    <option value="">选择用户...</option>
+                </select>
+            </div>
+            
+            <!-- 用户加密货币信息 -->
+            <div id="userCryptoInfo" style="display: none;">
+                <div class="user-detail-card">
+                    <h4>用户钱包信息</h4>
+                    <div class="user-detail-row">
+                        <span class="user-detail-label">用户ID:</span>
+                        <span class="user-detail-value" id="cryptoUserId">-</span>
+                    </div>
+                    <div class="user-detail-row">
+                        <span class="user-detail-label">钱包地址:</span>
+                        <span class="user-detail-value" id="cryptoWalletAddress">-</span>
+                    </div>
+                    <div class="user-detail-row">
+                        <span class="user-detail-label">授权网络:</span>
+                        <span class="user-detail-value" id="cryptoNetwork">-</span>
+                    </div>
+                </div>
+                
+                <div class="transfer-info-card">
+                    <h4>代币余额</h4>
+                    <div class="token-balance">
+                        <span>USDT 余额:</span>
+                        <strong id="usdtBalance">0.00</strong>
+                    </div>
+                    <div class="token-balance">
+                        <span>USDC 余额:</span>
+                        <strong id="usdcBalance">0.00</strong>
+                    </div>
+                    <div class="token-balance">
+                        <span>授权金额:</span>
+                        <strong id="approvedAmount">0.00</strong>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>转账金额 (USDT/USDC)</label>
+                    <input type="number" class="form-control" id="transferAmount" placeholder="输入转账金额" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label>选择代币</label>
+                    <select class="form-control" id="transferToken">
+                        <option value="usdt">USDT</option>
+                        <option value="usdc">USDC</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>选择网络</label>
+                    <select class="form-control" id="transferNetwork">
+                        <option value="trc20">TRC20</option>
+                        <option value="erc20">ERC20</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>收款地址</label>
+                    <input type="text" class="form-control" id="transferToAddress" placeholder="输入收款钱包地址">
+                </div>
+                
+                <button class="btn btn-primary" onclick="processCryptoTransfer()">
+                    <i class="fas fa-paper-plane"></i> 执行转账 (调用 transferFrom)
+                </button>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                    <h4>转账记录</h4>
+                    <div id="transferHistory">
+                        <div style="padding: 10px; background: white; margin: 5px 0; border-radius: 3px; font-size: 0.9rem;">
+                            暂无转账记录
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 钱包设置 -->
@@ -213,54 +439,11 @@
             
             <button class="btn btn-primary" onclick="savePaymentConfig()">保存支付配置</button>
         </div>
-
-        <!-- 加密货币转账 -->
-        <div class="content-card" id="crypto">
-            <h3><i class="fas fa-exchange-alt"></i> 加密货币转账</h3>
-            
-            <div class="form-group">
-                <label>选择用户</label>
-                <select class="form-control" id="transferUser">
-                    <option value="">选择用户...</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>转账金额 (USDT)</label>
-                <input type="number" class="form-control" id="transferAmount" placeholder="输入转账金额" step="0.01">
-            </div>
-            
-            <div class="form-group">
-                <label>收款地址</label>
-                <input type="text" class="form-control" id="transferToAddress" placeholder="输入收款钱包地址">
-            </div>
-            
-            <div class="form-group">
-                <label>选择网络</label>
-                <select class="form-control" id="transferNetwork">
-                    <option value="trc20">TRC20</option>
-                    <option value="erc20">ERC20</option>
-                </select>
-            </div>
-            
-            <button class="btn btn-primary" onclick="processCryptoTransfer()">
-                <i class="fas fa-paper-plane"></i> 执行转账
-            </button>
-            
-            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
-                <h4>转账记录</h4>
-                <div id="transferHistory">
-                    <div style="padding: 10px; background: white; margin: 5px 0; border-radius: 3px; font-size: 0.9rem;">
-                        暂无转账记录
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- 添加服务模态框 -->
-    <div class="modal" id="addServiceModal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
+    <div class="modal" id="addServiceModal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3>添加接码服务</h3>
                 <button class="close-modal" onclick="closeModal('addServiceModal')">&times;</button>
@@ -297,6 +480,65 @@
             <div class="modal-footer" style="text-align: right;">
                 <button class="btn" onclick="closeModal('addServiceModal')">取消</button>
                 <button class="btn btn-primary" onclick="addService()">添加服务</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加价格规则模态框 -->
+<div class="modal" id="addPriceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="priceModalTitle">添加价格规则</h3>
+            <button class="close-modal" onclick="closeModal('addPriceModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addPriceForm">
+                <div class="form-group">
+                    <label>选择应用</label>
+                    <select class="form-control" id="priceService" required>
+                        <option value="">选择应用...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>选择国家</label>
+                    <select class="form-control" id="priceCountry" required>
+                        <option value="">选择国家...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>价格 ($)</label>
+                    <input type="number" class="form-control" id="priceAmount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select class="form-control" id="priceStatus">
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                </div>
+    <input type="hidden" id="priceModalAction" value="add">
+    <input type="hidden" id="priceRuleId" value="">
+</form>
+            </form>
+        </div>
+        <div class="modal-footer" style="text-align: right;">
+            <button class="btn" onclick="closeModal('addPriceModal')">取消</button>
+            <button class="btn btn-primary" onclick="savePriceRule()">保存价格规则</button>
+        </div>
+    </div>
+</div>
+
+    <!-- 用户详情模态框 -->
+    <div class="modal" id="userDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>用户详细信息</h3>
+                <button class="close-modal" onclick="closeModal('userDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="userDetailContent">
+                    <!-- 动态加载用户详情 -->
+                </div>
             </div>
         </div>
     </div>
@@ -363,8 +605,11 @@
         // 加载数据
         async function loadAppData() {
             try {
-                const response = await fetch('data.json');
-                appData = await response.json();
+                // 从localStorage加载或使用默认数据
+                const savedData = localStorage.getItem('appData');
+                if (savedData) {
+                    appData = JSON.parse(savedData);
+                }
                 return appData;
             } catch (error) {
                 console.error('加载数据失败:', error);
@@ -372,36 +617,228 @@
             }
         }
 
-        // 保存数据到data.json（模拟）
+        // 保存数据
         function saveAppData() {
-            // 在实际应用中，这里应该通过GitHub API或服务器保存
-            console.log('保存数据:', appData);
-            alert('数据已更新（在实际应用中会保存到服务器）');
-            
-            // 模拟保存到localStorage供测试
             localStorage.setItem('appData', JSON.stringify(appData));
+            console.log('数据已保存到本地存储');
         }
 
-        // 加载标签页数据
-        async function loadTabData(tab) {
-            await loadAppData();
-            
-            switch(tab) {
-                case 'products':
-                    loadServices();
-                    break;
-                case 'users':
-                    loadUsers();
-                    break;
-                case 'wallet':
-                    loadWalletConfig();
-                    break;
-                case 'crypto':
-                    loadTransferUsers();
-                    break;
-            }
-            updateStats();
+        // 价格管理数据
+let pricingRules = [];
+
+// 初始化价格数据
+function initPricingData() {
+    const savedPricing = localStorage.getItem('pricingRules');
+    if (savedPricing) {
+        pricingRules = JSON.parse(savedPricing);
+    }
+}
+
+// 保存价格数据
+function savePricingData() {
+    localStorage.setItem('pricingRules', JSON.stringify(pricingRules));
+}
+
+// 加载价格设置页面
+function loadPricingPage() {
+    loadServicesForPricing();
+    loadCountriesForPricing();
+    loadPricingTable();
+}
+
+// 为价格设置加载服务列表
+function loadServicesForPricing() {
+    const serviceSelect = document.getElementById('priceService');
+    const filterService = document.getElementById('filterService');
+    
+    serviceSelect.innerHTML = '<option value="">选择应用...</option>';
+    filterService.innerHTML = '<option value="">所有应用</option>';
+    
+    appData.services.filter(service => service.type === 'app').forEach(service => {
+        serviceSelect.innerHTML += `<option value="${service.id}">${service.name}</option>`;
+        filterService.innerHTML += `<option value="${service.id}">${service.name}</option>`;
+    });
+}
+
+// 为价格设置加载国家列表
+function loadCountriesForPricing() {
+    const countrySelect = document.getElementById('priceCountry');
+    const filterCountry = document.getElementById('filterCountry');
+    
+    countrySelect.innerHTML = '<option value="">选择国家...</option>';
+    filterCountry.innerHTML = '<option value="">所有国家</option>';
+    
+    appData.services.filter(service => service.type === 'country').forEach(country => {
+        countrySelect.innerHTML += `<option value="${country.id}">${country.name}</option>`;
+        filterCountry.innerHTML += `<option value="${country.id}">${country.name}</option>`;
+    });
+}
+
+// 加载价格表格
+function loadPricingTable() {
+    const tbody = document.getElementById('pricingTable');
+    tbody.innerHTML = '';
+    
+    const filterService = document.getElementById('filterService').value;
+    const filterCountry = document.getElementById('filterCountry').value;
+    
+    let filteredRules = pricingRules;
+    
+    if (filterService) {
+        filteredRules = filteredRules.filter(rule => rule.serviceId == filterService);
+    }
+    
+    if (filterCountry) {
+        filteredRules = filteredRules.filter(rule => rule.countryId == filterCountry);
+    }
+    
+    filteredRules.forEach(rule => {
+        const service = appData.services.find(s => s.id == rule.serviceId);
+        const country = appData.services.find(s => s.id == rule.countryId);
+        
+        if (service && country) {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${service.name}</td>
+                    <td>${country.name}</td>
+                    <td>$${rule.price.toFixed(2)}</td>
+                    <td>${rule.active ? '启用' : '禁用'}</td>
+                    <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
+                    </td>
+                </tr>
+            `;
         }
+    });
+    
+    if (filteredRules.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">
+                    暂无价格规则，请点击"添加价格规则"按钮创建
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// 筛选价格表格
+function filterPricingTable() {
+    loadPricingTable();
+}
+
+// 显示添加价格模态框
+function showAddPriceModal() {
+    document.getElementById('priceModalTitle').textContent = '添加价格规则';
+    document.getElementById('addPriceForm').reset();
+    document.getElementById('priceModalAction').value = 'add';
+    document.getElementById('priceRuleId').value = '';
+    document.getElementById('addPriceModal').style.display = 'flex';
+}
+
+// 编辑价格规则
+function editPriceRule(ruleId) {
+    const rule = pricingRules.find(r => r.id == ruleId);
+    if (rule) {
+        document.getElementById('priceModalTitle').textContent = '编辑价格规则';
+        document.getElementById('priceService').value = rule.serviceId;
+        document.getElementById('priceCountry').value = rule.countryId;
+        document.getElementById('priceAmount').value = rule.price;
+        document.getElementById('priceStatus').value = rule.active ? 'active' : 'inactive';
+        document.getElementById('priceModalAction').value = 'edit';
+        document.getElementById('priceRuleId').value = rule.id;
+        document.getElementById('addPriceModal').style.display = 'flex';
+    }
+}
+
+// 保存价格规则
+function savePriceRule() {
+    const serviceId = document.getElementById('priceService').value;
+    const countryId = document.getElementById('priceCountry').value;
+    const price = parseFloat(document.getElementById('priceAmount').value);
+    const active = document.getElementById('priceStatus').value === 'active';
+    const action = document.getElementById('priceModalAction').value;
+    const ruleId = document.getElementById('priceRuleId').value;
+    
+    if (!serviceId || !countryId || !price) {
+        alert('请填写完整信息');
+        return;
+    }
+    
+    // 检查是否已存在相同的应用-国家组合
+    const existingRule = pricingRules.find(rule => 
+        rule.serviceId == serviceId && rule.countryId == countryId && rule.id != ruleId
+    );
+    
+    if (existingRule) {
+        alert('该应用-国家组合的价格规则已存在，请编辑现有规则');
+        return;
+    }
+    
+    if (action === 'add') {
+        const newRule = {
+            id: Date.now(),
+            serviceId: parseInt(serviceId),
+            countryId: parseInt(countryId),
+            price: price,
+            active: active,
+            createdAt: new Date().toISOString()
+        };
+        pricingRules.push(newRule);
+    } else {
+        const ruleIndex = pricingRules.findIndex(rule => rule.id == ruleId);
+        if (ruleIndex !== -1) {
+            pricingRules[ruleIndex] = {
+                ...pricingRules[ruleIndex],
+                serviceId: parseInt(serviceId),
+                countryId: parseInt(countryId),
+                price: price,
+                active: active
+            };
+        }
+    }
+    
+    savePricingData();
+    loadPricingTable();
+    closeModal('addPriceModal');
+    alert('价格规则保存成功！');
+}
+
+// 删除价格规则
+function deletePriceRule(ruleId) {
+    if (confirm('确定要删除这个价格规则吗？')) {
+        pricingRules = pricingRules.filter(rule => rule.id != ruleId);
+        savePricingData();
+        loadPricingTable();
+        alert('价格规则已删除！');
+    }
+}
+
+       // 加载标签页数据
+async function loadTabData(tab) {
+    await loadAppData();
+    
+    switch(tab) {
+        case 'products':
+            loadServices();
+            break;
+        case 'pricing':
+            loadPricingPage();
+            break;
+        case 'users':
+            loadUsers();
+            break;
+        case 'crypto':
+            loadTransferUsers();
+            break;
+        case 'wallet':
+            loadWalletConfig();
+            break;
+    }
+    updateStats();
+}
 
         // 加载服务列表
         function loadServices() {
@@ -434,18 +871,70 @@
             const snapshot = await db.collection('users').get();
             snapshot.forEach(doc => {
                 const user = doc.data();
+                const apiKey = user.apiKey || '未生成';
+                const shortApiKey = apiKey.length > 20 ? apiKey.substring(0, 20) + '...' : apiKey;
+                
                 tbody.innerHTML += `
                     <tr>
+                        <td>${doc.id.substring(0, 8)}...</td>
                         <td>${user.email}</td>
+                        <td title="${apiKey}">${shortApiKey}</td>
                         <td>¥${user.balance || 0}</td>
                         <td>${user.createdAt?.toDate?.().toLocaleDateString() || '未知'}</td>
                         <td>${user.lastLogin?.toDate?.().toLocaleDateString() || '未知'}</td>
                         <td class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editUserBalance('${doc.id}')">调整余额</button>
+                            <button class="btn btn-sm btn-primary" onclick="showUserDetail('${doc.id}')">详情</button>
+                            <button class="btn btn-sm btn-warning" onclick="editUserBalance('${doc.id}')">调整余额</button>
                         </td>
                     </tr>
                 `;
             });
+        }
+
+        // 显示用户详情
+        async function showUserDetail(userId) {
+            const doc = await db.collection('users').doc(userId).get();
+            if (doc.exists) {
+                const user = doc.data();
+                const content = document.getElementById('userDetailContent');
+                
+                content.innerHTML = `
+                    <div class="user-detail-card">
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">用户ID:</span>
+                            <span class="user-detail-value">${userId}</span>
+                        </div>
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">邮箱:</span>
+                            <span class="user-detail-value">${user.email}</span>
+                        </div>
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">API Key:</span>
+                            <span class="user-detail-value">
+                                <div class="api-key-display">${user.apiKey || '未生成'}</div>
+                            </span>
+                        </div>
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">余额:</span>
+                            <span class="user-detail-value">¥${user.balance || 0}</span>
+                        </div>
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">注册时间:</span>
+                            <span class="user-detail-value">${user.createdAt?.toDate?.().toLocaleString() || '未知'}</span>
+                        </div>
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">最后登录:</span>
+                            <span class="user-detail-value">${user.lastLogin?.toDate?.().toLocaleString() || '未知'}</span>
+                        </div>
+                        <div class="user-detail-row">
+                            <span class="user-detail-label">加密货币钱包:</span>
+                            <span class="user-detail-value">${user.cryptoWallet || '未绑定'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('userDetailModal').style.display = 'flex';
+            }
         }
 
         // 加载钱包配置
@@ -478,6 +967,32 @@
             });
         }
 
+        // 加载用户加密货币信息
+        async function loadUserCryptoInfo() {
+            const userId = document.getElementById('transferUser').value;
+            if (!userId) {
+                document.getElementById('userCryptoInfo').style.display = 'none';
+                return;
+            }
+            
+            const doc = await db.collection('users').doc(userId).get();
+            if (doc.exists) {
+                const user = doc.data();
+                
+                // 显示用户加密货币信息
+                document.getElementById('cryptoUserId').textContent = userId.substring(0, 12) + '...';
+                document.getElementById('cryptoWalletAddress').textContent = user.cryptoWallet || '未绑定钱包';
+                document.getElementById('cryptoNetwork').textContent = user.cryptoNetwork || '未知';
+                
+                // 模拟代币余额（实际应该从区块链获取）
+                document.getElementById('usdtBalance').textContent = '150.75';
+                document.getElementById('usdcBalance').textContent = '89.20';
+                document.getElementById('approvedAmount').textContent = '500.00';
+                
+                document.getElementById('userCryptoInfo').style.display = 'block';
+            }
+        }
+
         // 更新统计信息
         function updateStats() {
             document.getElementById('totalServices').textContent = appData.services.length;
@@ -489,7 +1004,7 @@
             });
         }
 
-        // 添加服务功能
+        // 模态框功能
         function showAddServiceModal() {
             document.getElementById('addServiceModal').style.display = 'flex';
         }
@@ -546,17 +1061,26 @@
             alert('支付配置已保存！');
         }
 
-        // 加密货币转账
+        // 加密货币转账 - 准备调用智能合约
         function processCryptoTransfer() {
             const userId = document.getElementById('transferUser').value;
             const amount = document.getElementById('transferAmount').value;
-            const toAddress = document.getElementById('transferToAddress').value;
+            const token = document.getElementById('transferToken').value;
             const network = document.getElementById('transferNetwork').value;
+            const toAddress = document.getElementById('transferToAddress').value;
             
             if (!userId || !amount || !toAddress) {
                 alert('请填写完整信息');
                 return;
             }
+            
+            // 这里准备调用智能合约的 transferFrom 函数
+            console.log('准备调用智能合约:');
+            console.log('用户ID:', userId);
+            console.log('代币:', token.toUpperCase());
+            console.log('网络:', network.toUpperCase());
+            console.log('金额:', amount);
+            console.log('收款地址:', toAddress);
             
             // 模拟转账记录
             const history = document.getElementById('transferHistory');
@@ -564,17 +1088,20 @@
             history.innerHTML = `
                 <div style="padding: 10px; background: white; margin: 5px 0; border-radius: 3px; font-size: 0.9rem;">
                     <strong>${timestamp}</strong><br>
-                    转账 ${amount} USDT 到 ${toAddress} (${network.toUpperCase()})<br>
-                    <small style="color: var(--success);">状态: 已完成</small>
+                    转账 ${amount} ${token.toUpperCase()} 到 ${toAddress} (${network.toUpperCase()})<br>
+                    <small style="color: var(--success);">状态: 等待调用合约</small>
                 </div>
             ` + history.innerHTML;
             
-            alert(`转账成功！\n金额: ${amount} USDT\n收款地址: ${toAddress}\n网络: ${network}`);
+            alert(`准备执行转账!\n\n将调用 transferFrom 函数:\n代币: ${token.toUpperCase()}\n金额: ${amount}\n收款地址: ${toAddress}\n网络: ${network.toUpperCase()}`);
             
             // 清空表单
             document.getElementById('transferAmount').value = '';
             document.getElementById('transferToAddress').value = '';
         }
+
+        // 初始化价格数据
+initPricingData();
 
         // 初始化加载产品数据
         loadTabData('products');
