@@ -1046,8 +1046,9 @@ function initDefaultCountries() {
             console.error('解析管理员数据失败:', error);
         }
     }
-    
+   // 在这里添加调试信息
     console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
+    console.log('国家列表:', servicesData.countries);
 }
 
        // 渲染服务列表
@@ -1099,10 +1100,17 @@ function renderServices() {
 }
     
    
-        // 渲染国家列表
+       // 渲染国家列表
 function renderCountries() {
     const countriesList = document.getElementById('countriesList');
     countriesList.innerHTML = '';
+    
+    console.log('开始渲染国家列表，共有', servicesData.countries.length, '个国家');
+    
+    if (servicesData.countries.length === 0) {
+        countriesList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无国家数据</div>';
+        return;
+    }
     
     servicesData.countries.forEach(country => {
         const item = document.createElement('div');
@@ -1113,15 +1121,17 @@ function renderCountries() {
                 <div class="country-flag-small">
                     <img src="${country.flag}" alt="${country.name}">
                 </div>
-                <span class="country-name">${country.name}</span>
-                <span class="country-numbers">${country.numbers}</span>
+                <div class="country-name">${country.name}</div>
             </div>
+            <div class="country-numbers">${country.numbers}</div>
+            <div class="country-price">$${country.price.toFixed(2)}</div>
         `;
         item.addEventListener('click', () => selectCountry(country));
         countriesList.appendChild(item);
     });
+    
+    console.log('国家列表渲染完成');
 }
-
         // 渲染运营商列表
         function renderOperators() {
             const operatorsList = document.getElementById('operatorsList');
