@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户面板 - 7SIM</title>
+    <title>7SIM - 专业接码服务平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -502,6 +502,30 @@
             color: var(--gray);
             margin-bottom: 20px;
         }
+
+        /* API密钥模态框 */
+        .api-key-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+        
+        .api-key-display {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .api-key-value {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-family: monospace;
+            margin-right: 10px;
+        }
         
         /* 响应式设计 */
         @media (max-width: 768px) {
@@ -663,6 +687,25 @@
         </div>
     </div>
 
+    <!-- API密钥模态框 -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>API密钥</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="api-key-section">
+                <p>您的API密钥用于访问7SIM服务。请妥善保管，不要泄露给他人。</p>
+                <div class="api-key-display">
+                    <div class="api-key-value" id="apiKeyValue">************************</div>
+                    <button class="btn btn-outline" id="showApiKey">显示</button>
+                    <button class="btn btn-outline" id="copyApiKey">复制</button>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" id="generateApiKey">生成新的API密钥</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase配置
         const firebaseConfig = {
@@ -685,6 +728,7 @@
         let selectedService = null;
         let selectedCountry = null;
         let selectedOperator = null;
+        let userApiKey = null;
 
         // 检查登录状态
         auth.onAuthStateChanged((user) => {
@@ -704,7 +748,13 @@
                     if (doc.exists) {
                         const userData = doc.data();
                         currentBalance = userData.balance || 0;
+                        userApiKey = userData.apiKey || null;
                         document.getElementById('balanceAmount').textContent = `¥${currentBalance.toFixed(2)}`;
+                        
+                        // 如果用户没有API密钥，自动生成一个
+                        if (!userApiKey) {
+                            generateUserApiKey(uid);
+                        }
                     }
                 })
                 .catch((error) => {
@@ -712,35 +762,91 @@
                 });
         }
 
-        // 加载服务数据
-        function loadServices() {
-            // 模拟数据
-            const servicesData = {
+        // 生成用户API密钥
+        function generateUserApiKey(uid) {
+            const newApiKey = generateRandomApiKey();
+            db.collection('users').doc(uid).update({
+                apiKey: newApiKey
+            })
+            .then(() => {
+                userApiKey = newApiKey;
+                console.log('API密钥已生成:', newApiKey);
+            })
+            .catch((error) => {
+                console.error('生成API密钥失败:', error);
+            });
+        }
+
+        // 生成随机API密钥
+        function generateRandomApiKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '7sim_';
+            for (let i = 0; i < 32; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // 加载服务数据 - 这里可以替换为真实的API调用
+        async function loadServices() {
+            try {
+                // 在实际部署中，这里应该调用您的后端API
+                // 示例：const response = await fetch('/api/services');
+                // const servicesData = await response.json();
+                
+                // 目前使用模拟数据
+                const servicesData = {
+                    services: [
+                        { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
+                        { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true },
+                        { id: 3, name: "Telegram", icon: "fab fa-telegram", numbers: "2,674,379", price: 8.00, active: true },
+                        { id: 4, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "2,805,483", price: 5.00, active: true },
+                        { id: 5, name: "Google/YouTube", icon: "fab fa-google", numbers: "1,912,079", price: 2.90, active: true },
+                        { id: 6, name: "Microsoft", icon: "fab fa-microsoft", numbers: "4,477,709", price: 1.00, active: true },
+                        { id: 7, name: "Twitter", icon: "fab fa-twitter", numbers: "4,093,117", price: 0.85, active: true },
+                        { id: 8, name: "Instagram", icon: "fab fa-instagram", numbers: "4,125,808", price: 1.00, active: true }
+                    ],
+                    countries: [
+                        { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
+                        { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true },
+                        { id: 3, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 6.0, numbers: "77,106", active: true },
+                        { id: 4, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 5.0, numbers: "25,000", active: true },
+                        { id: 5, name: "中国香港", flag: "https://flagcdn.com/w40/hk.png", price: 8.0, numbers: "34,727", active: true }
+                    ],
+                    operators: [
+                        { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
+                    ]
+                };
+
+                renderServices(servicesData.services);
+                renderCountries(servicesData.countries);
+                renderOperators(servicesData.operators);
+            } catch (error) {
+                console.error('加载服务失败:', error);
+                // 如果API调用失败，使用备用数据
+                loadFallbackData();
+            }
+        }
+
+        // 备用数据
+        function loadFallbackData() {
+            const fallbackData = {
                 services: [
                     { id: 1, name: "Amazon", icon: "fab fa-amazon", numbers: "4,353,436", price: 1.00, active: true },
-                    { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true },
-                    { id: 3, name: "Telegram", icon: "fab fa-telegram", numbers: "2,674,379", price: 8.00, active: true },
-                    { id: 4, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "2,805,483", price: 5.00, active: true },
-                    { id: 5, name: "Google/YouTube", icon: "fab fa-google", numbers: "1,912,079", price: 2.90, active: true },
-                    { id: 6, name: "Microsoft", icon: "fab fa-microsoft", numbers: "4,477,709", price: 1.00, active: true },
-                    { id: 7, name: "Twitter", icon: "fab fa-twitter", numbers: "4,093,117", price: 0.85, active: true },
-                    { id: 8, name: "Instagram", icon: "fab fa-instagram", numbers: "4,125,808", price: 1.00, active: true }
+                    { id: 2, name: "Facebook", icon: "fab fa-facebook", numbers: "1,913,522", price: 1.00, active: true }
                 ],
                 countries: [
                     { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 7.8, numbers: "138,428", active: true },
-                    { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true },
-                    { id: 3, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 6.0, numbers: "77,106", active: true },
-                    { id: 4, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 5.0, numbers: "25,000", active: true },
-                    { id: 5, name: "中国香港", flag: "https://flagcdn.com/w40/hk.png", price: 8.0, numbers: "34,727", active: true }
+                    { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 10.0, numbers: "118,358", active: true }
                 ],
                 operators: [
                     { id: 1, name: "Virtual59", successRate: "80.35%", smsType: ">1SMS", price: 15.0, numbers: "45,880", active: true }
                 ]
             };
-
-            renderServices(servicesData.services);
-            renderCountries(servicesData.countries);
-            renderOperators(servicesData.operators);
+            
+            renderServices(fallbackData.services);
+            renderCountries(fallbackData.countries);
+            renderOperators(fallbackData.operators);
         }
 
         // 渲染服务
@@ -941,6 +1047,46 @@
                 }
             });
 
+            // API密钥功能
+            document.getElementById('apiKeyBtn').addEventListener('click', function() {
+                document.getElementById('apiKeyModal').style.display = 'flex';
+                document.getElementById('userDropdown').classList.remove('show');
+            });
+
+            document.getElementById('showApiKey').addEventListener('click', function() {
+                const apiKeyValue = document.getElementById('apiKeyValue');
+                if (userApiKey) {
+                    if (apiKeyValue.textContent === '************************') {
+                        apiKeyValue.textContent = userApiKey;
+                        this.textContent = '隐藏';
+                    } else {
+                        apiKeyValue.textContent = '************************';
+                        this.textContent = '显示';
+                    }
+                } else {
+                    alert('API密钥尚未生成，请稍后再试');
+                }
+            });
+
+            document.getElementById('copyApiKey').addEventListener('click', function() {
+                if (userApiKey) {
+                    navigator.clipboard.writeText(userApiKey).then(() => {
+                        alert('API密钥已复制到剪贴板');
+                    });
+                } else {
+                    alert('API密钥尚未生成');
+                }
+            });
+
+            document.getElementById('generateApiKey').addEventListener('click', function() {
+                if (currentUser) {
+                    generateUserApiKey(currentUser.uid);
+                    alert('新的API密钥已生成');
+                    document.getElementById('apiKeyValue').textContent = '************************';
+                    document.getElementById('showApiKey').textContent = '显示';
+                }
+            });
+
             // 余额不足弹窗
             document.getElementById('goToRecharge').addEventListener('click', function() {
                 document.getElementById('insufficientBalanceModal').style.display = 'none';
@@ -954,6 +1100,13 @@
                     document.querySelectorAll('.modal').forEach(modal => {
                         modal.style.display = 'none';
                     });
+                });
+            });
+
+            // 退出登录
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                auth.signOut().then(() => {
+                    window.location.href = 'index.html';
                 });
             });
         });
