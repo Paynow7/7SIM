@@ -938,14 +938,41 @@ function userLogout() {
 document.addEventListener('DOMContentLoaded', function() {
     updateUserDropdown();
 });
-// 检查用户是否已登录
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user && user.emailVerified) {
-                updateUIForUser(user);
-            }
-        });
 
-         // 初始化默认国家数据
+// 检查用户是否已登录
+firebase.auth().onAuthStateChanged((user) => {
+    if (user && user.emailVerified) {
+        updateUIForUser(user);
+    }
+});
+
+// 服务数据 - 基于市场价格
+const servicesData = {
+    services: [
+        { id: 1, name: "Other", icon: "fas fa-ellipsis-h", numbers: "52,847", price: 2.00 },
+        { id: 2, name: "Sica", icon: "fas fa-mobile-alt", numbers: "24,893", price: 1.20 },
+        { id: 3, name: "Adobe", icon: "fab fa-adobe", numbers: "34,903", price: 1.00 },
+        { id: 4, name: "Airbnb", icon: "fab fa-airbnb", numbers: "84,412", price: 1.40 },
+        { id: 5, name: "Airindia", icon: "fas fa-plane", numbers: "34,903", price: 1.80 },
+        { id: 6, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "125,847", price: 0.50 },
+        { id: 7, name: "Telegram", icon: "fab fa-telegram", numbers: "98,432", price: 0.45 },
+        { id: 8, name: "Facebook", icon: "fab fa-facebook", numbers: "156,789", price: 0.60 },
+        { id: 9, name: "TikTok", icon: "fab fa-tiktok", numbers: "87,654", price: 0.55 },
+        { id: 10, name: "Instagram", icon: "fab fa-instagram", numbers: "134,567", price: 0.65 }
+    ],
+    countries: [], // 这里先留空，由 initDefaultCountries 填充
+    operators: [
+        { id: 1, name: "Virtual59", numbers: "45,880", price: 0.00 },
+        { id: 2, name: "PremiumSMS", numbers: "52,341", price: 0.00 }
+    ]
+};
+
+// 全局变量
+let selectedService = null;
+let selectedCountry = null;
+let selectedOperator = null;
+
+// 初始化默认国家数据
 function initDefaultCountries() {
     const defaultCountries = [
         { id: 1, name: "中国", flag: "https://flagcdn.com/w40/cn.png", price: 0.10, numbers: "200,000" },
@@ -980,7 +1007,15 @@ function initDefaultCountries() {
         { id: 30, name: "荷兰", flag: "https://flagcdn.com/w40/nl.png", price: 0.11, numbers: "30,000" }
     ];
     
-    // 合并国家数据
+    // 先清空国家数据
+    servicesData.countries = [];
+    
+    // 添加默认国家
+    defaultCountries.forEach(country => {
+        servicesData.countries.push(country);
+    });
+    
+    // 合并管理员添加的国家
     const savedData = localStorage.getItem('appData');
     if (savedData) {
         try {
@@ -1006,46 +1041,11 @@ function initDefaultCountries() {
             console.error('解析管理员数据失败:', error);
         }
     }
+    
+    console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
 }
-        
-        // 服务数据 - 基于市场价格
-        const servicesData = {
-            services: [
-                { id: 1, name: "Other", icon: "fas fa-ellipsis-h", numbers: "52,847", price: 2.00 },
-                { id: 2, name: "Sica", icon: "fas fa-mobile-alt", numbers: "24,893", price: 1.20 },
-                { id: 3, name: "Adobe", icon: "fab fa-adobe", numbers: "34,903", price: 1.00 },
-                { id: 4, name: "Airbnb", icon: "fab fa-airbnb", numbers: "84,412", price: 1.40 },
-                { id: 5, name: "Airindia", icon: "fas fa-plane", numbers: "34,903", price: 1.80 },
-                { id: 6, name: "WhatsApp", icon: "fab fa-whatsapp", numbers: "125,847", price: 0.50 },
-                { id: 7, name: "Telegram", icon: "fab fa-telegram", numbers: "98,432", price: 0.45 },
-                { id: 8, name: "Facebook", icon: "fab fa-facebook", numbers: "156,789", price: 0.60 },
-                { id: 9, name: "TikTok", icon: "fab fa-tiktok", numbers: "87,654", price: 0.55 },
-                { id: 10, name: "Instagram", icon: "fab fa-instagram", numbers: "134,567", price: 0.65 }
-            ],
-            countries: [
-                { id: 1, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 0.15, numbers: "138,428" },
-                { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 0.10, numbers: "118,358" },
-                { id: 3, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 0.12, numbers: "77,106" },
-                { id: 4, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 0.08, numbers: "45,321" },
-                { id: 5, name: "印度尼西亚", flag: "https://flagcdn.com/w40/id.png", price: 0.06, numbers: "89,123" },
-                { id: 6, name: "菲律宾", flag: "https://flagcdn.com/w40/ph.png", price: 0.05, numbers: "67,890" },
-                { id: 7, name: "印度", flag: "https://flagcdn.com/w40/in.png", price: 0.04, numbers: "156,789" },
-                { id: 8, name: "马来西亚", flag: "https://flagcdn.com/w40/my.png", price: 0.07, numbers: "34,567" }
-            ],
-           operators: [
-    { id: 1, name: "Virtual59", numbers: "45,880", price: 0.00 },
-    { id: 2, name: "PremiumSMS", numbers: "52,341", price: 0.00 }
-]
-};  // 添加这个闭合大括号和分号
 
-     
-        // 全局变量
-        let selectedService = null;
-        let selectedCountry = null;
-        let selectedOperator = null;
-
-
-        // 初始化页面
+// 初始化页面
 document.addEventListener('DOMContentLoaded', function() {
     initDefaultCountries();  // 先初始化国家数据
     renderServices();
