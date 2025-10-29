@@ -568,10 +568,53 @@
         const db = firebase.firestore();
 
         let appData = {
-            services: [],
-            paymentMethods: [],
-            users: []
-        };
+    services: [],
+    paymentMethods: [],
+    users: []
+};
+
+// 初始化默认国家数据
+function initDefaultCountries() {
+    const defaultCountries = [
+        { id: 1, name: "中国", type: "country", price: 0.10, stock: 200000, active: true, flag: "https://flagcdn.com/w40/cn.png" },
+        { id: 2, name: "美国", type: "country", price: 0.15, stock: 150000, active: true, flag: "https://flagcdn.com/w40/us.png" },
+        { id: 3, name: "英国", type: "country", price: 0.12, stock: 120000, active: true, flag: "https://flagcdn.com/w40/gb.png" },
+        { id: 4, name: "加拿大", type: "country", price: 0.13, stock: 80000, active: true, flag: "https://flagcdn.com/w40/ca.png" },
+        { id: 5, name: "澳大利亚", type: "country", price: 0.14, stock: 70000, active: true, flag: "https://flagcdn.com/w40/au.png" },
+        { id: 6, name: "德国", type: "country", price: 0.11, stock: 90000, active: true, flag: "https://flagcdn.com/w40/de.png" },
+        { id: 7, name: "法国", type: "country", price: 0.11, stock: 85000, active: true, flag: "https://flagcdn.com/w40/fr.png" },
+        { id: 8, name: "俄罗斯", type: "country", price: 0.08, stock: 100000, active: true, flag: "https://flagcdn.com/w40/ru.png" },
+        { id: 9, name: "日本", type: "country", price: 0.16, stock: 75000, active: true, flag: "https://flagcdn.com/w40/jp.png" },
+        { id: 10, name: "韩国", type: "country", price: 0.15, stock: 65000, active: true, flag: "https://flagcdn.com/w40/kr.png" },
+        { id: 11, name: "印度", type: "country", price: 0.05, stock: 180000, active: true, flag: "https://flagcdn.com/w40/in.png" },
+        { id: 12, name: "印度尼西亚", type: "country", price: 0.06, stock: 95000, active: true, flag: "https://flagcdn.com/w40/id.png" },
+        { id: 13, name: "马来西亚", type: "country", price: 0.07, stock: 60000, active: true, flag: "https://flagcdn.com/w40/my.png" },
+        { id: 14, name: "泰国", type: "country", price: 0.06, stock: 55000, active: true, flag: "https://flagcdn.com/w40/th.png" },
+        { id: 15, name: "越南", type: "country", price: 0.05, stock: 50000, active: true, flag: "https://flagcdn.com/w40/vn.png" },
+        { id: 16, name: "菲律宾", type: "country", price: 0.05, stock: 45000, active: true, flag: "https://flagcdn.com/w40/ph.png" },
+        { id: 17, name: "巴西", type: "country", price: 0.09, stock: 85000, active: true, flag: "https://flagcdn.com/w40/br.png" },
+        { id: 18, name: "墨西哥", type: "country", price: 0.08, stock: 40000, active: true, flag: "https://flagcdn.com/w40/mx.png" },
+        { id: 19, name: "阿根廷", type: "country", price: 0.07, stock: 35000, active: true, flag: "https://flagcdn.com/w40/ar.png" },
+        { id: 20, name: "土耳其", type: "country", price: 0.08, stock: 45000, active: true, flag: "https://flagcdn.com/w40/tr.png" },
+        { id: 21, name: "沙特阿拉伯", type: "country", price: 0.10, stock: 30000, active: true, flag: "https://flagcdn.com/w40/sa.png" },
+        { id: 22, name: "阿联酋", type: "country", price: 0.12, stock: 25000, active: true, flag: "https://flagcdn.com/w40/ae.png" },
+        { id: 23, name: "南非", type: "country", price: 0.07, stock: 20000, active: true, flag: "https://flagcdn.com/w40/za.png" },
+        { id: 24, name: "埃及", type: "country", price: 0.06, stock: 25000, active: true, flag: "https://flagcdn.com/w40/eg.png" },
+        { id: 25, name: "尼日利亚", type: "country", price: 0.05, stock: 30000, active: true, flag: "https://flagcdn.com/w40/ng.png" },
+        { id: 26, name: "乌克兰", type: "country", price: 0.07, stock: 40000, active: true, flag: "https://flagcdn.com/w40/ua.png" },
+        { id: 27, name: "波兰", type: "country", price: 0.09, stock: 35000, active: true, flag: "https://flagcdn.com/w40/pl.png" },
+        { id: 28, name: "意大利", type: "country", price: 0.10, stock: 45000, active: true, flag: "https://flagcdn.com/w40/it.png" },
+        { id: 29, name: "西班牙", type: "country", price: 0.10, stock: 50000, active: true, flag: "https://flagcdn.com/w40/es.png" },
+        { id: 30, name: "荷兰", type: "country", price: 0.11, stock: 30000, active: true, flag: "https://flagcdn.com/w40/nl.png" }
+    ];
+    
+    // 检查是否已经有国家数据，如果没有就添加默认国家
+    const hasCountries = appData.services.some(service => service.type === 'country');
+    if (!hasCountries) {
+        appData.services = [...appData.services, ...defaultCountries];
+        saveAppData();
+    }
+}
 
         // 退出登录
         function adminLogout() {
@@ -1137,6 +1180,9 @@ function editService(serviceId) {
 
         // 初始化价格数据
 initPricingData();
+
+        // 初始化默认国家数据
+initDefaultCountries();
 
         // 初始化加载产品数据
         loadTabData('products');
