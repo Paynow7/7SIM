@@ -9,7 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
-        /* 复用index.html的样式，但简化布局 */
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -17,44 +16,501 @@
             --danger: #e74c3c;
             --light: #f8f9fa;
             --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f5f7fb; color: var(--dark); }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        body { 
+            background: #f5f7fb; 
+            color: var(--dark); 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
         
         /* 导航栏 */
-        header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        header { 
+            background: white; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
         
-        .wallet-info { display: flex; align-items: center; background: var(--light); padding: 8px 15px; border-radius: 20px; margin-right: 15px; }
-        .btn { padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
-        .btn-primary { background: var(--primary); color: white; }
+        .navbar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 0; 
+        }
         
-        /* 搜索栏 */
-        .search-section { padding: 40px 0; background: white; }
-        .search-bar { position: relative; max-width: 600px; margin: 0 auto 20px; }
-        .search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #6c757d; }
-        .search-bar input { width: 100%; padding: 12px 15px 12px 45px; border: 2px solid #e9ecef; border-radius: 25px; font-size: 1rem; }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            color: var(--primary); 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
         
-        /* 服务网格 */
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 40px 0; }
-        .service-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); text-align: center; }
-        .service-flag { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; margin-bottom: 15px; }
-        .service-icon { width: 60px; height: 60px; border-radius: 12px; background: #e9ecef; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--primary); }
-        .service-name { font-weight: 600; margin-bottom: 5px; }
-        .service-price { color: var(--success); font-weight: 500; margin-bottom: 15px; }
+        .logo i {
+            margin-right: 8px;
+        }
+        
+        .wallet-info { 
+            display: flex; 
+            align-items: center; 
+            background: var(--light); 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            margin-right: 15px; 
+            font-weight: 500;
+        }
+        
+        .btn { 
+            padding: 8px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: 500; 
+            transition: all 0.3s;
+        }
+        
+        .btn-primary { 
+            background: var(--primary); 
+            color: white; 
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* 用户菜单样式 */
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 15px;
+            color: var(--gray);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .user-avatar:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 10px 0;
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 10px;
+        }
+        
+        .user-dropdown.show {
+            display: block;
+        }
+        
+        .user-dropdown-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-dropdown-item:hover {
+            background: var(--light);
+        }
+        
+        .user-dropdown-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            color: var(--gray);
+        }
+        
+        .user-dropdown-divider {
+            height: 1px;
+            background: var(--light-gray);
+            margin: 5px 0;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            display: flex;
+            flex: 1;
+            padding: 20px 0;
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-right: 20px;
+            height: fit-content;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--dark);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .search-bar {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 10px 10px 35px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .category-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .category-item {
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .category-item:hover {
+            background: var(--light);
+        }
+        
+        .category-item.active {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: var(--light);
+            color: var(--primary);
+        }
+        
+        .country-flag {
+            width: 24px;
+            height: 16px;
+            margin-right: 10px;
+            border-radius: 2px;
+            object-fit: cover;
+        }
+        
+        /* 右侧内容区域 */
+        .content-area {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .content-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .service-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+        
+        .service-icon-large {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-right: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .service-details h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .service-details p {
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .price-tag {
+            color: var(--success);
+            font-weight: 500;
+        }
+        
+        /* 运营商标签 */
+        .operators-section {
+            margin-top: 25px;
+        }
+        
+        .operators-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .operators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .operator-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .operator-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .operator-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .operator-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .operator-price {
+            color: var(--success);
+            font-size: 0.9rem;
+        }
+        
+        .operator-stock {
+            color: var(--gray);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
         
         /* 模态框 */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; border-radius: 8px; width: 90%; max-width: 500px; padding: 30px; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center; 
+        }
         
-        .payment-methods { display: grid; gap: 15px; margin: 20px 0; }
-        .payment-method { border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; text-align: center; }
+        .modal-content { 
+            background: white; 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 500px; 
+            padding: 30px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .close-modal { 
+            background: none; 
+            border: none; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            color: var(--gray);
+        }
+        
+        .payment-methods { 
+            display: grid; 
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        
+        .payment-method { 
+            border: 1px solid var(--light-gray); 
+            border-radius: 8px; 
+            padding: 15px; 
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+        
+        .insufficient-balance {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .insufficient-balance i {
+            font-size: 3rem;
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+        
+        .insufficient-balance h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .insufficient-balance p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        /* API密钥模态框 */
+        .api-key-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+        
+        .api-key-display {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .api-key-value {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-family: monospace;
+            margin-right: 10px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -71,36 +527,103 @@
                         <i class="fas fa-wallet"></i>
                         <span id="balanceAmount">¥0.00</span>
                     </div>
-                    <button class="btn btn-primary" id="rechargeBtn">充值</button>
-                    <div style="margin-left: 15px;">
-                        <button class="btn" onclick="logout()">退出</button>
+                    <button class="btn btn-primary" id="rechargeBtn" style="margin-right: 10px;">充值</button>
+                    
+                    <!-- 用户菜单 -->
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-item" id="profileBtn">
+                                <i class="fas fa-user-circle"></i> 个人资料
+                            </div>
+                            <div class="user-dropdown-item" id="walletBtn">
+                                <i class="fas fa-wallet"></i> 钱包余额
+                            </div>
+                            <div class="user-dropdown-item" id="apiKeyBtn">
+                                <i class="fas fa-key"></i> API密钥
+                            </div>
+                            <div class="user-dropdown-item">
+                                <i class="fas fa-history"></i> 使用记录
+                            </div>
+                            <div class="user-dropdown-divider"></div>
+                            <div class="user-dropdown-item" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> 退出登录
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 搜索区域 -->
-    <section class="search-section">
-        <div class="container">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" id="serviceSearch" placeholder="搜索国家或应用...">
+    <!-- 主内容区域 -->
+    <div class="container main-content">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>搜索服务</h3>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="serviceSearch" placeholder="搜索服务...">
+                </div>
             </div>
-            <div style="display: flex; justify-content: center; gap: 10px;">
-                <button class="btn btn-primary" data-filter="all">全部</button>
-                <button class="btn" data-filter="country">国家</button>
-                <button class="btn" data-filter="app">应用</button>
+            
+            <div class="sidebar-section">
+                <h3>热门应用</h3>
+                <ul class="category-list" id="appsList">
+                    <!-- 应用列表会动态加载 -->
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3>选择国家</h3>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="countrySearch" placeholder="搜索国家...">
+                </div>
+                <ul class="category-list" id="countriesList">
+                    <!-- 国家列表会动态加载 -->
+                </ul>
             </div>
         </div>
-    </section>
-
-    <!-- 服务区域 -->
-    <section class="container">
-        <div class="services-grid" id="servicesGrid">
-            <!-- 服务卡片会动态加载 -->
+        
+        <!-- 右侧内容区域 -->
+        <div class="content-area">
+            <div class="content-header">
+                <h2 id="selectedServiceTitle">选择服务</h2>
+                <div class="btn-group">
+                    <button class="btn btn-outline" id="viewByApp">按应用</button>
+                    <button class="btn btn-primary" id="viewByCountry">按国家</button>
+                </div>
+            </div>
+            
+            <div id="serviceSelectionView">
+                <div class="service-info">
+                    <div class="service-icon-large">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="service-details">
+                        <h3>欢迎使用7SIM</h3>
+                        <p>请在左侧选择您需要的服务或国家，查看可用的虚拟号码</p>
+                        <p class="price-tag">价格从 ¥0.80 起</p>
+                    </div>
+                </div>
+                
+                <div class="operators-section">
+                    <h3>推荐运营商</h3>
+                    <div class="operators-grid">
+                        <!-- 运营商卡片会动态加载 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="serviceDetailView" style="display: none;">
+                <!-- 选择具体服务后显示的内容 -->
+            </div>
         </div>
-    </section>
+    </div>
 
     <!-- 充值模态框 -->
     <div class="modal" id="rechargeModal">
@@ -132,8 +655,67 @@
         </div>
     </div>
 
+    <!-- 余额不足模态框 -->
+    <div class="modal" id="insufficientBalanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>余额不足</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="insufficient-balance">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>您的账户余额不足</h3>
+                <p>购买此服务需要 <span id="requiredAmount">¥0.00</span>，您当前余额为 <span id="currentBalance">¥0.00</span></p>
+                <button class="btn btn-primary" id="goToRecharge">立即充值</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- API密钥模态框 -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>API密钥</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="api-key-section">
+                <p>您的API密钥用于访问7SIM服务。请妥善保管，不要泄露给他人。</p>
+                <div class="api-key-display">
+                    <div class="api-key-value" id="apiKeyValue">************************</div>
+                    <button class="btn btn-outline" id="showApiKey">显示</button>
+                    <button class="btn btn-outline" id="copyApiKey">复制</button>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" id="generateApiKey">生成新的API密钥</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 个人资料模态框 -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>个人资料</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>电子邮箱</label>
+                    <input type="email" id="profileEmail" class="form-control" readonly>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>注册时间</label>
+                    <input type="text" id="profileCreatedAt" class="form-control" readonly>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>最后登录</label>
+                    <input type="text" id="profileLastLogin" class="form-control" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Firebase配置（与index.html相同）
+        // Firebase配置
         const firebaseConfig = {
             apiKey: "AIzaSyAKcWEdi_Zd-CAJYtEiwkbNNs7ibOp6HG4",
             authDomain: "sim-platform-fa8dd.firebaseapp.com",
@@ -148,18 +730,39 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // 全局变量
+        let currentUser = null;
+        let currentBalance = 0;
+        let servicesData = [];
+        let selectedService = null;
+        let selectedCountry = null;
+        let viewMode = 'country'; // 'country' 或 'app'
+
         // 检查登录状态
         auth.onAuthStateChanged((user) => {
             if (user && user.emailVerified) {
-                // 用户已登录且验证，加载数据
+                currentUser = user;
                 loadUserData(user.uid);
                 loadServices();
                 loadPaymentMethods();
+                
+                // 更新用户头像显示
+                updateUserAvatar(user);
             } else {
                 // 未登录或未验证，跳回首页
                 window.location.href = 'index.html';
             }
         });
+
+        // 更新用户头像显示
+        function updateUserAvatar(user) {
+            const userAvatar = document.getElementById('userAvatar');
+            if (user.email) {
+                // 如果有用户头像URL，可以在这里设置
+                // 否则使用默认图标
+                userAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+            }
+        }
 
         // 加载用户数据
         function loadUserData(uid) {
@@ -167,97 +770,264 @@
                 .then((doc) => {
                     if (doc.exists) {
                         const userData = doc.data();
-                        document.getElementById('balanceAmount').textContent = `¥${userData.balance.toFixed(2)}`;
+                        currentBalance = userData.balance || 0;
+                        document.getElementById('balanceAmount').textContent = `¥${currentBalance.toFixed(2)}`;
+                        
+                        // 更新个人资料信息
+                        document.getElementById('profileEmail').value = userData.email || currentUser.email;
+                        document.getElementById('profileCreatedAt').value = userData.createdAt ? 
+                            new Date(userData.createdAt).toLocaleString() : '未知';
+                        document.getElementById('profileLastLogin').value = userData.lastLogin ? 
+                            new Date(userData.lastLogin).toLocaleString() : '刚刚';
                     }
+                })
+                .catch((error) => {
+                    console.error('加载用户数据失败:', error);
                 });
         }
 
         // 加载服务数据
         async function loadServices() {
             try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-                const servicesGrid = document.getElementById('servicesGrid');
-                servicesGrid.innerHTML = '';
+                // 这里应该从API或Firestore获取数据
+                // 为了演示，我们使用静态数据
+                servicesData = {
+                    apps: [
+                        { id: 1, name: "WhatsApp", icon: "fab fa-whatsapp", price: 1.50, active: true },
+                        { id: 2, name: "Telegram", icon: "fab fa-telegram", price: 1.20, active: true },
+                        { id: 3, name: "Facebook", icon: "fab fa-facebook", price: 2.00, active: true },
+                        { id: 4, name: "Google", icon: "fab fa-google", price: 1.80, active: true },
+                        { id: 5, name: "Twitter", icon: "fab fa-twitter", price: 1.60, active: true },
+                        { id: 6, name: "Instagram", icon: "fab fa-instagram", price: 1.70, active: true }
+                    ],
+                    countries: [
+                        { id: 1, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 1.20, active: true },
+                        { id: 2, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 1.50, active: true },
+                        { id: 3, name: "中国", flag: "https://flagcdn.com/w40/cn.png", price: 0.80, active: true },
+                        { id: 4, name: "俄罗斯", flag: "https://flagcdn.com/w40/ru.png", price: 1.00, active: true },
+                        { id: 5, name: "日本", flag: "https://flagcdn.com/w40/jp.png", price: 1.30, active: true },
+                        { id: 6, name: "德国", flag: "https://flagcdn.com/w40/de.png", price: 1.40, active: true }
+                    ],
+                    operators: [
+                        { id: 1, name: "中国移动", icon: "fas fa-signal", price: 0.80, stock: 125 },
+                        { id: 2, name: "中国联通", icon: "fas fa-broadcast-tower", price: 0.85, stock: 98 },
+                        { id: 3, name: "中国电信", icon: "fas fa-satellite-dish", price: 0.90, stock: 76 },
+                        { id: 4, name: "Verizon", icon: "fas fa-wifi", price: 1.20, stock: 45 },
+                        { id: 5, name: "AT&T", icon: "fas fa-network-wired", price: 1.30, stock: 32 },
+                        { id: 6, name: "T-Mobile", icon: "fas fa-bluetooth", price: 1.25, stock: 28 }
+                    ]
+                };
 
-                data.services.filter(service => service.active).forEach(service => {
-                    const card = document.createElement('div');
-                    card.className = 'service-card';
-                    card.innerHTML = `
-                        ${service.type === 'country' ? 
-                            `<img src="${service.flag}" alt="${service.name}" class="service-flag">` :
-                            `<div class="service-icon"><i class="${service.icon}"></i></div>`
-                        }
-                        <div class="service-name">${service.name}</div>
-                        <div class="service-price">¥${service.price}/条</div>
-                        <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 15px;">库存: ${service.stock}个号码</div>
-                        <button class="btn btn-primary" onclick="selectService(${service.id})">选择号码</button>
-                    `;
-                    servicesGrid.appendChild(card);
-                });
+                renderAppsList();
+                renderCountriesList();
+                renderOperators();
             } catch (error) {
                 console.error('加载服务失败:', error);
             }
         }
 
-        // 在 dashboard.html 的 loadPaymentMethods 函数中修正
-function loadPaymentMethods() {
-    try {
-        const data = {
-            paymentMethods: [
-                {
-                    name: "TRC20 USDT",
-                    address: "TYmwTpQemLPRcXv9L3gJcNYqSURP3b99k9",
-                    active: true
-                },
-                {
-                    name: "ERC20 USDT", 
-                    address: "0x742EfB6e8B6c6b7c6c7D8e9f0a1b2c3d4e5f6a7b8",
-                    active: true
-                },
-                {
-                    name: "ERC20 USDC",
-                    address: "0x8c7E3e8d7f9C2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p",
-                    active: true
-                }
-            ]
-        };
-        
-        const container = document.getElementById('paymentMethodsList');
-        container.innerHTML = '';
-
-        data.paymentMethods.filter(method => method.active).forEach(method => {
-            const methodElement = document.createElement('div');
-            methodElement.className = 'payment-method';
-            methodElement.innerHTML = `
-                <div style="font-size: 2rem; margin-bottom: 10px; color: var(--primary);">
-                    <i class="fab fa-bitcoin"></i>
-                </div>
-                <div style="font-weight: 600;">${method.name}</div>
-                <div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">${method.address}</div>
-                <div style="font-size: 0.7rem; color: #28a745; margin-top: 5px;">点击地址复制</div>
-            `;
+        // 渲染应用列表
+        function renderAppsList() {
+            const appsList = document.getElementById('appsList');
+            appsList.innerHTML = '';
             
-            // 添加点击复制功能
-            methodElement.addEventListener('click', function() {
-                navigator.clipboard.writeText(method.address).then(() => {
-                    alert(`${method.name} 地址已复制到剪贴板`);
-                });
+            servicesData.apps.filter(app => app.active).forEach(app => {
+                const item = document.createElement('li');
+                item.className = 'category-item';
+                item.dataset.id = app.id;
+                item.dataset.type = 'app';
+                item.innerHTML = `
+                    <div class="category-icon">
+                        <i class="${app.icon}"></i>
+                    </div>
+                    <span>${app.name}</span>
+                `;
+                item.addEventListener('click', () => selectCategory(app, 'app'));
+                appsList.appendChild(item);
+            });
+        }
+
+        // 渲染国家列表
+        function renderCountriesList() {
+            const countriesList = document.getElementById('countriesList');
+            countriesList.innerHTML = '';
+            
+            servicesData.countries.filter(country => country.active).forEach(country => {
+                const item = document.createElement('li');
+                item.className = 'category-item';
+                item.dataset.id = country.id;
+                item.dataset.type = 'country';
+                item.innerHTML = `
+                    <img src="${country.flag}" alt="${country.name}" class="country-flag">
+                    <span>${country.name}</span>
+                `;
+                item.addEventListener('click', () => selectCategory(country, 'country'));
+                countriesList.appendChild(item);
+            });
+        }
+
+        // 渲染运营商
+        function renderOperators(service = null) {
+            const operatorsGrid = document.querySelector('.operators-grid');
+            operatorsGrid.innerHTML = '';
+            
+            let operators = servicesData.operators;
+            
+            // 如果有特定服务，可以过滤运营商
+            if (service) {
+                // 这里可以根据服务类型过滤运营商
+                // 例如：某些运营商可能不支持某些服务
+            }
+            
+            operators.forEach(operator => {
+                const card = document.createElement('div');
+                card.className = 'operator-card';
+                card.dataset.id = operator.id;
+                card.innerHTML = `
+                    <div class="operator-icon">
+                        <i class="${operator.icon}"></i>
+                    </div>
+                    <div class="operator-name">${operator.name}</div>
+                    <div class="operator-price">¥${operator.price}/条</div>
+                    <div class="operator-stock">库存: ${operator.stock}个</div>
+                `;
+                card.addEventListener('click', () => selectOperator(operator));
+                operatorsGrid.appendChild(card);
+            });
+        }
+
+        // 选择分类（应用或国家）
+        function selectCategory(item, type) {
+            // 移除所有活动状态
+            document.querySelectorAll('.category-item').forEach(el => {
+                el.classList.remove('active');
             });
             
-            container.appendChild(methodElement);
-        });
-    } catch (error) {
-        console.error('加载支付方式失败:', error);
-    }
-}
+            // 添加当前活动状态
+            event.currentTarget.classList.add('active');
+            
+            // 更新选中项
+            if (type === 'app') {
+                selectedService = item;
+                selectedCountry = null;
+                viewMode = 'app';
+                document.getElementById('viewByApp').classList.add('btn-primary');
+                document.getElementById('viewByApp').classList.remove('btn-outline');
+                document.getElementById('viewByCountry').classList.add('btn-outline');
+                document.getElementById('viewByCountry').classList.remove('btn-primary');
+            } else {
+                selectedCountry = item;
+                selectedService = null;
+                viewMode = 'country';
+                document.getElementById('viewByCountry').classList.add('btn-primary');
+                document.getElementById('viewByCountry').classList.remove('btn-outline');
+                document.getElementById('viewByApp').classList.add('btn-outline');
+                document.getElementById('viewByApp').classList.remove('btn-primary');
+            }
+            
+            // 更新内容区域
+            updateContentArea();
+        }
 
-        // 选择服务
-        function selectService(serviceId) {
-            const user = auth.currentUser;
-            if (user) {
-                // 这里实现选择服务的逻辑
-                alert(`选择服务 ID: ${serviceId}\n功能开发中...`);
+        // 更新内容区域
+        function updateContentArea() {
+            const serviceSelectionView = document.getElementById('serviceSelectionView');
+            const serviceDetailView = document.getElementById('serviceDetailView');
+            const selectedServiceTitle = document.getElementById('selectedServiceTitle');
+            
+            if (selectedService || selectedCountry) {
+                serviceSelectionView.style.display = 'block';
+                serviceDetailView.style.display = 'none';
+                
+                const serviceInfo = serviceSelectionView.querySelector('.service-info');
+                const serviceDetails = serviceInfo.querySelector('.service-details');
+                
+                if (selectedService) {
+                    selectedServiceTitle.textContent = selectedService.name;
+                    serviceInfo.querySelector('.service-icon-large').innerHTML = `<i class="${selectedService.icon}"></i>`;
+                    serviceDetails.querySelector('h3').textContent = selectedService.name;
+                    serviceDetails.querySelector('p').textContent = `用于接收 ${selectedService.name} 验证码的虚拟号码`;
+                    serviceDetails.querySelector('.price-tag').textContent = `价格从 ¥${selectedService.price} 起`;
+                } else if (selectedCountry) {
+                    selectedServiceTitle.textContent = selectedCountry.name;
+                    serviceInfo.querySelector('.service-icon-large').innerHTML = `<img src="${selectedCountry.flag}" alt="${selectedCountry.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+                    serviceDetails.querySelector('h3').textContent = selectedCountry.name;
+                    serviceDetails.querySelector('p').textContent = `${selectedCountry.name} 虚拟号码，可用于各种服务`;
+                    serviceDetails.querySelector('.price-tag').textContent = `价格从 ¥${selectedCountry.price} 起`;
+                }
+                
+                // 更新运营商显示
+                renderOperators(selectedService || selectedCountry);
+            }
+        }
+
+        // 选择运营商
+        function selectOperator(operator) {
+            // 检查余额是否足够
+            const requiredAmount = operator.price;
+            
+            if (currentBalance < requiredAmount) {
+                // 显示余额不足弹窗
+                document.getElementById('requiredAmount').textContent = `¥${requiredAmount.toFixed(2)}`;
+                document.getElementById('currentBalance').textContent = `¥${currentBalance.toFixed(2)}`;
+                document.getElementById('insufficientBalanceModal').style.display = 'flex';
+                return;
+            }
+            
+            // 如果余额足够，这里可以显示号码选择界面
+            // 根据需求，您可以选择直接显示号码或进行其他操作
+            alert(`选择了运营商: ${operator.name}\n价格: ¥${operator.price}\n功能开发中...`);
+        }
+
+        // 加载支付方式
+        function loadPaymentMethods() {
+            try {
+                const data = {
+                    paymentMethods: [
+                        {
+                            name: "TRC20 USDT",
+                            address: "TYmwTpQemLPRcXv9L3gJcNYqSURP3b99k9",
+                            active: true
+                        },
+                        {
+                            name: "ERC20 USDT", 
+                            address: "0x742EfB6e8B6c6b7c6c7D8e9f0a1b2c3d4e5f6a7b8",
+                            active: true
+                        },
+                        {
+                            name: "ERC20 USDC",
+                            address: "0x8c7E3e8d7f9C2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p",
+                            active: true
+                        }
+                    ]
+                };
+                
+                const container = document.getElementById('paymentMethodsList');
+                container.innerHTML = '';
+
+                data.paymentMethods.filter(method => method.active).forEach(method => {
+                    const methodElement = document.createElement('div');
+                    methodElement.className = 'payment-method';
+                    methodElement.innerHTML = `
+                        <div style="font-size: 2rem; margin-bottom: 10px; color: var(--primary);">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        <div style="font-weight: 600;">${method.name}</div>
+                        <div style="font-size: 0.8rem; color: #6c757d; margin-top: 5px;">${method.address}</div>
+                        <div style="font-size: 0.7rem; color: #28a745; margin-top: 5px;">点击地址复制</div>
+                    `;
+                    
+                    // 添加点击复制功能
+                    methodElement.addEventListener('click', function() {
+                        navigator.clipboard.writeText(method.address).then(() => {
+                            alert(`${method.name} 地址已复制到剪贴板`);
+                        });
+                    });
+                    
+                    container.appendChild(methodElement);
+                });
+            } catch (error) {
+                console.error('加载支付方式失败:', error);
             }
         }
 
@@ -268,53 +1038,222 @@ function loadPaymentMethods() {
             });
         }
 
-        // 充值功能
-        document.getElementById('rechargeBtn').addEventListener('click', function() {
-            document.getElementById('rechargeModal').style.display = 'flex';
-        });
+        // 生成随机API密钥
+        function generateRandomApiKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '7sim_';
+            for (let i = 0; i < 32; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
 
-        document.querySelectorAll('.close-modal').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.getElementById('rechargeModal').style.display = 'none';
-            });
-        });
-
-        // 金额选择
-        document.querySelectorAll('.amount-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.amount-option').forEach(o => o.style.background = '');
-                this.style.background = 'rgba(67, 97, 238, 0.1)';
-            });
-        });
-
-        // 搜索功能
-        document.getElementById('serviceSearch').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            filterServices(searchTerm);
-        });
-
-        // 筛选功能
-        document.querySelectorAll('[data-filter]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const filter = this.dataset.filter;
-                document.querySelectorAll('[data-filter]').forEach(b => b.className = 'btn');
-                this.className = 'btn btn-primary';
-                filterServices('', filter);
-            });
-        });
-
-        function filterServices(searchTerm = '', filter = 'all') {
-            const cards = document.querySelectorAll('.service-card');
-            cards.forEach(card => {
-                const serviceName = card.querySelector('.service-name').textContent.toLowerCase();
-                const serviceType = card.innerHTML.includes('service-flag') ? 'country' : 'app';
-                
-                const matchesSearch = serviceName.includes(searchTerm);
-                const matchesFilter = filter === 'all' || serviceType === filter;
-                
-                card.style.display = (matchesSearch && matchesFilter) ? 'block' : 'none';
+        // 获取用户API密钥
+        function getUserApiKey(uid) {
+            return new Promise((resolve) => {
+                db.collection('users').doc(uid).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            resolve(doc.data().apiKey);
+                        } else {
+                            resolve(null);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('获取API密钥失败:', error);
+                        resolve(null);
+                    });
             });
         }
+
+        // 保存用户API密钥
+        function saveUserApiKey(uid, apiKey) {
+            return db.collection('users').doc(uid).update({
+                apiKey: apiKey
+            });
+        }
+
+        // 事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 用户头像点击事件
+            document.getElementById('userAvatar').addEventListener('click', function() {
+                document.getElementById('userDropdown').classList.toggle('show');
+            });
+
+            // 点击其他地方关闭用户下拉菜单
+            window.addEventListener('click', function(e) {
+                if (!e.target.matches('#userAvatar') && !e.target.closest('#userDropdown')) {
+                    document.getElementById('userDropdown').classList.remove('show');
+                }
+            });
+
+            // 用户下拉菜单选项
+            document.getElementById('profileBtn').addEventListener('click', function() {
+                document.getElementById('profileModal').style.display = 'flex';
+                document.getElementById('userDropdown').classList.remove('show');
+            });
+
+            document.getElementById('walletBtn').addEventListener('click', function() {
+                // 这里可以跳转到钱包页面或显示钱包详情
+                alert('钱包功能开发中...');
+                document.getElementById('userDropdown').classList.remove('show');
+            });
+
+            document.getElementById('apiKeyBtn').addEventListener('click', function() {
+                document.getElementById('apiKeyModal').style.display = 'flex';
+                document.getElementById('userDropdown').classList.remove('show');
+                
+                // 加载API密钥
+                if (currentUser) {
+                    getUserApiKey(currentUser.uid).then(apiKey => {
+                        if (apiKey) {
+                            // 保存当前API密钥用于显示/隐藏功能
+                            document.getElementById('apiKeyValue').dataset.actualKey = apiKey;
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                logout();
+            });
+
+            // API密钥功能
+            document.getElementById('showApiKey').addEventListener('click', function() {
+                const apiKeyValue = document.getElementById('apiKeyValue');
+                const actualKey = apiKeyValue.dataset.actualKey;
+                
+                if (actualKey) {
+                    if (apiKeyValue.textContent === '************************') {
+                        apiKeyValue.textContent = actualKey;
+                        this.textContent = '隐藏';
+                    } else {
+                        apiKeyValue.textContent = '************************';
+                        this.textContent = '显示';
+                    }
+                } else {
+                    alert('您还没有生成API密钥');
+                }
+            });
+
+            document.getElementById('copyApiKey').addEventListener('click', function() {
+                const apiKeyValue = document.getElementById('apiKeyValue');
+                const actualKey = apiKeyValue.dataset.actualKey;
+                
+                if (actualKey && apiKeyValue.textContent !== '************************') {
+                    navigator.clipboard.writeText(actualKey).then(() => {
+                        alert('API密钥已复制到剪贴板');
+                    });
+                } else {
+                    alert('请先显示API密钥');
+                }
+            });
+
+            document.getElementById('generateApiKey').addEventListener('click', function() {
+                if (currentUser) {
+                    const newApiKey = generateRandomApiKey();
+                    saveUserApiKey(currentUser.uid, newApiKey)
+                        .then(() => {
+                            document.getElementById('apiKeyValue').dataset.actualKey = newApiKey;
+                            document.getElementById('apiKeyValue').textContent = newApiKey;
+                            document.getElementById('showApiKey').textContent = '隐藏';
+                            alert('新的API密钥已生成');
+                        })
+                        .catch(error => {
+                            console.error('生成API密钥失败:', error);
+                            alert('生成API密钥失败');
+                        });
+                }
+            });
+
+            // 充值功能
+            document.getElementById('rechargeBtn').addEventListener('click', function() {
+                document.getElementById('rechargeModal').style.display = 'flex';
+            });
+
+            // 关闭模态框
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                });
+            });
+
+            // 金额选择
+            document.querySelectorAll('.amount-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.amount-option').forEach(o => o.style.background = '');
+                    this.style.background = 'rgba(67, 97, 238, 0.1)';
+                });
+            });
+
+            // 余额不足弹窗中的充值按钮
+            document.getElementById('goToRecharge').addEventListener('click', function() {
+                document.getElementById('insufficientBalanceModal').style.display = 'none';
+                document.getElementById('rechargeModal').style.display = 'flex';
+            });
+
+            // 视图切换
+            document.getElementById('viewByApp').addEventListener('click', function() {
+                viewMode = 'app';
+                this.classList.add('btn-primary');
+                this.classList.remove('btn-outline');
+                document.getElementById('viewByCountry').classList.add('btn-outline');
+                document.getElementById('viewByCountry').classList.remove('btn-primary');
+                
+                // 重置选择
+                selectedService = null;
+                selectedCountry = null;
+                document.querySelectorAll('.category-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // 更新标题
+                document.getElementById('selectedServiceTitle').textContent = '选择服务';
+            });
+
+            document.getElementById('viewByCountry').addEventListener('click', function() {
+                viewMode = 'country';
+                this.classList.add('btn-primary');
+                this.classList.remove('btn-outline');
+                document.getElementById('viewByApp').classList.add('btn-outline');
+                document.getElementById('viewByApp').classList.remove('btn-primary');
+                
+                // 重置选择
+                selectedService = null;
+                selectedCountry = null;
+                document.querySelectorAll('.category-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // 更新标题
+                document.getElementById('selectedServiceTitle').textContent = '选择国家';
+            });
+
+            // 搜索功能
+            document.getElementById('serviceSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterItems('appsList', searchTerm);
+            });
+
+            document.getElementById('countrySearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filterItems('countriesList', searchTerm);
+            });
+
+            function filterItems(listId, searchTerm) {
+                const items = document.getElementById(listId).querySelectorAll('.category-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
