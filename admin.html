@@ -524,41 +524,39 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 数据存储
-        let appData = {
-            countries: [],
-            services: [],
+       // 数据存储
+let appData = {
+    countries: [],
+    services: [],
+    pricingRules: [],
+    paymentMethods: [],
+    users: []
+};
+
+      function initData() {
+    const savedData = localStorage.getItem('appData');
+    if (savedData) {
+        appData = JSON.parse(savedData);
+    } else {
+        // 如果localStorage中没有数据，初始化默认数据
+        appData = {
+            countries: [
+                { id: 1, name: "中国", code: "CN", flag: "https://flagcdn.com/w40/cn.png", active: true },
+                { id: 2, name: "美国", code: "US", flag: "https://flagcdn.com/w40/us.png", active: true },
+                { id: 3, name: "英国", code: "GB", flag: "https://flagcdn.com/w40/gb.png", active: true }
+            ],
+            services: [
+                { id: 1, name: "WhatsApp", code: "whatsapp", icon: "fab fa-whatsapp", active: true },
+                { id: 2, name: "Telegram", code: "telegram", icon: "fab fa-telegram", active: true },
+                { id: 3, name: "微信", code: "wechat", icon: "fab fa-weixin", active: true }
+            ],
             pricingRules: [],
             paymentMethods: [],
             users: []
         };
-
-        // 初始化数据
-        function initData() {
-            const savedData = localStorage.getItem('appData');
-            if (savedData) {
-                appData = JSON.parse(savedData);
-            }
-            
-            // 初始化默认数据（如果没有）
-            if (appData.countries.length === 0) {
-                appData.countries = [
-                    { id: 1, name: "中国", code: "CN", flag: "https://flagcdn.com/w40/cn.png", active: true },
-                    { id: 2, name: "美国", code: "US", flag: "https://flagcdn.com/w40/us.png", active: true },
-                    { id: 3, name: "英国", code: "GB", flag: "https://flagcdn.com/w40/gb.png", active: true }
-                ];
-            }
-            
-            if (appData.services.length === 0) {
-                appData.services = [
-                    { id: 1, name: "WhatsApp", code: "whatsapp", icon: "fab fa-whatsapp", active: true },
-                    { id: 2, name: "Telegram", code: "telegram", icon: "fab fa-telegram", active: true },
-                    { id: 3, name: "微信", code: "wechat", icon: "fab fa-weixin", active: true }
-                ];
-            }
-            
-            saveAppData();
-        }
+        saveAppData();
+    }
+}
 
         // 保存数据
         function saveAppData() {
@@ -1130,9 +1128,11 @@
             });
         }
 
-        // 初始化
-        initData();
-        loadTabData('countries');
+       // 初始化 - 使用DOMContentLoaded确保页面加载完成
+document.addEventListener('DOMContentLoaded', function() {
+    initData();
+    loadTabData('countries');
+});
     </script>
 </body>
 </html>
