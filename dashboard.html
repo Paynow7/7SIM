@@ -1499,7 +1499,57 @@ function findComboPrice(serviceId, countryId) {
 function testFunction() {
     console.log('测试函数正常');
 }
-        // 监听价格规则变化
+        // ============ 确保所有必需函数都已定义 ============
+if (typeof updateUserDropdown === 'undefined') {
+    console.error('updateUserDropdown 函数未定义');
+    function updateUserDropdown() {
+        console.log('updateUserDropdown placeholder');
+    }
+}
+
+if (typeof initDefaultCountries === 'undefined') {
+    console.error('initDefaultCountries 函数未定义');
+    function initDefaultCountries() {
+        console.log('initDefaultCountries placeholder');
+    }
+}
+
+if (typeof renderServices === 'undefined') {
+    console.error('renderServices 函数未定义');
+    function renderServices() {
+        console.log('renderServices placeholder');
+    }
+}
+
+if (typeof renderCountries === 'undefined') {
+    console.error('renderCountries 函数未定义');
+    function renderCountries() {
+        console.log('renderCountries placeholder');
+    }
+}
+
+if (typeof renderOperators === 'undefined') {
+    console.error('renderOperators 函数未定义');
+    function renderOperators() {
+        console.log('renderOperators placeholder');
+    }
+}
+
+if (typeof setupEventListeners === 'undefined') {
+    console.error('setupEventListeners 函数未定义');
+    function setupEventListeners() {
+        console.log('setupEventListeners placeholder');
+    }
+}
+
+if (typeof updatePriceCalculation === 'undefined') {
+    console.error('updatePriceCalculation 函数未定义');
+    function updatePriceCalculation() {
+        console.log('updatePriceCalculation placeholder');
+    }
+}
+
+// 监听价格规则变化
 function setupPriceUpdateListener() {
     window.addEventListener('storage', function(e) {
         if (e.key === 'pricingRules') {
@@ -1511,13 +1561,15 @@ function setupPriceUpdateListener() {
 
 // 在页面加载时调用
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded 开始执行');
     updateUserDropdown();
     initDefaultCountries();
     renderServices();
     renderCountries();
     renderOperators();
     setupEventListeners();
-    setupPriceUpdateListener(); // 新增
+    setupPriceUpdateListener();
+    console.log('DOMContentLoaded 执行完成');
 });
     </script>
 </body>
