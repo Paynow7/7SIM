@@ -1227,7 +1227,7 @@ function renderCountries() {
                     <div class="operator-numbers">${operator.numbers}</div>
                     <div class="operator-price">$${operator.price.toFixed(2)}</div>
                 `;
-                item.addEventListener('click', () => selectOperator(operator));
+                item.addEventListener('click', (e) => selectOperator(operator, e));
                 operatorsList.appendChild(item);
             });
         }
@@ -1293,18 +1293,18 @@ function calculateServicePriceRange(serviceId) {
             updateGetNumberButton();
         }
 
-        // 选择运营商
-        function selectOperator(operator) {
-            selectedOperator = operator;
-            
-            // 更新UI
-            document.querySelectorAll('.operator-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            
-            updateGetNumberButton();
-        }
+      // 选择运营商
+function selectOperator(operator, event) {
+    selectedOperator = operator;
+    
+    // 更新UI
+    document.querySelectorAll('.operator-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+    
+    updateGetNumberButton();
+}
 
        // 更新价格计算
 function updatePriceCalculation() {
