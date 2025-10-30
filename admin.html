@@ -760,7 +760,7 @@
             }
         }
 
-        // 批量删除功能
+        // 批量删除功能 - 修复版本
         function batchDelete(type) {
             let checkboxes, idsToDelete, confirmMessage;
             
@@ -780,6 +780,9 @@
                     idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
                     confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个价格规则吗？`;
                     break;
+                default:
+                    console.error('未知的类型:', type);
+                    return;
             }
             
             if (idsToDelete.length === 0) {
@@ -814,24 +817,23 @@
 
         // 全选/取消全选
         function toggleSelectAll(type) {
-            let selectAll, checkboxes, countElement;
+            let selectAll, checkboxes;
             
             switch(type) {
                 case 'countries':
                     selectAll = document.getElementById('selectAllCountries');
                     checkboxes = document.querySelectorAll('input[name="countryCheckbox"]');
-                    countElement = document.getElementById('selectedCount');
                     break;
                 case 'services':
                     selectAll = document.getElementById('selectAllServices');
                     checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]');
-                    countElement = document.getElementById('selectedServicesCount');
                     break;
                 case 'pricing':
                     selectAll = document.getElementById('selectAllPricing');
                     checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]');
-                    countElement = document.getElementById('selectedPricingCount');
                     break;
+                default:
+                    return;
             }
             
             checkboxes.forEach(checkbox => {
@@ -858,9 +860,13 @@
                     checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
                     countElement = document.getElementById('selectedPricingCount');
                     break;
+                default:
+                    return;
             }
             
-            countElement.textContent = `已选择 ${checkboxes.length} 个${type === 'countries' ? '国家' : type === 'services' ? '服务' : '价格规则'}`;
+            if (countElement) {
+                countElement.textContent = `已选择 ${checkboxes.length} 个${type === 'countries' ? '国家' : type === 'services' ? '服务' : '价格规则'}`;
+            }
         }
 
         // 国家管理功能
