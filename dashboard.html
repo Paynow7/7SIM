@@ -1200,7 +1200,6 @@ function renderCountries() {
                 <div class="country-name">${country.name}</div>
             </div>
             <div class="country-numbers">${country.numbers}</div>
-            <div class="country-price">$${country.price.toFixed(2)}</div>
         `;
         item.addEventListener('click', () => selectCountry(country));
         countriesList.appendChild(item);
