@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1041,57 +1042,43 @@ const servicesData = {
         { id: 2, name: "PremiumSMS", numbers: "52,341", price: 0.00 }
     ]
 };
-        
-// 初始化默认国家数据 - 5sim完整国家列表
+// 初始化默认国家数据
 function initDefaultCountries() {
     const defaultCountries = [
-        { id: 1, name: "中国", code: "CN", flag: "https://flagcdn.com/w40/cn.png", price: 0.10, numbers: "200,000" },
-        { id: 2, name: "美国", code: "US", flag: "https://flagcdn.com/w40/us.png", price: 0.15, numbers: "150,000" },
-        { id: 3, name: "俄罗斯", code: "RU", flag: "https://flagcdn.com/w40/ru.png", price: 0.08, numbers: "100,000" },
-        { id: 4, name: "英国", code: "GB", flag: "https://flagcdn.com/w40/gb.png", price: 0.12, numbers: "120,000" },
-        { id: 5, name: "德国", code: "DE", flag: "https://flagcdn.com/w40/de.png", price: 0.11, numbers: "90,000" },
-        { id: 6, name: "法国", code: "FR", flag: "https://flagcdn.com/w40/fr.png", price: 0.11, numbers: "85,000" },
-        { id: 7, name: "日本", code: "JP", flag: "https://flagcdn.com/w40/jp.png", price: 0.16, numbers: "75,000" },
-        { id: 8, name: "韩国", code: "KR", flag: "https://flagcdn.com/w40/kr.png", price: 0.15, numbers: "65,000" },
-        { id: 9, name: "印度", code: "IN", flag: "https://flagcdn.com/w40/in.png", price: 0.05, numbers: "180,000" },
-        { id: 10, name: "巴西", code: "BR", flag: "https://flagcdn.com/w40/br.png", price: 0.09, numbers: "85,000" },
-        { id: 11, name: "加拿大", code: "CA", flag: "https://flagcdn.com/w40/ca.png", price: 0.13, numbers: "80,000" },
-        { id: 12, name: "澳大利亚", code: "AU", flag: "https://flagcdn.com/w40/au.png", price: 0.14, numbers: "70,000" },
-        { id: 13, name: "印尼", code: "ID", flag: "https://flagcdn.com/w40/id.png", price: 0.06, numbers: "95,000" },
-        { id: 14, name: "菲律宾", code: "PH", flag: "https://flagcdn.com/w40/ph.png", price: 0.05, numbers: "45,000" },
-        { id: 15, name: "马来西亚", code: "MY", flag: "https://flagcdn.com/w40/my.png", price: 0.07, numbers: "60,000" },
-        { id: 16, name: "泰国", code: "TH", flag: "https://flagcdn.com/w40/th.png", price: 0.06, numbers: "55,000" },
-        { id: 17, name: "越南", code: "VN", flag: "https://flagcdn.com/w40/vn.png", price: 0.05, numbers: "50,000" },
-        { id: 18, name: "墨西哥", code: "MX", flag: "https://flagcdn.com/w40/mx.png", price: 0.08, numbers: "40,000" },
-        { id: 19, name: "阿根廷", code: "AR", flag: "https://flagcdn.com/w40/ar.png", price: 0.07, numbers: "35,000" },
-        { id: 20, name: "土耳其", code: "TR", flag: "https://flagcdn.com/w40/tr.png", price: 0.08, numbers: "45,000" },
-        { id: 21, name: "沙特阿拉伯", code: "SA", flag: "https://flagcdn.com/w40/sa.png", price: 0.10, numbers: "30,000" },
-        { id: 22, name: "阿联酋", code: "AE", flag: "https://flagcdn.com/w40/ae.png", price: 0.12, numbers: "25,000" },
-        { id: 23, name: "南非", code: "ZA", flag: "https://flagcdn.com/w40/za.png", price: 0.07, numbers: "20,000" },
-        { id: 24, name: "埃及", code: "EG", flag: "https://flagcdn.com/w40/eg.png", price: 0.06, numbers: "25,000" },
-        { id: 25, name: "尼日利亚", code: "NG", flag: "https://flagcdn.com/w40/ng.png", price: 0.05, numbers: "30,000" },
-        { id: 26, name: "乌克兰", code: "UA", flag: "https://flagcdn.com/w40/ua.png", price: 0.07, numbers: "40,000" },
-        { id: 27, name: "波兰", code: "PL", flag: "https://flagcdn.com/w40/pl.png", price: 0.09, numbers: "35,000" },
-        { id: 28, name: "意大利", code: "IT", flag: "https://flagcdn.com/w40/it.png", price: 0.10, numbers: "45,000" },
-        { id: 29, name: "西班牙", code: "ES", flag: "https://flagcdn.com/w40/es.png", price: 0.10, numbers: "50,000" },
-        { id: 30, name: "荷兰", code: "NL", flag: "https://flagcdn.com/w40/nl.png", price: 0.11, numbers: "30,000" },
-        { id: 31, name: "比利时", code: "BE", flag: "https://flagcdn.com/w40/be.png", price: 0.12, numbers: "25,000" },
-        { id: 32, name: "瑞典", code: "SE", flag: "https://flagcdn.com/w40/se.png", price: 0.13, numbers: "20,000" },
-        { id: 33, name: "挪威", code: "NO", flag: "https://flagcdn.com/w40/no.png", price: 0.14, numbers: "18,000" },
-        { id: 34, name: "丹麦", code: "DK", flag: "https://flagcdn.com/w40/dk.png", price: 0.13, numbers: "15,000" },
-        { id: 35, name: "芬兰", code: "FI", flag: "https://flagcdn.com/w40/fi.png", price: 0.12, numbers: "12,000" },
-        { id: 36, name: "葡萄牙", code: "PT", flag: "https://flagcdn.com/w40/pt.png", price: 0.11, numbers: "22,000" },
-        { id: 37, name: "希腊", code: "GR", flag: "https://flagcdn.com/w40/gr.png", price: 0.10, numbers: "18,000" },
-        { id: 38, name: "捷克", code: "CZ", flag: "https://flagcdn.com/w40/cz.png", price: 0.09, numbers: "16,000" },
-        { id: 39, name: "匈牙利", code: "HU", flag: "https://flagcdn.com/w40/hu.png", price: 0.08, numbers: "14,000" },
-        { id: 40, name: "罗马尼亚", code: "RO", flag: "https://flagcdn.com/w40/ro.png", price: 0.07, numbers: "20,000" }
+        { id: 1, name: "中国", flag: "https://flagcdn.com/w40/cn.png", price: 0.10, numbers: "200,000" },
+        { id: 2, name: "美国", flag: "https://flagcdn.com/w40/us.png", price: 0.15, numbers: "150,000" },
+        { id: 3, name: "英国", flag: "https://flagcdn.com/w40/gb.png", price: 0.12, numbers: "120,000" },
+        { id: 4, name: "加拿大", flag: "https://flagcdn.com/w40/ca.png", price: 0.13, numbers: "80,000" },
+        { id: 5, name: "澳大利亚", flag: "https://flagcdn.com/w40/au.png", price: 0.14, numbers: "70,000" },
+        { id: 6, name: "德国", flag: "https://flagcdn.com/w40/de.png", price: 0.11, numbers: "90,000" },
+        { id: 7, name: "法国", flag: "https://flagcdn.com/w40/fr.png", price: 0.11, numbers: "85,000" },
+        { id: 8, name: "俄罗斯", flag: "https://flagcdn.com/w40/ru.png", price: 0.08, numbers: "100,000" },
+        { id: 9, name: "日本", flag: "https://flagcdn.com/w40/jp.png", price: 0.16, numbers: "75,000" },
+        { id: 10, name: "韩国", flag: "https://flagcdn.com/w40/kr.png", price: 0.15, numbers: "65,000" },
+        { id: 11, name: "印度", flag: "https://flagcdn.com/w40/in.png", price: 0.05, numbers: "180,000" },
+        { id: 12, name: "印度尼西亚", flag: "https://flagcdn.com/w40/id.png", price: 0.06, numbers: "95,000" },
+        { id: 13, name: "马来西亚", flag: "https://flagcdn.com/w40/my.png", price: 0.07, numbers: "60,000" },
+        { id: 14, name: "泰国", flag: "https://flagcdn.com/w40/th.png", price: 0.06, numbers: "55,000" },
+        { id: 15, name: "越南", flag: "https://flagcdn.com/w40/vn.png", price: 0.05, numbers: "50,000" },
+        { id: 16, name: "菲律宾", flag: "https://flagcdn.com/w40/ph.png", price: 0.05, numbers: "45,000" },
+        { id: 17, name: "巴西", flag: "https://flagcdn.com/w40/br.png", price: 0.09, numbers: "85,000" },
+        { id: 18, name: "墨西哥", flag: "https://flagcdn.com/w40/mx.png", price: 0.08, numbers: "40,000" },
+        { id: 19, name: "阿根廷", flag: "https://flagcdn.com/w40/ar.png", price: 0.07, numbers: "35,000" },
+        { id: 20, name: "土耳其", flag: "https://flagcdn.com/w40/tr.png", price: 0.08, numbers: "45,000" },
+        { id: 21, name: "沙特阿拉伯", flag: "https://flagcdn.com/w40/sa.png", price: 0.10, numbers: "30,000" },
+        { id: 22, name: "阿联酋", flag: "https://flagcdn.com/w40/ae.png", price: 0.12, numbers: "25,000" },
+        { id: 23, name: "南非", flag: "https://flagcdn.com/w40/za.png", price: 0.07, numbers: "20,000" },
+        { id: 24, name: "埃及", flag: "https://flagcdn.com/w40/eg.png", price: 0.06, numbers: "25,000" },
+        { id: 25, name: "尼日利亚", flag: "https://flagcdn.com/w40/ng.png", price: 0.05, numbers: "30,000" },
+        { id: 26, name: "乌克兰", flag: "https://flagcdn.com/w40/ua.png", price: 0.07, numbers: "40,000" },
+        { id: 27, name: "波兰", flag: "https://flagcdn.com/w40/pl.png", price: 0.09, numbers: "35,000" },
+        { id: 28, name: "意大利", flag: "https://flagcdn.com/w40/it.png", price: 0.10, numbers: "45,000" },
+        { id: 29, name: "西班牙", flag: "https://flagcdn.com/w40/es.png", price: 0.10, numbers: "50,000" },
+        { id: 30, name: "荷兰", flag: "https://flagcdn.com/w40/nl.png", price: 0.11, numbers: "30,000" }
     ];
     
-    // 直接赋值
+    // 直接赋值，不要清空
     servicesData.countries = defaultCountries;
-    
-    console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
-}
     
     // 合并管理员添加的国家
     const savedData = localStorage.getItem('appData');
@@ -1121,6 +1108,7 @@ function initDefaultCountries() {
     }
     
     console.log('国家数据初始化完成，共', servicesData.countries.length, '个国家');
+}
 
 // 在页面加载时更新用户信息
 document.addEventListener('DOMContentLoaded', function() {
@@ -1140,7 +1128,7 @@ let selectedOperator = null;
 
 
 
-      // 渲染服务列表
+       // 渲染服务列表
 function renderServices() {
     const servicesList = document.getElementById('servicesList');
     servicesList.innerHTML = '';
@@ -1167,7 +1155,7 @@ function renderServices() {
     }
     
     servicesToRender.forEach(service => {
-        // 计算价格范围（基于组合价格）
+        // 计算价格范围
         const priceRange = calculateServicePriceRange(service.id);
         
         const item = document.createElement('div');
@@ -1188,35 +1176,6 @@ function renderServices() {
     });
 }
     
-    servicesToRender.forEach(service => {
-        // 计算服务价格范围（考虑组合价格）
-function calculateServicePriceRange(serviceId) {
-    const savedPricing = localStorage.getItem('pricingRules');
-    let minPrice = 999, maxPrice = 0;
-    
-    if (savedPricing) {
-        try {
-            const pricingRules = JSON.parse(savedPricing);
-            const serviceRules = pricingRules.filter(rule => 
-                rule.serviceId == serviceId && rule.active === true
-            );
-            
-            serviceRules.forEach(rule => {
-                if (rule.price < minPrice) minPrice = rule.price;
-                if (rule.price > maxPrice) maxPrice = rule.price;
-            });
-        } catch (error) {
-            console.error('解析价格规则失败:', error);
-        }
-    }
-    
-    // 如果没有找到组合价格规则，使用默认范围
-    if (minPrice === 999 || maxPrice === 0) {
-        return "0.10-0.60";
-    }
-    
-    return `${minPrice.toFixed(2)}-${maxPrice.toFixed(2)}`;
-}
    
        // 渲染国家列表
 function renderCountries() {
@@ -1494,62 +1453,7 @@ function findComboPrice(serviceId, countryId) {
                 });
             }
         }
-
-        // 测试函数 - 如果这行不报错，说明问题在前面
-function testFunction() {
-    console.log('测试函数正常');
-}
-        // ============ 确保所有必需函数都已定义 ============
-if (typeof updateUserDropdown === 'undefined') {
-    console.error('updateUserDropdown 函数未定义');
-    function updateUserDropdown() {
-        console.log('updateUserDropdown placeholder');
-    }
-}
-
-if (typeof initDefaultCountries === 'undefined') {
-    console.error('initDefaultCountries 函数未定义');
-    function initDefaultCountries() {
-        console.log('initDefaultCountries placeholder');
-    }
-}
-
-if (typeof renderServices === 'undefined') {
-    console.error('renderServices 函数未定义');
-    function renderServices() {
-        console.log('renderServices placeholder');
-    }
-}
-
-if (typeof renderCountries === 'undefined') {
-    console.error('renderCountries 函数未定义');
-    function renderCountries() {
-        console.log('renderCountries placeholder');
-    }
-}
-
-if (typeof renderOperators === 'undefined') {
-    console.error('renderOperators 函数未定义');
-    function renderOperators() {
-        console.log('renderOperators placeholder');
-    }
-}
-
-if (typeof setupEventListeners === 'undefined') {
-    console.error('setupEventListeners 函数未定义');
-    function setupEventListeners() {
-        console.log('setupEventListeners placeholder');
-    }
-}
-
-if (typeof updatePriceCalculation === 'undefined') {
-    console.error('updatePriceCalculation 函数未定义');
-    function updatePriceCalculation() {
-        console.log('updatePriceCalculation placeholder');
-    }
-}
-
-// 监听价格规则变化
+        // 监听价格规则变化
 function setupPriceUpdateListener() {
     window.addEventListener('storage', function(e) {
         if (e.key === 'pricingRules') {
@@ -1561,15 +1465,13 @@ function setupPriceUpdateListener() {
 
 // 在页面加载时调用
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded 开始执行');
     updateUserDropdown();
     initDefaultCountries();
     renderServices();
     renderCountries();
     renderOperators();
     setupEventListeners();
-    setupPriceUpdateListener();
-    console.log('DOMContentLoaded 执行完成');
+    setupPriceUpdateListener(); // 新增
 });
     </script>
 </body>
