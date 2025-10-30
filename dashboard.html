@@ -1127,7 +1127,7 @@ let selectedOperator = null;
 
 
 
-       // 渲染服务列表
+      // 渲染服务列表
 function renderServices() {
     const servicesList = document.getElementById('servicesList');
     servicesList.innerHTML = '';
@@ -1154,7 +1154,7 @@ function renderServices() {
     }
     
     servicesToRender.forEach(service => {
-        // 计算价格范围
+        // 计算价格范围（基于组合价格）
         const priceRange = calculateServicePriceRange(service.id);
         
         const item = document.createElement('div');
@@ -1175,6 +1175,35 @@ function renderServices() {
     });
 }
     
+    servicesToRender.forEach(service => {
+        // 计算服务价格范围（考虑组合价格）
+function calculateServicePriceRange(serviceId) {
+    const savedPricing = localStorage.getItem('pricingRules');
+    let minPrice = 999, maxPrice = 0;
+    
+    if (savedPricing) {
+        try {
+            const pricingRules = JSON.parse(savedPricing);
+            const serviceRules = pricingRules.filter(rule => 
+                rule.serviceId == serviceId && rule.active === true
+            );
+            
+            serviceRules.forEach(rule => {
+                if (rule.price < minPrice) minPrice = rule.price;
+                if (rule.price > maxPrice) maxPrice = rule.price;
+            });
+        } catch (error) {
+            console.error('解析价格规则失败:', error);
+        }
+    }
+    
+    // 如果没有找到组合价格规则，使用默认范围
+    if (minPrice === 999 || maxPrice === 0) {
+        return "0.10-0.60";
+    }
+    
+    return `${minPrice.toFixed(2)}-${maxPrice.toFixed(2)}`;
+}
    
        // 渲染国家列表
 function renderCountries() {
