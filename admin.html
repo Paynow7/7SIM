@@ -223,32 +223,72 @@
             </div>
         </div>
 
-        <!-- 产品设置 -->
-        <div class="content-card active" id="products">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3><i class="fas fa-cog"></i> 接码服务管理</h3>
-                <button class="btn btn-primary" onclick="showAddServiceModal()">
-                    <i class="fas fa-plus"></i> 添加服务
+       <!-- 产品设置 -->
+<div class="content-card active" id="products">
+    <!-- 国家管理部分 -->
+    <div class="section" style="margin-bottom: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3><i class="fas fa-globe"></i> 国家管理</h3>
+            <div>
+                <button class="btn btn-danger" onclick="batchDelete('country')" style="margin-right: 10px;">
+                    <i class="fas fa-trash"></i> 批量删除
+                </button>
+                <button class="btn btn-primary" onclick="showAddServiceModal('country')">
+                    <i class="fas fa-plus"></i> 添加国家
                 </button>
             </div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>名称</th>
-                        <th>类型</th>
-                        <th>价格 (¥)</th>
-                        <th>库存</th>
-                        <th>状态</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="servicesTable">
-                    <!-- 动态加载 -->
-                </tbody>
-            </table>
         </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th width="30"><input type="checkbox" id="selectAllCountries" onchange="toggleSelectAll('country')"></th>
+                    <th>国家名称</th>
+                    <th>国旗</th>
+                    <th>价格 ($)</th>
+                    <th>库存</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="countriesTable">
+                <!-- 动态加载 -->
+            </tbody>
+        </table>
+    </div>
 
+    <!-- 应用管理部分 -->
+    <div class="section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3><i class="fas fa-mobile-alt"></i> 应用管理</h3>
+            <div>
+                <button class="btn btn-danger" onclick="batchDelete('app')" style="margin-right: 10px;">
+                    <i class="fas fa-trash"></i> 批量删除
+                </button>
+                <button class="btn btn-primary" onclick="showAddServiceModal('app')">
+                    <i class="fas fa-plus"></i> 添加应用
+                </button>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th width="30"><input type="checkbox" id="selectAllApps" onchange="toggleSelectAll('app')"></th>
+                    <th>应用名称</th>
+                    <th>图标</th>
+                    <th>价格 ($)</th>
+                    <th>库存</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="appsTable">
+                <!-- 动态加载 -->
+            </tbody>
+        </table>
+    </div>
+</div>
         <!-- 用户列表 -->
         <div class="content-card" id="users">
             <h3><i class="fas fa-users"></i> 用户管理</h3>
@@ -441,48 +481,54 @@
         </div>
     </div>
 
-    <!-- 添加服务模态框 -->
-    <div class="modal" id="addServiceModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>添加接码服务</h3>
-                <button class="close-modal" onclick="closeModal('addServiceModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="addServiceForm">
+   <!-- 添加服务模态框 -->
+<div class="modal" id="addServiceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="serviceModalTitle">添加服务</h3>
+            <button class="close-modal" onclick="closeModal('addServiceModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addServiceForm">
+                <div class="form-group">
+                    <label>服务类型</label>
+                    <select class="form-control" id="serviceType" required onchange="toggleServiceFields()">
+                        <option value="country">国家</option>
+                        <option value="app">应用</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="nameLabel">国家名称</label>
+                    <input type="text" class="form-control" id="serviceName" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
-                        <label>服务名称</label>
-                        <input type="text" class="form-control" id="serviceName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>服务类型</label>
-                        <select class="form-control" id="serviceType" required>
-                            <option value="country">国家</option>
-                            <option value="app">应用</option>
-                        </select>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div class="form-group">
-                            <label>价格 (¥)</label>
-                            <input type="number" class="form-control" id="servicePrice" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label>库存数量</label>
-                            <input type="number" class="form-control" id="serviceStock" required>
-                        </div>
+                        <label>价格 ($)</label>
+                        <input type="number" class="form-control" id="servicePrice" step="0.01" required>
                     </div>
                     <div class="form-group">
-                        <label id="iconLabel">国旗URL</label>
-                        <input type="text" class="form-control" id="serviceIcon" placeholder="输入国旗图片URL或图标类名">
+                        <label>库存数量</label>
+                        <input type="number" class="form-control" id="serviceStock" required>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer" style="text-align: right;">
-                <button class="btn" onclick="closeModal('addServiceModal')">取消</button>
-                <button class="btn btn-primary" onclick="addService()">添加服务</button>
-            </div>
+                </div>
+                <div class="form-group" id="iconField">
+                    <label id="iconLabel">国旗URL</label>
+                    <input type="text" class="form-control" id="serviceIcon" placeholder="输入国旗图片URL">
+                    <small class="form-text text-muted">例如: https://flagcdn.com/w40/us.png</small>
+                </div>
+                <div class="form-group" id="appIconField" style="display: none;">
+                    <label>图标类名</label>
+                    <input type="text" class="form-control" id="appIconClass" placeholder="输入FontAwesome图标类名">
+                    <small class="form-text text-muted">例如: fab fa-whatsapp</small>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer" style="text-align: right;">
+            <button class="btn" onclick="closeModal('addServiceModal')">取消</button>
+            <button class="btn btn-primary" onclick="addService()">添加</button>
         </div>
     </div>
+</div>
 
     <!-- 添加价格规则模态框 -->
 <div class="modal" id="addPriceModal">
@@ -874,13 +920,13 @@ function deletePriceRule(ruleId) {
     }
 }
 
-       // 加载标签页数据
+      // 加载标签页数据
 async function loadTabData(tab) {
     await loadAppData();
     
     switch(tab) {
         case 'products':
-            loadServices();
+            loadProductsTable(); // 修改为加载新产品表格
             break;
         case 'pricing':
             loadPricingPage();
@@ -1191,6 +1237,181 @@ function editService(serviceId) {
             // 清空表单
             document.getElementById('transferAmount').value = '';
             document.getElementById('transferToAddress').value = '';
+        }
+        // 批量删除功能
+        function batchDelete(type) {
+            const selectedItems = document.querySelectorAll(`input[name="${type}Checkbox"]:checked`);
+            
+            if (selectedItems.length === 0) {
+                alert('请先选择要删除的项');
+                return;
+            }
+            
+            if (confirm(`确定要删除选中的 ${selectedItems.length} 个${type === 'country' ? '国家' : '应用'}吗？`)) {
+                const idsToDelete = Array.from(selectedItems).map(item => parseInt(item.value));
+                
+                // 从服务列表中删除
+                appData.services = appData.services.filter(service => 
+                    !idsToDelete.includes(service.id)
+                );
+                
+                // 同时删除相关的价格规则
+                pricingRules = pricingRules.filter(rule => 
+                    !idsToDelete.includes(rule.serviceId) && !idsToDelete.includes(rule.countryId)
+                );
+                
+                saveAppData();
+                savePricingData();
+                loadProductsTable();
+                alert(`成功删除 ${selectedItems.length} 个${type === 'country' ? '国家' : '应用'}！`);
+            }
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll(type) {
+            const selectAll = document.getElementById(`selectAll${type === 'country' ? 'Countries' : 'Apps'}`);
+            const checkboxes = document.querySelectorAll(`input[name="${type}Checkbox"]`);
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+
+        // 切换服务类型字段显示
+        function toggleServiceFields() {
+            const type = document.getElementById('serviceType').value;
+            const nameLabel = document.getElementById('nameLabel');
+            const iconField = document.getElementById('iconField');
+            const appIconField = document.getElementById('appIconField');
+            
+            if (type === 'country') {
+                nameLabel.textContent = '国家名称';
+                iconField.style.display = 'block';
+                appIconField.style.display = 'none';
+                document.getElementById('serviceModalTitle').textContent = '添加国家';
+            } else {
+                nameLabel.textContent = '应用名称';
+                iconField.style.display = 'none';
+                appIconField.style.display = 'block';
+                document.getElementById('serviceModalTitle').textContent = '添加应用';
+            }
+        }
+
+        // 显示添加服务模态框（带类型参数）
+        function showAddServiceModal(type) {
+            document.getElementById('serviceType').value = type;
+            toggleServiceFields();
+            document.getElementById('addServiceForm').reset();
+            document.getElementById('addServiceModal').style.display = 'flex';
+        }
+
+        // 加载产品表格（分开显示国家和应用）
+        function loadProductsTable() {
+            loadCountriesTable();
+            loadAppsTable();
+            updateStats();
+        }
+
+        // 加载国家表格
+        function loadCountriesTable() {
+            const tbody = document.getElementById('countriesTable');
+            tbody.innerHTML = '';
+            
+            const countries = appData.services.filter(service => service.type === 'country');
+            
+            countries.forEach(country => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" name="countryCheckbox" value="${country.id}"></td>
+                        <td>${country.name}</td>
+                        <td><img src="${country.flag}" alt="${country.name}" style="width: 24px; height: 16px; border-radius: 2px;"></td>
+                        <td>$${country.price}</td>
+                        <td>${country.stock}</td>
+                        <td>${country.active ? '启用' : '禁用'}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editService(${country.id})">编辑</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteService(${country.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            if (countries.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">
+                            暂无国家数据
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 加载应用表格
+        function loadAppsTable() {
+            const tbody = document.getElementById('appsTable');
+            tbody.innerHTML = '';
+            
+            const apps = appData.services.filter(service => service.type === 'app');
+            
+            apps.forEach(app => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" name="appCheckbox" value="${app.id}"></td>
+                        <td>${app.name}</td>
+                        <td><i class="${app.icon || 'fas fa-mobile-alt'}" style="font-size: 1.2rem;"></i></td>
+                        <td>$${app.price}</td>
+                        <td>${app.stock}</td>
+                        <td>${app.active ? '启用' : '禁用'}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editService(${app.id})">编辑</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteService(${app.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            if (apps.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">
+                            暂无应用数据
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 修改添加服务函数
+        function addService() {
+            const name = document.getElementById('serviceName').value;
+            const type = document.getElementById('serviceType').value;
+            const price = parseFloat(document.getElementById('servicePrice').value);
+            const stock = parseInt(document.getElementById('serviceStock').value);
+            
+            const newService = {
+                id: Date.now(),
+                name,
+                type,
+                price,
+                stock,
+                active: true
+            };
+            
+            // 根据类型设置不同的图标字段
+            if (type === 'country') {
+                const flag = document.getElementById('serviceIcon').value;
+                newService.flag = flag || 'https://flagcdn.com/w40/us.png';
+            } else {
+                const iconClass = document.getElementById('appIconClass').value;
+                newService.icon = iconClass || 'fas fa-mobile-alt';
+            }
+            
+            appData.services.push(newService);
+            saveAppData();
+            loadProductsTable();
+            closeModal('addServiceModal');
+            alert(`${type === 'country' ? '国家' : '应用'}添加成功！`);
         }
 
         // 初始化价格数据
