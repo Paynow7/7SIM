@@ -848,6 +848,21 @@ function savePriceRule() {
     closeModal('addPriceModal');
     alert('价格规则保存成功！');
 }
+        // 通知 dashboard 页面价格规则已更新
+    notifyDashboardPriceUpdate();
+    
+    alert('价格规则保存成功！');
+}
+
+// 通知 dashboard 价格更新
+function notifyDashboardPriceUpdate() {
+    // 触发 storage 事件
+    const updateEvent = new Event('storage');
+    window.localStorage.setItem('pricingRulesUpdate', Date.now().toString());
+    setTimeout(() => {
+        window.localStorage.removeItem('pricingRulesUpdate');
+    }, 100);
+}
 
 // 删除价格规则
 function deletePriceRule(ruleId) {
