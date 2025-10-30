@@ -1494,6 +1494,11 @@ function findComboPrice(serviceId, countryId) {
                 });
             }
         }
+
+        // 测试函数 - 如果这行不报错，说明问题在前面
+function testFunction() {
+    console.log('测试函数正常');
+}
         // 监听价格规则变化
 function setupPriceUpdateListener() {
     window.addEventListener('storage', function(e) {
