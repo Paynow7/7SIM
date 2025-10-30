@@ -1305,24 +1305,56 @@ function calculateServicePriceRange(serviceId) {
             updateGetNumberButton();
         }
 
-        // 更新价格计算
-        function updatePriceCalculation() {
-            const priceCalculation = document.getElementById('priceCalculation');
+       // 更新价格计算
+function updatePriceCalculation() {
+    const priceCalculation = document.getElementById('priceCalculation');
+    
+    if (selectedService && selectedCountry) {
+        priceCalculation.style.display = 'block';
+        
+        // 查找对应的价格规则
+        const comboPrice = findComboPrice(selectedService.id, selectedCountry.id);
+        
+        if (comboPrice !== null) {
+            // 使用组合价格
+            document.getElementById('servicePriceValue').textContent = `$${comboPrice.toFixed(2)}`;
+            document.getElementById('countryPriceValue').textContent = `$0.00`;
+            document.getElementById('totalPriceValue').textContent = `$${comboPrice.toFixed(2)}`;
+        } else {
+            // 使用默认价格相加
+            const servicePrice = selectedService.price;
+            const countryPrice = selectedCountry.price;
+            const totalPrice = servicePrice + countryPrice;
             
-            if (selectedService && selectedCountry) {
-                priceCalculation.style.display = 'block';
-                
-                const servicePrice = selectedService.price;
-                const countryPrice = selectedCountry.price;
-                const totalPrice = servicePrice + countryPrice;
-                
-                document.getElementById('servicePriceValue').textContent = `$${servicePrice.toFixed(2)}`;
-                document.getElementById('countryPriceValue').textContent = `$${countryPrice.toFixed(2)}`;
-                document.getElementById('totalPriceValue').textContent = `$${totalPrice.toFixed(2)}`;
-            } else {
-                priceCalculation.style.display = 'none';
-            }
+            document.getElementById('servicePriceValue').textContent = `$${servicePrice.toFixed(2)}`;
+            document.getElementById('countryPriceValue').textContent = `$${countryPrice.toFixed(2)}`;
+            document.getElementById('totalPriceValue').textContent = `$${totalPrice.toFixed(2)}`;
         }
+    } else {
+        priceCalculation.style.display = 'none';
+    }
+}
+
+// 查找应用+国家组合价格
+function findComboPrice(serviceId, countryId) {
+    const savedPricing = localStorage.getItem('pricingRules');
+    if (savedPricing) {
+        try {
+            const pricingRules = JSON.parse(savedPricing);
+            const comboRule = pricingRules.find(rule => 
+                rule.serviceId == serviceId && 
+                rule.countryId == countryId && 
+                rule.active === true
+            );
+            
+            return comboRule ? comboRule.price : null;
+        } catch (error) {
+            console.error('解析价格规则失败:', error);
+            return null;
+        }
+    }
+    return null;
+}
 
         // 更新获取号码按钮状态
         function updateGetNumberButton() {
@@ -1420,6 +1452,26 @@ function calculateServicePriceRange(serviceId) {
                 });
             }
         }
+        // 监听价格规则变化
+function setupPriceUpdateListener() {
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'pricingRules') {
+            console.log('检测到价格规则更新，重新计算价格');
+            updatePriceCalculation();
+        }
+    });
+}
+
+// 在页面加载时调用
+document.addEventListener('DOMContentLoaded', function() {
+    updateUserDropdown();
+    initDefaultCountries();
+    renderServices();
+    renderCountries();
+    renderOperators();
+    setupEventListeners();
+    setupPriceUpdateListener(); // 新增
+});
     </script>
 </body>
 </html>
