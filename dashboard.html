@@ -1151,6 +1151,35 @@ function loadDataFromAdmin() {
         let selectedCountry = null;
         let selectedOperator = null;
 
+        // 计算服务价格范围
+function calculateServicePriceRange(serviceId) {
+    const savedPricing = localStorage.getItem('pricingRules');
+    let minPrice = 999, maxPrice = 0;
+    
+    if (savedPricing) {
+        try {
+            const pricingRules = JSON.parse(savedPricing);
+            const serviceRules = pricingRules.filter(rule => 
+                rule.serviceId == serviceId && rule.active === true
+            );
+            
+            serviceRules.forEach(rule => {
+                if (rule.price < minPrice) minPrice = rule.price;
+                if (rule.price > maxPrice) maxPrice = rule.price;
+            });
+        } catch (error) {
+            console.error('解析价格规则失败:', error);
+        }
+    }
+    
+    // 如果没有找到价格规则，使用默认范围
+    if (minPrice === 999 || maxPrice === 0) {
+        return "0.10-0.60";
+    }
+    
+    return `${minPrice.toFixed(2)}-${maxPrice.toFixed(2)}`;
+}
+
                // 渲染服务列表
         function renderServices() {
             const servicesList = document.getElementById('servicesList');
