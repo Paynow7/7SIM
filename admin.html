@@ -230,6 +230,9 @@
         <div class="nav-item" data-tab="pricing">
             <i class="fas fa-tags"></i> 价格设置
         </div>
+         <div class="nav-item" data-tab="operators">
+    <i class="fas fa-sim-card"></i> 运营商设置
+</div>
         <div class="nav-item" data-tab="users">
             <i class="fas fa-users"></i> 用户列表
         </div>
@@ -385,6 +388,39 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- 运营商设置 -->
+<div class="content-card" id="operators">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3><i class="fas fa-sim-card"></i> 运营商管理</h3>
+        <button class="btn btn-primary" onclick="showAddOperatorModal()">
+            <i class="fas fa-plus"></i> 添加运营商
+        </button>
+    </div>
+    
+    <div class="batch-actions">
+        <button class="btn btn-danger" onclick="batchDelete('operators')">
+            <i class="fas fa-trash"></i> 批量删除选中运营商
+        </button>
+        <span id="selectedOperatorsCount">已选择 0 个运营商</span>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th width="30"><input type="checkbox" id="selectAllOperators" onchange="toggleSelectAll('operators')"></th>
+                <th>运营商名称</th>
+                <th>显示名称</th>
+                <th>价格倍数</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="operatorsTable">
+            <!-- 动态加载 -->
+        </tbody>
+    </table>
+</div>
         
         <!-- 其他内容保持不变 -->
         <div class="content-card" id="users">
@@ -534,6 +570,46 @@
         </div>
     </div>
 
+    <!-- 添加运营商模态框 -->
+<div class="modal" id="addOperatorModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="operatorModalTitle">添加运营商</h3>
+            <button class="close-modal" onclick="closeModal('addOperatorModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addOperatorForm">
+                <div class="form-group">
+                    <label>运营商名称</label>
+                    <input type="text" class="form-control" id="operatorName" required placeholder="例如：标准套餐">
+                </div>
+                <div class="form-group">
+                    <label>显示名称</label>
+                    <input type="text" class="form-control" id="operatorDisplayName" required placeholder="例如：Virtual 4">
+                </div>
+                <div class="form-group">
+                    <label>价格倍数</label>
+                    <input type="number" class="form-control" id="operatorMultiplier" step="0.01" min="0.01" value="1.00" required>
+                    <small class="form-text text-muted">最终价格 = 基础价格 × 倍数</small>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select class="form-control" id="operatorStatus">
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                </div>
+                <input type="hidden" id="operatorModalAction" value="add">
+                <input type="hidden" id="operatorId" value="">
+            </form>
+        </div>
+        <div class="modal-footer" style="text-align: right;">
+            <button class="btn" onclick="closeModal('addOperatorModal')">取消</button>
+            <button class="btn btn-primary" onclick="saveOperator()">保存运营商</button>
+        </div>
+    </div>
+</div>
+
     <!-- 其他模态框保持不变 -->
 
     <script>
@@ -614,6 +690,23 @@ function initDefaultData() {
             { id: 2, name: "Telegram", code: "telegram", icon: "fab fa-telegram", active: true },
             { id: 3, name: "微信", code: "wechat", icon: "fab fa-weixin", active: true }
         ],
+        operators: [
+            { 
+                id: 1, 
+                name: "标准套餐", 
+                displayName: "Virtual 4", 
+                multiplier: 1.00, 
+                active: true 
+            },
+            { 
+                id: 2, 
+                name: "高级套餐", 
+                displayName: "Virtual 21", 
+                multiplier: 1.76, 
+                active: true 
+            }
+        ],
+
         pricingRules: [],
         paymentMethods: [],
         users: []
@@ -688,30 +781,33 @@ function getCurrentTab() {
             });
         });
 
-        // 加载标签页数据
-        function loadTabData(tab) {
-            switch(tab) {
-                case 'countries':
-                    loadCountriesTable();
-                    break;
-                case 'services':
-                    loadServicesTable();
-                    break;
-                case 'pricing':
-                    loadPricingPage();
-                    break;
-                case 'users':
-                    loadUsers();
-                    break;
-                case 'crypto':
-                    loadTransferUsers();
-                    break;
-                case 'wallet':
-                    loadWalletConfig();
-                    break;
-            }
-            updateStats();
-        }
+        // 在 loadTabData 函数中添加
+function loadTabData(tab) {
+    switch(tab) {
+        case 'countries':
+            loadCountriesTable();
+            break;
+        case 'services':
+            loadServicesTable();
+            break;
+        case 'pricing':
+            loadPricingPage();
+            break;
+        case 'operators':  // 新增
+            loadOperatorsTable();
+            break;
+        case 'users':
+            loadUsers();
+            break;
+        case 'crypto':
+            loadTransferUsers();
+            break;
+        case 'wallet':
+            loadWalletConfig();
+            break;
+    }
+    updateStats();
+}
 
        // 加载国家表格 - 修复版本
 function loadCountriesTable() {
@@ -866,7 +962,61 @@ function loadCountriesTable() {
                         function loadPricingTable() {
             const tbody = document.getElementById('pricingTable');
             tbody.innerHTML = '';
-            
+
+                            // 加载运营商表格
+function loadOperatorsTable() {
+    const tbody = document.getElementById('operatorsTable');
+    tbody.innerHTML = '';
+    
+    if (!appData.operators || !Array.isArray(appData.operators)) {
+        console.error('运营商数据未正确初始化:', appData.operators);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: #e74c3c;">
+                    数据加载错误，请刷新页面
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    if (appData.operators.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">
+                    暂无运营商数据，请点击"添加运营商"按钮创建
+                </td>
+            </tr>
+        `;
+        updateSelectedCount('operators');
+        return;
+    }
+    
+    appData.operators.forEach(operator => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="checkbox" name="operatorCheckbox" value="${operator.id}" onchange="updateSelectedCount('operators')"></td>
+            <td>${operator.name}</td>
+            <td>${operator.displayName}</td>
+            <td>${operator.multiplier} 倍</td>
+            <td>
+                <span class="badge ${operator.active ? 'badge-success' : 'badge-secondary'}">
+                    ${operator.active ? '启用' : '禁用'}
+                </span>
+            </td>
+            <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="editOperator(${operator.id})">编辑</button>
+                <button class="btn btn-sm btn-warning" onclick="toggleOperatorStatus(${operator.id})">
+                    ${operator.active ? '禁用' : '启用'}
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteOperator(${operator.id})">删除</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    updateSelectedCount('operators');
+}
             // 安全检查 - 添加这部分
             if (!appData.pricingRules || !Array.isArray(appData.pricingRules)) {
                 console.error('价格规则数据未正确初始化:', appData.pricingRules);
@@ -1040,59 +1190,65 @@ function loadCountriesTable() {
                 }
             }
         }
-        // 全选/取消全选
         function toggleSelectAll(type) {
-            let selectAll, checkboxes;
-            
-            switch(type) {
-                case 'countries':
-                    selectAll = document.getElementById('selectAllCountries');
-                    checkboxes = document.querySelectorAll('input[name="countryCheckbox"]');
-                    break;
-                case 'services':
-                    selectAll = document.getElementById('selectAllServices');
-                    checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]');
-                    break;
-                case 'pricing':
-                    selectAll = document.getElementById('selectAllPricing');
-                    checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]');
-                    break;
-                default:
-                    return;
-            }
-            
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAll.checked;
-            });
-            
-            updateSelectedCount(type);
-        }
+    let selectAll, checkboxes;
+    
+    switch(type) {
+        case 'countries':
+            selectAll = document.getElementById('selectAllCountries');
+            checkboxes = document.querySelectorAll('input[name="countryCheckbox"]');
+            break;
+        case 'services':
+            selectAll = document.getElementById('selectAllServices');
+            checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]');
+            break;
+        case 'pricing':
+            selectAll = document.getElementById('selectAllPricing');
+            checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]');
+            break;
+        case 'operators':  // 新增运营商处理
+            selectAll = document.getElementById('selectAllOperators');
+            checkboxes = document.querySelectorAll('input[name="operatorCheckbox"]');
+            break;
+        default:
+            return;
+    }
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateSelectedCount(type);
+}
 
-        // 更新选中数量
         function updateSelectedCount(type) {
-            let checkboxes, countElement;
-            
-            switch(type) {
-                case 'countries':
-                    checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
-                    countElement = document.getElementById('selectedCount');
-                    break;
-                case 'services':
-                    checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]:checked');
-                    countElement = document.getElementById('selectedServicesCount');
-                    break;
-                case 'pricing':
-                    checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
-                    countElement = document.getElementById('selectedPricingCount');
-                    break;
-                default:
-                    return;
-            }
-            
-            if (countElement) {
-                countElement.textContent = `已选择 ${checkboxes.length} 个${type === 'countries' ? '国家' : type === 'services' ? '服务' : '价格规则'}`;
-            }
-        }
+    let checkboxes, countElement;
+    
+    switch(type) {
+        case 'countries':
+            checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
+            countElement = document.getElementById('selectedCount');
+            break;
+        case 'services':
+            checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]:checked');
+            countElement = document.getElementById('selectedServicesCount');
+            break;
+        case 'pricing':
+            checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
+            countElement = document.getElementById('selectedPricingCount');
+            break;
+        case 'operators':  // 新增运营商处理
+            checkboxes = document.querySelectorAll('input[name="operatorCheckbox"]:checked');
+            countElement = document.getElementById('selectedOperatorsCount');
+            break;
+        default:
+            return;
+    }
+    
+    if (countElement) {
+        countElement.textContent = `已选择 ${checkboxes.length} 个${type === 'countries' ? '国家' : type === 'services' ? '服务' : type === 'pricing' ? '价格规则' : '运营商'}`;
+    }
+}
 
         // 国家管理功能
         function showAddCountryModal() {
@@ -1321,6 +1477,88 @@ function deleteService(serviceId) {
         function filterPricingTable() {
             loadPricingTable();
         }
+
+        // 运营商管理功能
+function showAddOperatorModal() {
+    document.getElementById('operatorModalTitle').textContent = '添加运营商';
+    document.getElementById('addOperatorForm').reset();
+    document.getElementById('operatorModalAction').value = 'add';
+    document.getElementById('operatorId').value = '';
+    document.getElementById('addOperatorModal').style.display = 'flex';
+}
+
+function saveOperator() {
+    const name = document.getElementById('operatorName').value;
+    const displayName = document.getElementById('operatorDisplayName').value;
+    const multiplier = parseFloat(document.getElementById('operatorMultiplier').value);
+    const active = document.getElementById('operatorStatus').value === 'active';
+    const action = document.getElementById('operatorModalAction').value;
+    const operatorId = document.getElementById('operatorId').value;
+    
+    if (!name || !displayName || !multiplier) {
+        alert('请填写完整信息');
+        return;
+    }
+    
+    if (action === 'add') {
+        const newOperator = {
+            id: Date.now(),
+            name,
+            displayName,
+            multiplier,
+            active
+        };
+        appData.operators.push(newOperator);
+    } else {
+        const operatorIndex = appData.operators.findIndex(op => op.id == operatorId);
+        if (operatorIndex !== -1) {
+            appData.operators[operatorIndex] = {
+                ...appData.operators[operatorIndex],
+                name,
+                displayName,
+                multiplier,
+                active
+            };
+        }
+    }
+    
+    saveAppData();
+    loadOperatorsTable();
+    closeModal('addOperatorModal');
+    alert('运营商保存成功！');
+}
+
+function editOperator(operatorId) {
+    const operator = appData.operators.find(op => op.id == operatorId);
+    if (operator) {
+        document.getElementById('operatorModalTitle').textContent = '编辑运营商';
+        document.getElementById('operatorName').value = operator.name;
+        document.getElementById('operatorDisplayName').value = operator.displayName;
+        document.getElementById('operatorMultiplier').value = operator.multiplier;
+        document.getElementById('operatorStatus').value = operator.active ? 'active' : 'inactive';
+        document.getElementById('operatorModalAction').value = 'edit';
+        document.getElementById('operatorId').value = operator.id;
+        document.getElementById('addOperatorModal').style.display = 'flex';
+    }
+}
+
+function toggleOperatorStatus(operatorId) {
+    const operator = appData.operators.find(op => op.id == operatorId);
+    if (operator) {
+        operator.active = !operator.active;
+        saveAppData();
+        loadOperatorsTable();
+    }
+}
+
+function deleteOperator(operatorId) {
+    if (confirm('确定要删除这个运营商吗？')) {
+        appData.operators = appData.operators.filter(op => op.id != operatorId);
+        saveAppData();
+        loadOperatorsTable();
+        alert('运营商已删除！');
+    }
+}
 
         // 模态框功能
         function closeModal(modalId) {
