@@ -1307,24 +1307,51 @@ function calculateServicePriceRange(serviceId) {
     
     updateGetNumberButton();
 }
-        // 更新价格计算
-        function updatePriceCalculation() {
-            const priceCalculation = document.getElementById('priceCalculation');
-            
-            if (selectedService && selectedCountry) {
-                priceCalculation.style.display = 'block';
-                
-                const servicePrice = selectedService.price;
-                const countryPrice = selectedCountry.price;
-                const totalPrice = servicePrice + countryPrice;
-                
-                document.getElementById('servicePriceValue').textContent = `$${servicePrice.toFixed(2)}`;
-                document.getElementById('countryPriceValue').textContent = `$${countryPrice.toFixed(2)}`;
-                document.getElementById('totalPriceValue').textContent = `$${totalPrice.toFixed(2)}`;
-            } else {
-                priceCalculation.style.display = 'none';
-            }
+       // 在 dashboard.html 中修改 updatePriceCalculation 函数
+function updatePriceCalculation() {
+    const priceCalculation = document.getElementById('priceCalculation');
+    
+    if (selectedService && selectedCountry) {
+        priceCalculation.style.display = 'block';
+        
+        // 查找对应的价格规则
+        const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
+        let servicePrice = selectedService.price; // 默认价格
+        let countryPrice = selectedCountry.price; // 默认价格
+        
+        // 如果找到价格规则，使用规则中的价格
+        if (priceRule) {
+            servicePrice = priceRule.price;
+            countryPrice = 0; // 价格规则已经包含了国家价格
         }
+        
+        const totalPrice = servicePrice + countryPrice;
+        
+        document.getElementById('servicePriceValue').textContent = `$${servicePrice.toFixed(2)}`;
+        document.getElementById('countryPriceValue').textContent = `$${countryPrice.toFixed(2)}`;
+        document.getElementById('totalPriceValue').textContent = `$${totalPrice.toFixed(2)}`;
+    } else {
+        priceCalculation.style.display = 'none';
+    }
+}
+
+// 查找价格规则
+function findPriceRule(serviceId, countryId) {
+    const savedPricing = localStorage.getItem('pricingRules');
+    if (savedPricing) {
+        try {
+            const pricingRules = JSON.parse(savedPricing);
+            return pricingRules.find(rule => 
+                rule.serviceId == serviceId && 
+                rule.countryId == countryId && 
+                rule.active === true
+            );
+        } catch (error) {
+            console.error('解析价格规则失败:', error);
+        }
+    }
+    return null;
+}
 
         // 更新获取号码按钮状态
         function updateGetNumberButton() {
@@ -1368,7 +1395,7 @@ function calculateServicePriceRange(serviceId) {
             // 这里可以添加实际的获取号码逻辑
         }
 
-        // 设置事件监听器
+               // 设置事件监听器
         function setupEventListeners() {
             // 移除选择事件
             document.getElementById('removeServiceSelection').addEventListener('click', removeServiceSelection);
@@ -1422,6 +1449,54 @@ function calculateServicePriceRange(serviceId) {
                 });
             }
         }
+
+        // ========== 添加数据更新监听代码 START ==========
+        // 监听 admin 数据更新
+        window.addEventListener('appDataUpdated', function() {
+            console.log('检测到管理员数据更新，重新加载服务和国家数据...');
+            initDefaultCountries();
+            renderServices();
+            renderCountries();
+            // 重置选择状态
+            selectedService = null;
+            selectedCountry = null;
+            selectedOperator = null;
+            document.getElementById('selectedServiceItem').style.display = 'none';
+            document.getElementById('selectedCountryItem').style.display = 'none';
+            document.getElementById('servicesList').style.display = 'block';
+            document.getElementById('countriesList').style.display = 'block';
+            document.getElementById('priceCalculation').style.display = 'none';
+            updateGetNumberButton();
+        });
+
+        // 监听 localStorage 变化（多标签页同步）
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'lastUpdate' || e.key === 'appData' || e.key === 'pricingRules') {
+                console.log('检测到存储数据变化，重新加载数据...');
+                initDefaultCountries();
+                renderServices();
+                renderCountries();
+            }
+        });
+
+        // 监听页面可见性变化（当用户切换回这个标签页时检查更新）
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // 页面变为可见时检查数据更新
+                const lastUpdate = localStorage.getItem('lastUpdate');
+                if (lastUpdate && lastUpdate !== window.lastDataUpdate) {
+                    console.log('页面重新激活，检查数据更新...');
+                    initDefaultCountries();
+                    renderServices();
+                    renderCountries();
+                    window.lastDataUpdate = lastUpdate;
+                }
+            }
+        });
+
+        // 初始化最后更新时间
+        window.lastDataUpdate = localStorage.getItem('lastUpdate');
+        // ========== 添加数据更新监听代码 END ==========
     </script>
 </body>
 </html>
