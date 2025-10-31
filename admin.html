@@ -710,6 +710,7 @@ function loadCountriesTable() {
                 </td>
             </tr>
         `;
+        updateSelectedCount('countries');
         return;
     }
     
@@ -737,7 +738,6 @@ function loadCountriesTable() {
     
     updateSelectedCount('countries');
 }
-
                // 加载服务表格 - 修复版本
         function loadServicesTable() {
             const tbody = document.getElementById('servicesTable');
@@ -1055,16 +1055,16 @@ function loadCountriesTable() {
             }
         }
 
-        function deleteCountry(countryId) {
-            if (confirm('确定要删除这个国家吗？相关的价格规则也会被删除！')) {
-                appData.countries = appData.countries.filter(c => c.id !== countryId);
-                // 删除相关的价格规则
-                appData.pricingRules = appData.pricingRules.filter(rule => rule.countryId !== countryId);
-                saveAppData();
-                loadCountriesTable();
-                alert('国家删除成功！');
-            }
-        }
+       function deleteCountry(countryId) {
+    if (confirm('确定要删除这个国家吗？相关的价格规则也会被删除！')) {
+        appData.countries = appData.countries.filter(c => c.id !== countryId);
+        // 删除相关的价格规则 - 修复比较运算符
+        appData.pricingRules = appData.pricingRules.filter(rule => rule.countryId != countryId);
+        saveAppData();
+        loadCountriesTable();
+        alert('国家删除成功！');
+    }
+}
 
         // 服务管理功能
         function showAddServiceModal() {
@@ -1113,16 +1113,16 @@ function loadCountriesTable() {
             }
         }
 
-        function deleteService(serviceId) {
-            if (confirm('确定要删除这个服务吗？相关的价格规则也会被删除！')) {
-                appData.services = appData.services.filter(s => s.id !== serviceId);
-                // 删除相关的价格规则
-                appData.pricingRules = appData.pricingRules.filter(rule => rule.serviceId !== serviceId);
-                saveAppData();
-                loadServicesTable();
-                alert('服务删除成功！');
-            }
-        }
+      function deleteService(serviceId) {
+    if (confirm('确定要删除这个服务吗？相关的价格规则也会被删除！')) {
+        appData.services = appData.services.filter(s => s.id !== serviceId);
+        // 删除相关的价格规则 - 修复比较运算符
+        appData.pricingRules = appData.pricingRules.filter(rule => rule.serviceId != serviceId);
+        saveAppData();
+        loadServicesTable();
+        alert('服务删除成功！');
+    }
+}
 
         // 价格规则功能
         function showAddPriceModal() {
@@ -1270,19 +1270,29 @@ function loadCountriesTable() {
         }
 
       // 初始化 - 使用DOMContentLoaded确保页面加载完成
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Admin页面加载完成，开始初始化数据...');
-    initData();
-    loadTabData('countries');
-    
-    // 调试：检查数据是否加载成功
-    setTimeout(() => {
-        console.log('当前appData:', appData);
-        console.log('国家数量:', appData.countries.length);
-        console.log('服务数量:', appData.services.length);
-        console.log('价格规则数量:', appData.pricingRules.length);
-    }, 1000);
-});
+ // 初始化 - 使用DOMContentLoaded确保页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Admin页面加载完成，开始初始化数据...');
+            initData();
+            // 确保所有函数都已定义后再调用
+            setTimeout(() => {
+                if (typeof loadTabData === 'function') {
+                    loadTabData('countries');
+                } else {
+                    console.error('loadTabData 函数未定义');
+                    // 手动加载国家表格作为备选
+                    loadCountriesTable();
+                }
+            }, 100);
+            
+            // 调试：检查数据是否加载成功
+            setTimeout(() => {
+                console.log('当前appData:', appData);
+                console.log('国家数量:', appData.countries.length);
+                console.log('服务数量:', appData.services.length);
+                console.log('价格规则数量:', appData.pricingRules.length);
+            }, 500);
+        });
     </script>
 </body>
 </html>
