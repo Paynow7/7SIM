@@ -1104,16 +1104,6 @@ function loadDataFromAdmin() {
             });
         }
 
-        // 在页面加载时更新用户信息
-        document.addEventListener('DOMContentLoaded', function() {
-            updateUserDropdown();
-            loadDataFromAdmin();  // 改为加载管理员数据
-            renderServices();
-            renderCountries();
-            renderOperators();
-            setupEventListeners();
-        });
-
         // 全局变量
         let selectedService = null;
         let selectedCountry = null;
@@ -1182,6 +1172,16 @@ function loadDataFromAdmin() {
                 countriesList.appendChild(item);
             });
         }
+
+         // 在页面加载时更新用户信息
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserDropdown();
+            loadDataFromAdmin();  // 改为加载管理员数据
+            renderServices();
+            renderCountries();
+            renderOperators();
+            setupEventListeners();
+        });
 
         // 计算服务价格范围
         function calculateServicePriceRange(serviceId) {
