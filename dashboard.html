@@ -1038,51 +1038,64 @@
         };
 
         // 从 localStorage 加载管理员添加的数据
-        function loadDataFromAdmin() {
-            const savedData = localStorage.getItem('appData');
-            if (savedData) {
-                try {
-                    const adminData = JSON.parse(savedData);
-                    
-                    // 清空现有数据
-                    servicesData.services = [];
-                    servicesData.countries = [];
-                    servicesData.operators = [];
-                    
-                    // 从管理员数据中分类加载
-                    if (adminData.services && adminData.services.length > 0) {
-                        adminData.services.forEach(item => {
-                            if (item.type === 'service') {
-                                servicesData.services.push({
-                                    id: item.id,
-                                    name: item.name,
-                                    icon: item.icon || 'fas fa-mobile-alt',
-                                    numbers: item.numbers || '0',
-                                    price: item.price || 0
-                                });
-                            } else if (item.type === 'country') {
-                                servicesData.countries.push({
-                                    id: item.id,
-                                    name: item.name,
-                                    flag: item.flag || 'https://flagcdn.com/w40/un.png'
-                                });
-                            }
-                            // 可以添加 operator 类型的处理
+function loadDataFromAdmin() {
+    const savedData = localStorage.getItem('appData');
+    console.log('从 localStorage 读取的数据:', savedData);
+    
+    if (savedData) {
+        try {
+            const adminData = JSON.parse(savedData);
+            console.log('解析后的管理员数据:', adminData);
+            
+            // 清空现有数据
+            servicesData.services = [];
+            servicesData.countries = [];
+            servicesData.operators = [];
+            
+            // 加载国家数据
+            if (adminData.countries && adminData.countries.length > 0) {
+                console.log('找到国家数据，数量:', adminData.countries.length);
+                
+                adminData.countries.forEach((country, index) => {
+                    if (country.active !== false) { // 只加载活跃的国家
+                        servicesData.countries.push({
+                            id: country.id,
+                            name: country.name,
+                            flag: country.flag
                         });
                     }
-                    
-                    console.log('从管理员数据加载完成:', {
-                        services: servicesData.services.length,
-                        countries: servicesData.countries.length
-                    });
-                    
-                } catch (error) {
-                    console.error('加载管理员数据失败:', error);
-                }
-            } else {
-                console.log('暂无管理员数据，请在 admin 页面添加');
+                });
             }
+            
+            // 加载服务数据
+            if (adminData.services && adminData.services.length > 0) {
+                console.log('找到服务数据，数量:', adminData.services.length);
+                
+                adminData.services.forEach((service, index) => {
+                    if (service.active !== false) { // 只加载活跃的服务
+                        servicesData.services.push({
+                            id: service.id,
+                            name: service.name,
+                            icon: service.icon || 'fas fa-mobile-alt',
+                            numbers: '0', // 默认值
+                            price: 0 // 默认值
+                        });
+                    }
+                });
+            }
+            
+            console.log('加载完成后的数据:', {
+                services: servicesData.services.length,
+                countries: servicesData.countries.length
+            });
+            
+        } catch (error) {
+            console.error('加载管理员数据失败:', error);
         }
+    } else {
+        console.log('localStorage 中没有 appData 数据');
+    }
+}
 
         // 在页面加载时更新用户信息
         document.addEventListener('DOMContentLoaded', function() {
