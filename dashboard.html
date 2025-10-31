@@ -1357,15 +1357,6 @@ function calculateFinalPrice() {
     const finalPrice = basePrice * selectedOperator.multiplier;
     return finalPrice.toFixed(2);
 }
-        
-        // 直接显示最终售价
-        document.getElementById('servicePriceValue').style.display = 'none';
-        document.getElementById('countryPriceValue').style.display = 'none';
-        document.getElementById('totalPriceValue').textContent = `售价: $${finalPrice.toFixed(2)}`;
-    } else {
-        priceCalculation.style.display = 'none';
-    }
-}
 
         // 查找价格规则
         function findPriceRule(serviceId, countryId) {
