@@ -944,6 +944,13 @@ function loadCountriesTable() {
             console.log('开始批量删除，类型:', type);
             console.log('当前appData:', appData);
             
+            // 添加全局安全检查
+            if (!appData || !appData.countries || !appData.services || !appData.pricingRules) {
+                console.error('数据未正确初始化，无法执行删除操作');
+                alert('数据加载错误，请刷新页面后重试');
+                return;
+            }
+            
             let checkboxes, idsToDelete, confirmMessage, successMessage;
             
             switch(type) {
@@ -1134,11 +1141,22 @@ function loadCountriesTable() {
             }
         }
 
-       function deleteCountry(countryId) {
+      function deleteCountry(countryId) {
     if (confirm('确定要删除这个国家吗？相关的价格规则也会被删除！')) {
+        // 安全检查
+        if (!appData.countries || !Array.isArray(appData.countries)) {
+            console.error('国家数据未正确初始化');
+            alert('数据错误，请刷新页面');
+            return;
+        }
+        
         appData.countries = appData.countries.filter(c => c.id !== countryId);
-        // 删除相关的价格规则
-        appData.pricingRules = appData.pricingRules.filter(rule => rule.countryId != countryId);
+        
+        // 删除相关的价格规则 - 添加安全检查
+        if (appData.pricingRules && Array.isArray(appData.pricingRules)) {
+            appData.pricingRules = appData.pricingRules.filter(rule => rule.countryId != countryId);
+        }
+        
         saveAppData();
         loadCountriesTable();
         loadPricingTable(); // 重新加载价格表格
@@ -1148,16 +1166,26 @@ function loadCountriesTable() {
 
 function deleteService(serviceId) {
     if (confirm('确定要删除这个服务吗？相关的价格规则也会被删除！')) {
+        // 安全检查
+        if (!appData.services || !Array.isArray(appData.services)) {
+            console.error('服务数据未正确初始化');
+            alert('数据错误，请刷新页面');
+            return;
+        }
+        
         appData.services = appData.services.filter(s => s.id !== serviceId);
-        // 删除相关的价格规则
-        appData.pricingRules = appData.pricingRules.filter(rule => rule.serviceId != serviceId);
+        
+        // 删除相关的价格规则 - 添加安全检查
+        if (appData.pricingRules && Array.isArray(appData.pricingRules)) {
+            appData.pricingRules = appData.pricingRules.filter(rule => rule.serviceId != serviceId);
+        }
+        
         saveAppData();
         loadServicesTable();
         loadPricingTable(); // 重新加载价格表格
         alert('服务删除成功！');
     }
 }
-
         // 服务管理功能
         function showAddServiceModal() {
             document.getElementById('addServiceForm').reset();
@@ -1351,7 +1379,7 @@ function deleteService(serviceId) {
             });
         }
 
-                // 页面加载完成后初始化
+                       // 页面加载完成后初始化
         function initializeAdmin() {
             console.log('Admin页面加载完成，开始初始化数据...');
             
@@ -1363,6 +1391,13 @@ function deleteService(serviceId) {
                 console.log('数据初始化完成，开始加载表格...');
                 console.log('当前appData:', appData);
                 console.log('国家数据:', appData.countries);
+                console.log('服务数据:', appData.services);
+                console.log('价格规则数据:', appData.pricingRules);
+                
+                // 强制确保数据结构完整
+                if (!appData.countries) appData.countries = [];
+                if (!appData.services) appData.services = [];
+                if (!appData.pricingRules) appData.pricingRules = [];
                 
                 if (appData.countries && Array.isArray(appData.countries)) {
                     loadTabData('countries');
@@ -1373,7 +1408,6 @@ function deleteService(serviceId) {
                 }
             }, 100);
         }
-
         // 使用DOMContentLoaded确保页面加载完成
         document.addEventListener('DOMContentLoaded', initializeAdmin);
     </script>
