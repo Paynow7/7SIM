@@ -738,25 +738,44 @@ function loadCountriesTable() {
     updateSelectedCount('countries');
 }
 
-        // 加载服务表格
+               // 加载服务表格 - 修复版本
         function loadServicesTable() {
             const tbody = document.getElementById('servicesTable');
             tbody.innerHTML = '';
             
-            appData.services.forEach(service => {
-                tbody.innerHTML += `
+            console.log('加载服务数据:', appData.services);
+            
+            if (appData.services.length === 0) {
+                tbody.innerHTML = `
                     <tr>
-                        <td><input type="checkbox" name="serviceCheckbox" value="${service.id}" onchange="updateSelectedCount('services')"></td>
-                        <td>${service.name}</td>
-                        <td><i class="${service.icon}" style="font-size: 1.2rem;"></i></td>
-                        <td>${service.code}</td>
-                        <td>${service.active ? '启用' : '禁用'}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="toggleServiceStatus(${service.id})">${service.active ? '禁用' : '启用'}</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">删除</button>
+                        <td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">
+                            暂无服务数据，请点击"添加服务"按钮创建
                         </td>
                     </tr>
                 `;
+                return;
+            }
+            
+            appData.services.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" name="serviceCheckbox" value="${service.id}" onchange="updateSelectedCount('services')"></td>
+                    <td>${service.name}</td>
+                    <td><i class="${service.icon}" style="font-size: 1.2rem;"></i></td>
+                    <td>${service.code}</td>
+                    <td>
+                        <span class="badge ${service.active ? 'badge-success' : 'badge-secondary'}">
+                            ${service.active ? '启用' : '禁用'}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="toggleServiceStatus(${service.id})">
+                            ${service.active ? '禁用' : '启用'}
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">删除</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
             
             updateSelectedCount('services');
@@ -795,7 +814,7 @@ function loadCountriesTable() {
             });
         }
 
-        function loadPricingTable() {
+                function loadPricingTable() {
             const tbody = document.getElementById('pricingTable');
             tbody.innerHTML = '';
             
@@ -812,29 +831,7 @@ function loadCountriesTable() {
                 filteredRules = filteredRules.filter(rule => rule.countryId == filterCountry);
             }
             
-            filteredRules.forEach(rule => {
-                const service = appData.services.find(s => s.id == rule.serviceId);
-                const country = appData.countries.find(c => c.id == rule.countryId);
-                
-                if (service && country) {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><input type="checkbox" name="pricingCheckbox" value="${rule.id}" onchange="updateSelectedCount('pricing')"></td>
-                            <td>${service.name}</td>
-                            <td>${country.name}</td>
-                            <td>$${rule.price.toFixed(2)}</td>
-                            <td>${rule.active ? '启用' : '禁用'}</td>
-                            <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
-                            <td class="action-buttons">
-                                <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
-                                <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
-                            </td>
-                        </tr>
-                    `;
-                }
-            });
-            
-            updateSelectedCount('pricing');
+            console.log('加载价格规则数据:', filteredRules);
             
             if (filteredRules.length === 0) {
                 tbody.innerHTML = `
@@ -844,11 +841,44 @@ function loadCountriesTable() {
                         </td>
                     </tr>
                 `;
+                updateSelectedCount('pricing');
+                return;
             }
+            
+            filteredRules.forEach(rule => {
+                const service = appData.services.find(s => s.id == rule.serviceId);
+                const country = appData.countries.find(c => c.id == rule.countryId);
+                
+                if (service && country) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><input type="checkbox" name="pricingCheckbox" value="${rule.id}" onchange="updateSelectedCount('pricing')"></td>
+                        <td>${service.name}</td>
+                        <td>${country.name}</td>
+                        <td>$${rule.price.toFixed(2)}</td>
+                        <td>
+                            <span class="badge ${rule.active ? 'badge-success' : 'badge-secondary'}">
+                                ${rule.active ? '启用' : '禁用'}
+                            </span>
+                        </td>
+                        <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+            
+            updateSelectedCount('pricing');
         }
 
                 // 批量删除功能 - 修复版本
         function batchDelete(type) {
+            console.log('开始批量删除，类型:', type);
+            console.log('当前appData:', appData);
+            
             let checkboxes, idsToDelete, confirmMessage, successMessage;
             
             switch(type) {
