@@ -701,6 +701,8 @@ function loadCountriesTable() {
     tbody.innerHTML = '';
     
     console.log('加载国家数据:', appData.countries);
+    console.log('渲染国家表格，数据:', appData.countries);
+    console.log('国家数量:', appData.countries.length);
     
     if (appData.countries.length === 0) {
         tbody.innerHTML = `
@@ -744,6 +746,8 @@ function loadCountriesTable() {
             tbody.innerHTML = '';
             
             console.log('加载服务数据:', appData.services);
+            console.log('渲染服务表格，数据:', appData.services);
+            console.log('服务数量:', appData.services.length);
             
             if (appData.services.length === 0) {
                 tbody.innerHTML = `
@@ -832,6 +836,8 @@ function loadCountriesTable() {
             }
             
             console.log('加载价格规则数据:', filteredRules);
+            console.log('渲染价格表格，数据:', filteredRules);
+            console.log('过滤后的价格规则数量:', filteredRules.length);
             
             if (filteredRules.length === 0) {
                 tbody.innerHTML = `
@@ -874,7 +880,7 @@ function loadCountriesTable() {
             updateSelectedCount('pricing');
         }
 
-                // 批量删除功能 - 修复版本
+                        // 批量删除功能 - 修复版本
         function batchDelete(type) {
             console.log('开始批量删除，类型:', type);
             console.log('当前appData:', appData);
@@ -905,6 +911,8 @@ function loadCountriesTable() {
                     return;
             }
             
+            console.log('选中的ID:', idsToDelete);
+            
             if (idsToDelete.length === 0) {
                 alert('请先选择要删除的项');
                 return;
@@ -917,19 +925,29 @@ function loadCountriesTable() {
                     case 'countries':
                         const beforeCount = appData.countries.length;
                         appData.countries = appData.countries.filter(country => !idsToDelete.includes(country.id));
-                        // 删除相关的价格规则
-                        appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.countryId));
+                        // 删除相关的价格规则 - 修复比较逻辑
+                        appData.pricingRules = appData.pricingRules.filter(rule => 
+                            !idsToDelete.some(countryId => countryId == rule.countryId)
+                        );
                         hasChanges = beforeCount !== appData.countries.length;
-                        if (hasChanges) loadCountriesTable();
+                        if (hasChanges) {
+                            loadCountriesTable();
+                            loadPricingTable(); // 重新加载价格表格
+                        }
                         break;
                         
                     case 'services':
                         const beforeServiceCount = appData.services.length;
                         appData.services = appData.services.filter(service => !idsToDelete.includes(service.id));
-                        // 删除相关的价格规则
-                        appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.serviceId));
+                        // 删除相关的价格规则 - 修复比较逻辑
+                        appData.pricingRules = appData.pricingRules.filter(rule => 
+                            !idsToDelete.some(serviceId => serviceId == rule.serviceId)
+                        );
                         hasChanges = beforeServiceCount !== appData.services.length;
-                        if (hasChanges) loadServicesTable();
+                        if (hasChanges) {
+                            loadServicesTable();
+                            loadPricingTable(); // 重新加载价格表格
+                        }
                         break;
                         
                     case 'pricing':
@@ -951,6 +969,8 @@ function loadCountriesTable() {
                         selectAllCheckbox.checked = false;
                     }
                     updateSelectedCount(type);
+                } else {
+                    alert('没有找到要删除的项');
                 }
             }
         }
@@ -1058,11 +1078,24 @@ function loadCountriesTable() {
        function deleteCountry(countryId) {
     if (confirm('确定要删除这个国家吗？相关的价格规则也会被删除！')) {
         appData.countries = appData.countries.filter(c => c.id !== countryId);
-        // 删除相关的价格规则 - 修复比较运算符
+        // 删除相关的价格规则
         appData.pricingRules = appData.pricingRules.filter(rule => rule.countryId != countryId);
         saveAppData();
         loadCountriesTable();
+        loadPricingTable(); // 重新加载价格表格
         alert('国家删除成功！');
+    }
+}
+
+function deleteService(serviceId) {
+    if (confirm('确定要删除这个服务吗？相关的价格规则也会被删除！')) {
+        appData.services = appData.services.filter(s => s.id !== serviceId);
+        // 删除相关的价格规则
+        appData.pricingRules = appData.pricingRules.filter(rule => rule.serviceId != serviceId);
+        saveAppData();
+        loadServicesTable();
+        loadPricingTable(); // 重新加载价格表格
+        alert('服务删除成功！');
     }
 }
 
@@ -1269,30 +1302,23 @@ function loadCountriesTable() {
             });
         }
 
-      // 初始化 - 使用DOMContentLoaded确保页面加载完成
- // 初始化 - 使用DOMContentLoaded确保页面加载完成
-        document.addEventListener('DOMContentLoaded', function() {
+        // 页面加载完成后初始化
+        function initializeAdmin() {
             console.log('Admin页面加载完成，开始初始化数据...');
             initData();
-            // 确保所有函数都已定义后再调用
-            setTimeout(() => {
-                if (typeof loadTabData === 'function') {
-                    loadTabData('countries');
-                } else {
-                    console.error('loadTabData 函数未定义');
-                    // 手动加载国家表格作为备选
-                    loadCountriesTable();
-                }
-            }, 100);
+            loadTabData('countries');
             
-            // 调试：检查数据是否加载成功
+            // 调试信息
             setTimeout(() => {
                 console.log('当前appData:', appData);
                 console.log('国家数量:', appData.countries.length);
                 console.log('服务数量:', appData.services.length);
                 console.log('价格规则数量:', appData.pricingRules.length);
             }, 500);
-        });
+        }
+
+        // 使用DOMContentLoaded确保页面加载完成
+        document.addEventListener('DOMContentLoaded', initializeAdmin);
     </script>
 </body>
 </html>
