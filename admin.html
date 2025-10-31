@@ -558,13 +558,44 @@ let appData = {
     }
 }
 
-        // 保存数据
-        function saveAppData() {
-            localStorage.setItem('appData', JSON.stringify(appData));
-            // 通知dashboard数据已更新
-            notifyDashboardUpdate();
-        }
+        // 在 admin.html 的 saveAppData 函数中增强
+function saveAppData() {
+    localStorage.setItem('appData', JSON.stringify(appData));
+    
+    // 单独保存价格规则，方便 dashboard 读取
+    localStorage.setItem('pricingRules', JSON.stringify(appData.pricingRules));
+    
+    // 通知所有打开的 dashboard 页面更新数据
+    notifyDashboardUpdate();
+}
 
+// 增强通知机制
+function notifyDashboardUpdate() {
+    // 触发自定义事件
+    const event = new Event('appDataUpdated');
+    window.dispatchEvent(event);
+    
+    // 如果是 iframe 方式，通知父窗口
+    if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'appDataUpdated' }, '*');
+    }
+    
+    // 如果是多标签页，使用 localStorage 事件
+    localStorage.setItem('lastUpdate', Date.now().toString());
+}
+
+// 监听其他页面的数据更新
+window.addEventListener('storage', function(e) {
+    if (e.key === 'lastUpdate') {
+        initData();
+        loadTabData(getCurrentTab());
+    }
+});
+
+function getCurrentTab() {
+    const activeTab = document.querySelector('.nav-item.active');
+    return activeTab ? activeTab.dataset.tab : 'countries';
+}
         // 通知dashboard数据更新
         function notifyDashboardUpdate() {
             const event = new Event('appDataUpdated');
@@ -758,25 +789,28 @@ let appData = {
             }
         }
 
-        // 批量删除功能 - 修复版本
+                // 批量删除功能 - 修复版本
         function batchDelete(type) {
-            let checkboxes, idsToDelete, confirmMessage;
+            let checkboxes, idsToDelete, confirmMessage, successMessage;
             
             switch(type) {
                 case 'countries':
                     checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
                     idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
                     confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个国家吗？`;
+                    successMessage = `成功删除 ${idsToDelete.length} 个国家！`;
                     break;
                 case 'services':
                     checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]:checked');
                     idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
                     confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个服务吗？`;
+                    successMessage = `成功删除 ${idsToDelete.length} 个服务！`;
                     break;
                 case 'pricing':
                     checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
                     idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
                     confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个价格规则吗？`;
+                    successMessage = `成功删除 ${idsToDelete.length} 个价格规则！`;
                     break;
                 default:
                     console.error('未知的类型:', type);
@@ -789,30 +823,49 @@ let appData = {
             }
             
             if (confirm(confirmMessage)) {
+                let hasChanges = false;
+                
                 switch(type) {
                     case 'countries':
-                        // 删除国家及相关价格规则
+                        const beforeCount = appData.countries.length;
                         appData.countries = appData.countries.filter(country => !idsToDelete.includes(country.id));
+                        // 删除相关的价格规则
                         appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.countryId));
-                        loadCountriesTable();
+                        hasChanges = beforeCount !== appData.countries.length;
+                        if (hasChanges) loadCountriesTable();
                         break;
+                        
                     case 'services':
-                        // 删除服务及相关价格规则
+                        const beforeServiceCount = appData.services.length;
                         appData.services = appData.services.filter(service => !idsToDelete.includes(service.id));
+                        // 删除相关的价格规则
                         appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.serviceId));
-                        loadServicesTable();
+                        hasChanges = beforeServiceCount !== appData.services.length;
+                        if (hasChanges) loadServicesTable();
                         break;
+                        
                     case 'pricing':
+                        const beforePricingCount = appData.pricingRules.length;
                         appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.id));
-                        loadPricingTable();
+                        hasChanges = beforePricingCount !== appData.pricingRules.length;
+                        if (hasChanges) loadPricingTable();
                         break;
                 }
                 
-                saveAppData();
-                alert(`成功删除 ${idsToDelete.length} 个${type === 'countries' ? '国家' : type === 'services' ? '服务' : '价格规则'}！`);
+                if (hasChanges) {
+                    saveAppData();
+                    alert(successMessage);
+                    
+                    // 重置全选复选框
+                    const selectAllId = `selectAll${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                    const selectAllCheckbox = document.getElementById(selectAllId);
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = false;
+                    }
+                    updateSelectedCount(type);
+                }
             }
         }
-
         // 全选/取消全选
         function toggleSelectAll(type) {
             let selectAll, checkboxes;
