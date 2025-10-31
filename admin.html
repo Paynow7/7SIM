@@ -1,3 +1,6 @@
+我的代码原本是这样的，但是我不知道如何修改，因为我在网页上的运营商页面点击增加运营商之后，没有反应
+
+这个是我现在的完整代码，你看看哪里需要优化
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -962,68 +965,82 @@ function loadCountriesTable() {
         }
 
                         function loadPricingTable() {
-            const tbody = document.getElementById('pricingTable');
-            tbody.innerHTML = '';
-            
-            const filterService = document.getElementById('filterService').value;
-            const filterCountry = document.getElementById('filterCountry').value;
-            
-            let filteredRules = appData.pricingRules;
-            
-            if (filterService) {
-                filteredRules = filteredRules.filter(rule => rule.serviceId == filterService);
-            }
-            
-            if (filterCountry) {
-                filteredRules = filteredRules.filter(rule => rule.countryId == filterCountry);
-            }
-            
-            console.log('加载价格规则数据:', filteredRules);
-            console.log('渲染价格表格，数据:', filteredRules);
-            console.log('过滤后的价格规则数量:', filteredRules.length);
-            
-            if (filteredRules.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">
-                            暂无价格规则，请点击"添加价格规则"按钮创建
-                        </td>
-                    </tr>
-                `;
-                updateSelectedCount('pricing');
-                return;
-            }
-            
-            filteredRules.forEach(rule => {
-                const service = appData.services.find(s => s.id == rule.serviceId);
-                const country = appData.countries.find(c => c.id == rule.countryId);
-                
-                if (service && country) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="checkbox" name="pricingCheckbox" value="${rule.id}" onchange="updateSelectedCount('pricing')"></td>
-                        <td>${service.name}</td>
-                        <td>${country.name}</td>
-                        <td>$${rule.price.toFixed(2)}</td>
-                        <td>
-                            <span class="badge ${rule.active ? 'badge-success' : 'badge-secondary'}">
-                                ${rule.active ? '启用' : '禁用'}
-                            </span>
-                        </td>
-                        <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                }
-            });
-            
-            updateSelectedCount('pricing');
-        }
+    const tbody = document.getElementById('pricingTable');
+    tbody.innerHTML = '';
 
-          // 加载运营商表格
+    // 安全检查 - 添加这部分
+    if (!appData.pricingRules || !Array.isArray(appData.pricingRules)) {
+        console.error('价格规则数据未正确初始化:', appData.pricingRules);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 20px; color: #e74c3c;">
+                    数据加载错误，请刷新页面
+                </td>
+            </tr>
+        `;
+        updateSelectedCount('pricing');
+        return;
+    }
+    
+    const filterService = document.getElementById('filterService').value;
+    const filterCountry = document.getElementById('filterCountry').value;
+    
+    let filteredRules = appData.pricingRules;
+    
+    if (filterService) {
+        filteredRules = filteredRules.filter(rule => rule.serviceId == filterService);
+    }
+    
+    if (filterCountry) {
+        filteredRules = filteredRules.filter(rule => rule.countryId == filterCountry);
+    }
+    
+    console.log('加载价格规则数据:', filteredRules);
+    console.log('渲染价格表格，数据:', filteredRules);
+    console.log('过滤后的价格规则数量:', filteredRules.length);
+    
+    if (filteredRules.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">
+                    暂无价格规则，请点击"添加价格规则"按钮创建
+                </td>
+            </tr>
+        `;
+        updateSelectedCount('pricing');
+        return;
+    }
+    
+    filteredRules.forEach(rule => {
+        const service = appData.services.find(s => s.id == rule.serviceId);
+        const country = appData.countries.find(c => c.id == rule.countryId);
+        
+        if (service && country) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" name="pricingCheckbox" value="${rule.id}" onchange="updateSelectedCount('pricing')"></td>
+                <td>${service.name}</td>
+                <td>${country.name}</td>
+                <td>$${rule.price.toFixed(2)}</td>
+                <td>
+                    <span class="badge ${rule.active ? 'badge-success' : 'badge-secondary'}">
+                        ${rule.active ? '启用' : '禁用'}
+                    </span>
+                </td>
+                <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
+                    <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+    });
+    
+    updateSelectedCount('pricing');
+}
+
+// 加载运营商表格 - 这个函数应该独立存在，不应该嵌套在loadPricingTable内部
 function loadOperatorsTable() {
     const tbody = document.getElementById('operatorsTable');
     tbody.innerHTML = '';
@@ -1077,19 +1094,6 @@ function loadOperatorsTable() {
     
     updateSelectedCount('operators');
 }
-            // 安全检查 - 添加这部分
-            if (!appData.pricingRules || !Array.isArray(appData.pricingRules)) {
-                console.error('价格规则数据未正确初始化:', appData.pricingRules);
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 20px; color: #e74c3c;">
-                            数据加载错误，请刷新页面
-                        </td>
-                    </tr>
-                `;
-                updateSelectedCount('pricing');
-                return;
-            }
 
                         // 批量删除功能 - 修复版本
         function batchDelete(type) {
@@ -1124,6 +1128,16 @@ function loadOperatorsTable() {
                     confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个价格规则吗？`;
                     successMessage = `成功删除 ${idsToDelete.length} 个价格规则！`;
                     break;
+                case 'operators':  // 新增运营商处理
+                    checkboxes = document.querySelectorAll('input[name="operatorCheckbox"]:checked');
+                    idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+                    confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个运营商吗？`;
+                    successMessage = `成功删除 ${idsToDelete.length} 个运营商！`;
+            break;
+        default:
+            console.error('未知的类型:', type);
+            return;
+    }
                 default:
                     console.error('未知的类型:', type);
                     return;
@@ -1174,6 +1188,11 @@ function loadOperatorsTable() {
                         hasChanges = beforePricingCount !== appData.pricingRules.length;
                         if (hasChanges) loadPricingTable();
                         break;
+                        const beforeOperatorCount = appData.operators.length;
+            appData.operators = appData.operators.filter(operator => !idsToDelete.includes(operator.id));
+            hasChanges = beforeOperatorCount !== appData.operators.length;
+            if (hasChanges) loadOperatorsTable();
+            break;
                 }
                 
                 if (hasChanges) {
