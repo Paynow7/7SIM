@@ -570,18 +570,36 @@ let appData = {
 };
 
      function initData() {
+    console.log('开始初始化数据...');
     const savedData = localStorage.getItem('appData');
+    
     if (savedData) {
         try {
-            appData = JSON.parse(savedData);
+            const parsedData = JSON.parse(savedData);
+            // 确保所有必要的属性都存在
+            appData = {
+                countries: parsedData.countries || [],
+                services: parsedData.services || [],
+                pricingRules: parsedData.pricingRules || [],
+                paymentMethods: parsedData.paymentMethods || [],
+                users: parsedData.users || []
+            };
             console.log('成功加载数据:', appData);
         } catch (error) {
             console.error('解析数据失败:', error);
             initDefaultData();
         }
     } else {
+        console.log('没有找到保存的数据，使用默认数据');
         initDefaultData();
     }
+    
+    // 确保数据结构完整
+    if (!appData.countries) appData.countries = [];
+    if (!appData.services) appData.services = [];
+    if (!appData.pricingRules) appData.pricingRules = [];
+    
+    console.log('数据初始化完成:', appData);
 }
 
 function initDefaultData() {
@@ -700,6 +718,19 @@ function loadCountriesTable() {
     const tbody = document.getElementById('countriesTable');
     tbody.innerHTML = '';
     
+    // 安全检查
+    if (!appData.countries || !Array.isArray(appData.countries)) {
+        console.error('国家数据未正确初始化:', appData.countries);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: #e74c3c;">
+                    数据加载错误，请刷新页面
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
     console.log('加载国家数据:', appData.countries);
     console.log('渲染国家表格，数据:', appData.countries);
     console.log('国家数量:', appData.countries.length);
@@ -740,10 +771,23 @@ function loadCountriesTable() {
     
     updateSelectedCount('countries');
 }
-               // 加载服务表格 - 修复版本
+                      // 加载服务表格 - 修复版本
         function loadServicesTable() {
             const tbody = document.getElementById('servicesTable');
             tbody.innerHTML = '';
+            
+            // 安全检查 - 添加这部分
+            if (!appData.services || !Array.isArray(appData.services)) {
+                console.error('服务数据未正确初始化:', appData.services);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 20px; color: #e74c3c;">
+                            数据加载错误，请刷新页面
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
             
             console.log('加载服务数据:', appData.services);
             console.log('渲染服务表格，数据:', appData.services);
@@ -757,6 +801,7 @@ function loadCountriesTable() {
                         </td>
                     </tr>
                 `;
+                updateSelectedCount('services'); // 添加这行
                 return;
             }
             
@@ -784,7 +829,7 @@ function loadCountriesTable() {
             
             updateSelectedCount('services');
         }
-
+        
         // 价格管理功能
         function loadPricingPage() {
             loadServicesForPricing();
@@ -818,9 +863,23 @@ function loadCountriesTable() {
             });
         }
 
-                function loadPricingTable() {
+                        function loadPricingTable() {
             const tbody = document.getElementById('pricingTable');
             tbody.innerHTML = '';
+            
+            // 安全检查 - 添加这部分
+            if (!appData.pricingRules || !Array.isArray(appData.pricingRules)) {
+                console.error('价格规则数据未正确初始化:', appData.pricingRules);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #e74c3c;">
+                            数据加载错误，请刷新页面
+                        </td>
+                    </tr>
+                `;
+                updateSelectedCount('pricing');
+                return;
+            }
             
             const filterService = document.getElementById('filterService').value;
             const filterCountry = document.getElementById('filterCountry').value;
@@ -1146,16 +1205,6 @@ function deleteService(serviceId) {
             }
         }
 
-      function deleteService(serviceId) {
-    if (confirm('确定要删除这个服务吗？相关的价格规则也会被删除！')) {
-        appData.services = appData.services.filter(s => s.id !== serviceId);
-        // 删除相关的价格规则 - 修复比较运算符
-        appData.pricingRules = appData.pricingRules.filter(rule => rule.serviceId != serviceId);
-        saveAppData();
-        loadServicesTable();
-        alert('服务删除成功！');
-    }
-}
 
         // 价格规则功能
         function showAddPriceModal() {
@@ -1302,19 +1351,27 @@ function deleteService(serviceId) {
             });
         }
 
-        // 页面加载完成后初始化
+                // 页面加载完成后初始化
         function initializeAdmin() {
             console.log('Admin页面加载完成，开始初始化数据...');
-            initData();
-            loadTabData('countries');
             
-            // 调试信息
+            // 先初始化数据
+            initData();
+            
+            // 等待数据完全初始化后再加载表格
             setTimeout(() => {
+                console.log('数据初始化完成，开始加载表格...');
                 console.log('当前appData:', appData);
-                console.log('国家数量:', appData.countries.length);
-                console.log('服务数量:', appData.services.length);
-                console.log('价格规则数量:', appData.pricingRules.length);
-            }, 500);
+                console.log('国家数据:', appData.countries);
+                
+                if (appData.countries && Array.isArray(appData.countries)) {
+                    loadTabData('countries');
+                } else {
+                    console.error('国家数据初始化失败，重新初始化...');
+                    initDefaultData();
+                    loadTabData('countries');
+                }
+            }, 100);
         }
 
         // 使用DOMContentLoaded确保页面加载完成
