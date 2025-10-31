@@ -1030,29 +1030,14 @@
             }
         }
 
-       // 服务数据 - 完全从 admin 页面添加
+      // 服务数据 - 完全从 admin 页面添加
 const servicesData = {
     services: [],  // 空数组，等待从 admin 添加
     countries: [], // 空数组，等待从 admin 添加
-    operators: [
-        { 
-            id: 1, 
-            name: "Virtual 4", 
-            numbers: "45,880", 
-            price: 1.00,  // x1 价格
-            multiplier: 1.00
-        },
-        { 
-            id: 2, 
-            name: "Virtual 21", 
-            numbers: "52,341", 
-            price: 1.76,  // 1.76倍价格
-            multiplier: 1.76
-        }
-    ]
+    operators: []  // 空数组，等待从 admin 添加
 };
 
-        // 从 localStorage 加载管理员添加的数据
+// 从 localStorage 加载管理员添加的数据
 function loadDataFromAdmin() {
     const savedData = localStorage.getItem('appData');
     console.log('从 localStorage 读取的数据:', savedData);
@@ -1065,6 +1050,7 @@ function loadDataFromAdmin() {
             // 清空现有数据
             servicesData.services = [];
             servicesData.countries = [];
+            servicesData.operators = []; // 清空运营商数据
             
             // 加载国家数据
             if (adminData.countries && adminData.countries.length > 0) {
@@ -1098,9 +1084,27 @@ function loadDataFromAdmin() {
                 });
             }
             
+            // 加载运营商数据 - 新增这部分
+            if (adminData.operators && adminData.operators.length > 0) {
+                console.log('找到运营商数据，数量:', adminData.operators.length);
+                
+                adminData.operators.forEach((operator, index) => {
+                    if (operator.active !== false) { // 只加载活跃的运营商
+                        servicesData.operators.push({
+                            id: operator.id,
+                            name: operator.displayName || operator.name, // 使用显示名称
+                            numbers: '0', // 默认值，可以根据需要调整
+                            price: operator.multiplier, // 价格倍数
+                            multiplier: operator.multiplier // 保留倍数用于计算
+                        });
+                    }
+                });
+            }
+            
             console.log('加载完成后的数据:', {
                 services: servicesData.services.length,
-                countries: servicesData.countries.length
+                countries: servicesData.countries.length,
+                operators: servicesData.operators.length
             });
             
         } catch (error) {
@@ -1110,7 +1114,6 @@ function loadDataFromAdmin() {
         console.log('localStorage 中没有 appData 数据');
     }
 }
-
          // 按中文拼音排序
         function sortByPinyin(array, key = 'name') {
             return array.sort((a, b) => {
@@ -1187,46 +1190,49 @@ function loadDataFromAdmin() {
             });
         }
 
-        // 渲染运营商列表
-        function renderOperators() {
-            const operatorsList = document.getElementById('operatorsList');
-            operatorsList.innerHTML = '';
-            
-            if (servicesData.operators.length === 0) {
-                operatorsList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无运营商数据</div>';
-                return;
-            }
-            
-            servicesData.operators.forEach(operator => {
-                const item = document.createElement('div');
-                item.className = 'operator-item';
-                item.dataset.id = operator.id;
-                item.innerHTML = `
-                    <div class="operator-info">
-                        <div class="operator-icon-small">
-                            <i class="fas fa-sim-card"></i>
-                        </div>
-                        <div class="operator-name">${operator.name}</div>
-                    </div>
-                    <div class="operator-numbers">${operator.numbers}</div>
-                    <div class="operator-price">$${operator.price.toFixed(2)}</div>
-                `;
-                item.addEventListener('click', function() {
-                    selectOperator(operator, this);
-                });
-                operatorsList.appendChild(item);
-            });
-        }
+       // 渲染运营商列表
+function renderOperators() {
+    const operatorsList = document.getElementById('operatorsList');
+    operatorsList.innerHTML = '';
+    
+    if (servicesData.operators.length === 0) {
+        operatorsList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无运营商，请在管理页面添加</div>';
+        return;
+    }
+    
+    // 按拼音排序
+    const sortedOperators = sortByPinyin(servicesData.operators, 'name');
+    
+    sortedOperators.forEach(operator => {
+        const item = document.createElement('div');
+        item.className = 'operator-item';
+        item.dataset.id = operator.id;
+        item.innerHTML = `
+            <div class="operator-info">
+                <div class="operator-icon-small">
+                    <i class="fas fa-sim-card"></i>
+                </div>
+                <div class="operator-name">${operator.name}</div>
+            </div>
+            <div class="operator-numbers">${operator.numbers}</div>
+            <div class="operator-price">${operator.multiplier}倍</div>
+        `;
+        item.addEventListener('click', function() {
+            selectOperator(operator, this);
+        });
+        operatorsList.appendChild(item);
+    });
+}
 
          // 在页面加载时更新用户信息
-        document.addEventListener('DOMContentLoaded', function() {
-            updateUserDropdown();
-            loadDataFromAdmin();  // 改为加载管理员数据
-            renderServices();
-            renderCountries();
-            renderOperators();
-            setupEventListeners();
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    updateUserDropdown();
+    loadDataFromAdmin();  // 加载管理员数据
+    renderServices();
+    renderCountries();
+    renderOperators();    // 渲染运营商
+    setupEventListeners();
+});
 
         // 计算服务价格范围
         function calculateServicePriceRange(serviceId) {
@@ -1304,7 +1310,7 @@ function loadDataFromAdmin() {
             updateGetNumberButton();
         }
 
-        function updatePriceCalculation() {
+       function updatePriceCalculation() {
     const priceCalculation = document.getElementById('priceCalculation');
     
     if (selectedService && selectedCountry && selectedOperator) {
