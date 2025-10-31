@@ -1255,7 +1255,8 @@ function renderOperators() {
 // 计算运营商价格
 function calculateOperatorPrice(operator) {
     if (!selectedService || !selectedCountry) {
-        return '0.00';
+        // 如果没有选择服务和国家，显示运营商倍数
+        return `${operator.multiplier}倍`;
     }
     
     // 查找对应的价格规则
@@ -1274,10 +1275,8 @@ function calculateOperatorPrice(operator) {
     return finalPrice.toFixed(2);
 }
 
-        // 更新所有运营商的价格显示
+       // 更新所有运营商的价格显示
 function updateOperatorPrices() {
-    if (!selectedService || !selectedCountry) return;
-    
     document.querySelectorAll('.operator-item').forEach(item => {
         const operatorId = parseInt(item.dataset.id);
         const operator = servicesData.operators.find(op => op.id === operatorId);
@@ -1285,7 +1284,11 @@ function updateOperatorPrices() {
             const price = calculateOperatorPrice(operator);
             const priceElement = item.querySelector('.operator-price');
             if (priceElement) {
-                priceElement.textContent = `$${price}`;
+                if (!selectedService || !selectedCountry) {
+                    priceElement.textContent = `${price}`;
+                } else {
+                    priceElement.textContent = `$${price}`;
+                }
             }
         }
     });
@@ -1539,6 +1542,16 @@ function getNumber() {
 
         // 初始化最后更新时间
         window.lastDataUpdate = localStorage.getItem('lastUpdate');
+        // 初始化页面
+document.addEventListener('DOMContentLoaded', function() {
+    updateUserDropdown();
+    loadDataFromAdmin();
+    renderServices();
+    renderCountries();
+    renderOperators();
+    updateOperatorPrices(); // 新增这一行
+    setupEventListeners();
+});
     </script>
 </body>
 </html>
