@@ -176,6 +176,42 @@
             background: #f8f9fa;
             border-radius: 5px;
         }
+
+                /* 添加徽章样式 */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* 添加表格复选框样式 */
+        table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* 添加状态指示器样式 */
+        .status-active {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .status-inactive {
+            color: var(--danger);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -533,31 +569,39 @@ let appData = {
     users: []
 };
 
-      function initData() {
+     function initData() {
     const savedData = localStorage.getItem('appData');
     if (savedData) {
-        appData = JSON.parse(savedData);
+        try {
+            appData = JSON.parse(savedData);
+            console.log('成功加载数据:', appData);
+        } catch (error) {
+            console.error('解析数据失败:', error);
+            initDefaultData();
+        }
     } else {
-        // 如果localStorage中没有数据，初始化默认数据
-        appData = {
-            countries: [
-                { id: 1, name: "中国", code: "CN", flag: "https://flagcdn.com/w40/cn.png", active: true },
-                { id: 2, name: "美国", code: "US", flag: "https://flagcdn.com/w40/us.png", active: true },
-                { id: 3, name: "英国", code: "GB", flag: "https://flagcdn.com/w40/gb.png", active: true }
-            ],
-            services: [
-                { id: 1, name: "WhatsApp", code: "whatsapp", icon: "fab fa-whatsapp", active: true },
-                { id: 2, name: "Telegram", code: "telegram", icon: "fab fa-telegram", active: true },
-                { id: 3, name: "微信", code: "wechat", icon: "fab fa-weixin", active: true }
-            ],
-            pricingRules: [],
-            paymentMethods: [],
-            users: []
-        };
-        saveAppData();
+        initDefaultData();
     }
 }
 
+function initDefaultData() {
+    appData = {
+        countries: [
+            { id: 1, name: "中国", code: "CN", flag: "https://flagcdn.com/w40/cn.png", active: true },
+            { id: 2, name: "美国", code: "US", flag: "https://flagcdn.com/w40/us.png", active: true },
+            { id: 3, name: "英国", code: "GB", flag: "https://flagcdn.com/w40/gb.png", active: true }
+        ],
+        services: [
+            { id: 1, name: "WhatsApp", code: "whatsapp", icon: "fab fa-whatsapp", active: true },
+            { id: 2, name: "Telegram", code: "telegram", icon: "fab fa-telegram", active: true },
+            { id: 3, name: "微信", code: "wechat", icon: "fab fa-weixin", active: true }
+        ],
+        pricingRules: [],
+        paymentMethods: [],
+        users: []
+    };
+    saveAppData();
+}
         // 在 admin.html 的 saveAppData 函数中增强
 function saveAppData() {
     localStorage.setItem('appData', JSON.stringify(appData));
@@ -596,12 +640,7 @@ function getCurrentTab() {
     const activeTab = document.querySelector('.nav-item.active');
     return activeTab ? activeTab.dataset.tab : 'countries';
 }
-        // 通知dashboard数据更新
-        function notifyDashboardUpdate() {
-            const event = new Event('appDataUpdated');
-            window.dispatchEvent(event);
-        }
-
+      
         // 退出登录
         function adminLogout() {
             sessionStorage.clear();
@@ -656,29 +695,48 @@ function getCurrentTab() {
             updateStats();
         }
 
-        // 加载国家表格
-        function loadCountriesTable() {
-            const tbody = document.getElementById('countriesTable');
-            tbody.innerHTML = '';
-            
-            appData.countries.forEach(country => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><input type="checkbox" name="countryCheckbox" value="${country.id}" onchange="updateSelectedCount('countries')"></td>
-                        <td>${country.name}</td>
-                        <td><img src="${country.flag}" alt="${country.name}" style="width: 24px; height: 16px; border-radius: 2px;"></td>
-                        <td>${country.code}</td>
-                        <td>${country.active ? '启用' : '禁用'}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="toggleCountryStatus(${country.id})">${country.active ? '禁用' : '启用'}</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteCountry(${country.id})">删除</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            updateSelectedCount('countries');
-        }
+       // 加载国家表格 - 修复版本
+function loadCountriesTable() {
+    const tbody = document.getElementById('countriesTable');
+    tbody.innerHTML = '';
+    
+    console.log('加载国家数据:', appData.countries);
+    
+    if (appData.countries.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">
+                    暂无国家数据，请点击"添加国家"按钮创建
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    appData.countries.forEach(country => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="checkbox" name="countryCheckbox" value="${country.id}" onchange="updateSelectedCount('countries')"></td>
+            <td>${country.name}</td>
+            <td><img src="${country.flag}" alt="${country.name}" style="width: 24px; height: 16px; border-radius: 2px;"></td>
+            <td>${country.code}</td>
+            <td>
+                <span class="badge ${country.active ? 'badge-success' : 'badge-secondary'}">
+                    ${country.active ? '启用' : '禁用'}
+                </span>
+            </td>
+            <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="toggleCountryStatus(${country.id})">
+                    ${country.active ? '禁用' : '启用'}
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteCountry(${country.id})">删除</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    updateSelectedCount('countries');
+}
 
         // 加载服务表格
         function loadServicesTable() {
@@ -1181,10 +1239,19 @@ function getCurrentTab() {
             });
         }
 
-       // 初始化 - 使用DOMContentLoaded确保页面加载完成
+      // 初始化 - 使用DOMContentLoaded确保页面加载完成
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin页面加载完成，开始初始化数据...');
     initData();
     loadTabData('countries');
+    
+    // 调试：检查数据是否加载成功
+    setTimeout(() => {
+        console.log('当前appData:', appData);
+        console.log('国家数量:', appData.countries.length);
+        console.log('服务数量:', appData.services.length);
+        console.log('价格规则数量:', appData.pricingRules.length);
+    }, 1000);
 });
     </script>
 </body>
