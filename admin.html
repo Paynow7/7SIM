@@ -636,10 +636,11 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-       // 数据存储
+      // 数据存储
 let appData = {
     countries: [],
     services: [],
+    operators: [],  // 确保包含这一行
     pricingRules: [],
     paymentMethods: [],
     users: []
@@ -1093,121 +1094,119 @@ function loadOperatorsTable() {
 }
 
                         // 批量删除功能 - 修复版本
-        function batchDelete(type) {
-            console.log('开始批量删除，类型:', type);
-            console.log('当前appData:', appData);
-            
-            // 添加全局安全检查
-            if (!appData || !appData.countries || !appData.services || !appData.pricingRules) {
-                console.error('数据未正确初始化，无法执行删除操作');
-                alert('数据加载错误，请刷新页面后重试');
-                return;
-            }
-            
-            let checkboxes, idsToDelete, confirmMessage, successMessage;
-            
-            switch(type) {
-                case 'countries':
-                    checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
-                    idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
-                    confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个国家吗？`;
-                    successMessage = `成功删除 ${idsToDelete.length} 个国家！`;
-                    break;
-                case 'services':
-                    checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]:checked');
-                    idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
-                    confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个服务吗？`;
-                    successMessage = `成功删除 ${idsToDelete.length} 个服务！`;
-                    break;
-                case 'pricing':
-                    checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
-                    idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
-                    confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个价格规则吗？`;
-                    successMessage = `成功删除 ${idsToDelete.length} 个价格规则！`;
-                    break;
-                case 'operators':  // 新增运营商处理
-                    checkboxes = document.querySelectorAll('input[name="operatorCheckbox"]:checked');
-                    idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
-                    confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个运营商吗？`;
-                    successMessage = `成功删除 ${idsToDelete.length} 个运营商！`;
+       function batchDelete(type) {
+    console.log('开始批量删除，类型:', type);
+    console.log('当前appData:', appData);
+    
+    // 添加全局安全检查
+    if (!appData || !appData.countries || !appData.services || !appData.pricingRules) {
+        console.error('数据未正确初始化，无法执行删除操作');
+        alert('数据加载错误，请刷新页面后重试');
+        return;
+    }
+    
+    let checkboxes, idsToDelete, confirmMessage, successMessage;
+    
+    switch(type) {
+        case 'countries':
+            checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
+            idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个国家吗？`;
+            successMessage = `成功删除 ${idsToDelete.length} 个国家！`;
+            break;
+        case 'services':
+            checkboxes = document.querySelectorAll('input[name="serviceCheckbox"]:checked');
+            idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个服务吗？`;
+            successMessage = `成功删除 ${idsToDelete.length} 个服务！`;
+            break;
+        case 'pricing':
+            checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
+            idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个价格规则吗？`;
+            successMessage = `成功删除 ${idsToDelete.length} 个价格规则！`;
+            break;
+        case 'operators':  // 新增运营商处理
+            checkboxes = document.querySelectorAll('input[name="operatorCheckbox"]:checked');
+            idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            confirmMessage = `确定要删除选中的 ${idsToDelete.length} 个运营商吗？`;
+            successMessage = `成功删除 ${idsToDelete.length} 个运营商！`;
             break;
         default:
             console.error('未知的类型:', type);
             return;
     }
-                default:
-                    console.error('未知的类型:', type);
-                    return;
-            }
-            
-            console.log('选中的ID:', idsToDelete);
-            
-            if (idsToDelete.length === 0) {
-                alert('请先选择要删除的项');
-                return;
-            }
-            
-            if (confirm(confirmMessage)) {
-                let hasChanges = false;
-                
-                switch(type) {
-                    case 'countries':
-                        const beforeCount = appData.countries.length;
-                        appData.countries = appData.countries.filter(country => !idsToDelete.includes(country.id));
-                        // 删除相关的价格规则 - 修复比较逻辑
-                        appData.pricingRules = appData.pricingRules.filter(rule => 
-                            !idsToDelete.some(countryId => countryId == rule.countryId)
-                        );
-                        hasChanges = beforeCount !== appData.countries.length;
-                        if (hasChanges) {
-                            loadCountriesTable();
-                            loadPricingTable(); // 重新加载价格表格
-                        }
-                        break;
-                        
-                    case 'services':
-                        const beforeServiceCount = appData.services.length;
-                        appData.services = appData.services.filter(service => !idsToDelete.includes(service.id));
-                        // 删除相关的价格规则 - 修复比较逻辑
-                        appData.pricingRules = appData.pricingRules.filter(rule => 
-                            !idsToDelete.some(serviceId => serviceId == rule.serviceId)
-                        );
-                        hasChanges = beforeServiceCount !== appData.services.length;
-                        if (hasChanges) {
-                            loadServicesTable();
-                            loadPricingTable(); // 重新加载价格表格
-                        }
-                        break;
-                        
-                    case 'pricing':
-                        const beforePricingCount = appData.pricingRules.length;
-                        appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.id));
-                        hasChanges = beforePricingCount !== appData.pricingRules.length;
-                        if (hasChanges) loadPricingTable();
-                        break;
-                        const beforeOperatorCount = appData.operators.length;
-            appData.operators = appData.operators.filter(operator => !idsToDelete.includes(operator.id));
-            hasChanges = beforeOperatorCount !== appData.operators.length;
-            if (hasChanges) loadOperatorsTable();
-            break;
-                }
-                
+    
+    console.log('选中的ID:', idsToDelete);
+    
+    if (idsToDelete.length === 0) {
+        alert('请先选择要删除的项');
+        return;
+    }
+    
+    if (confirm(confirmMessage)) {
+        let hasChanges = false;
+        
+        switch(type) {
+            case 'countries':
+                const beforeCount = appData.countries.length;
+                appData.countries = appData.countries.filter(country => !idsToDelete.includes(country.id));
+                // 删除相关的价格规则 - 修复比较逻辑
+                appData.pricingRules = appData.pricingRules.filter(rule => 
+                    !idsToDelete.some(countryId => countryId == rule.countryId)
+                );
+                hasChanges = beforeCount !== appData.countries.length;
                 if (hasChanges) {
-                    saveAppData();
-                    alert(successMessage);
-                    
-                    // 重置全选复选框
-                    const selectAllId = `selectAll${type.charAt(0).toUpperCase() + type.slice(1)}`;
-                    const selectAllCheckbox = document.getElementById(selectAllId);
-                    if (selectAllCheckbox) {
-                        selectAllCheckbox.checked = false;
-                    }
-                    updateSelectedCount(type);
-                } else {
-                    alert('没有找到要删除的项');
+                    loadCountriesTable();
+                    loadPricingTable(); // 重新加载价格表格
                 }
-            }
+                break;
+                
+            case 'services':
+                const beforeServiceCount = appData.services.length;
+                appData.services = appData.services.filter(service => !idsToDelete.includes(service.id));
+                // 删除相关的价格规则 - 修复比较逻辑
+                appData.pricingRules = appData.pricingRules.filter(rule => 
+                    !idsToDelete.some(serviceId => serviceId == rule.serviceId)
+                );
+                hasChanges = beforeServiceCount !== appData.services.length;
+                if (hasChanges) {
+                    loadServicesTable();
+                    loadPricingTable(); // 重新加载价格表格
+                }
+                break;
+                
+            case 'pricing':
+                const beforePricingCount = appData.pricingRules.length;
+                appData.pricingRules = appData.pricingRules.filter(rule => !idsToDelete.includes(rule.id));
+                hasChanges = beforePricingCount !== appData.pricingRules.length;
+                if (hasChanges) loadPricingTable();
+                break;
+                
+            case 'operators':  // 新增运营商处理
+                const beforeOperatorCount = appData.operators.length;
+                appData.operators = appData.operators.filter(operator => !idsToDelete.includes(operator.id));
+                hasChanges = beforeOperatorCount !== appData.operators.length;
+                if (hasChanges) loadOperatorsTable();
+                break;
         }
+        
+        if (hasChanges) {
+            saveAppData();
+            alert(successMessage);
+            
+            // 重置全选复选框
+            const selectAllId = `selectAll${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            const selectAllCheckbox = document.getElementById(selectAllId);
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = false;
+            }
+            updateSelectedCount(type);
+        } else {
+            alert('没有找到要删除的项');
+        }
+    }
+}
         function toggleSelectAll(type) {
     let selectAll, checkboxes;
     
