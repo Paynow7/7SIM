@@ -1097,6 +1097,13 @@ function loadDataFromAdmin() {
     }
 }
 
+         // 按中文拼音排序
+        function sortByPinyin(array, key = 'name') {
+            return array.sort((a, b) => {
+                return a[key].localeCompare(b[key], 'zh-CN');
+            });
+        }
+
         // 在页面加载时更新用户信息
         document.addEventListener('DOMContentLoaded', function() {
             updateUserDropdown();
@@ -1112,7 +1119,7 @@ function loadDataFromAdmin() {
         let selectedCountry = null;
         let selectedOperator = null;
 
-        // 渲染服务列表
+               // 渲染服务列表
         function renderServices() {
             const servicesList = document.getElementById('servicesList');
             servicesList.innerHTML = '';
@@ -1122,7 +1129,10 @@ function loadDataFromAdmin() {
                 return;
             }
             
-            servicesData.services.forEach(service => {
+            // 按拼音排序
+            const sortedServices = sortByPinyin(servicesData.services, 'name');
+            
+            sortedServices.forEach(service => {
                 const priceRange = calculateServicePriceRange(service.id);
                 
                 const item = document.createElement('div');
@@ -1142,8 +1152,8 @@ function loadDataFromAdmin() {
                 servicesList.appendChild(item);
             });
         }
-
-        // 渲染国家列表
+        
+              // 渲染国家列表
         function renderCountries() {
             const countriesList = document.getElementById('countriesList');
             countriesList.innerHTML = '';
@@ -1153,7 +1163,10 @@ function loadDataFromAdmin() {
                 return;
             }
             
-            servicesData.countries.forEach(country => {
+            // 按拼音排序
+            const sortedCountries = sortByPinyin(servicesData.countries, 'name');
+            
+            sortedCountries.forEach(country => {
                 const item = document.createElement('div');
                 item.className = 'country-item';
                 item.dataset.id = country.id;
@@ -1167,36 +1180,6 @@ function loadDataFromAdmin() {
                 `;
                 item.addEventListener('click', () => selectCountry(country));
                 countriesList.appendChild(item);
-            });
-        }
-
-        function renderOperators() {
-            const operatorsList = document.getElementById('operatorsList');
-            operatorsList.innerHTML = '';
-            
-            if (servicesData.operators.length === 0) {
-                operatorsList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无运营商数据</div>';
-                return;
-            }
-            
-            servicesData.operators.forEach(operator => {
-                const item = document.createElement('div');
-                item.className = 'operator-item';
-                item.dataset.id = operator.id;
-                item.innerHTML = `
-                    <div class="operator-info">
-                        <div class="operator-icon-small">
-                            <i class="fas fa-sim-card"></i>
-                        </div>
-                        <div class="operator-name">${operator.name}</div>
-                    </div>
-                    <div class="operator-numbers">${operator.numbers}</div>
-                    <div class="operator-price">$${operator.price.toFixed(2)}</div>
-                `;
-                item.addEventListener('click', function() {
-                    selectOperator(operator, this);
-                });
-                operatorsList.appendChild(item);
             });
         }
 
