@@ -656,6 +656,7 @@ let appData = {
             appData = {
                 countries: parsedData.countries || [],
                 services: parsedData.services || [],
+                operators: parsedData.operators || [],  // 添加这一行
                 pricingRules: parsedData.pricingRules || [],
                 paymentMethods: parsedData.paymentMethods || [],
                 users: parsedData.users || []
@@ -673,6 +674,7 @@ let appData = {
     // 确保数据结构完整
     if (!appData.countries) appData.countries = [];
     if (!appData.services) appData.services = [];
+    if (!appData.operators) appData.operators = [];  // 添加这一行
     if (!appData.pricingRules) appData.pricingRules = [];
     
     console.log('数据初始化完成:', appData);
@@ -962,8 +964,66 @@ function loadCountriesTable() {
                         function loadPricingTable() {
             const tbody = document.getElementById('pricingTable');
             tbody.innerHTML = '';
+            
+            const filterService = document.getElementById('filterService').value;
+            const filterCountry = document.getElementById('filterCountry').value;
+            
+            let filteredRules = appData.pricingRules;
+            
+            if (filterService) {
+                filteredRules = filteredRules.filter(rule => rule.serviceId == filterService);
+            }
+            
+            if (filterCountry) {
+                filteredRules = filteredRules.filter(rule => rule.countryId == filterCountry);
+            }
+            
+            console.log('加载价格规则数据:', filteredRules);
+            console.log('渲染价格表格，数据:', filteredRules);
+            console.log('过滤后的价格规则数量:', filteredRules.length);
+            
+            if (filteredRules.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">
+                            暂无价格规则，请点击"添加价格规则"按钮创建
+                        </td>
+                    </tr>
+                `;
+                updateSelectedCount('pricing');
+                return;
+            }
+            
+            filteredRules.forEach(rule => {
+                const service = appData.services.find(s => s.id == rule.serviceId);
+                const country = appData.countries.find(c => c.id == rule.countryId);
+                
+                if (service && country) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><input type="checkbox" name="pricingCheckbox" value="${rule.id}" onchange="updateSelectedCount('pricing')"></td>
+                        <td>${service.name}</td>
+                        <td>${country.name}</td>
+                        <td>$${rule.price.toFixed(2)}</td>
+                        <td>
+                            <span class="badge ${rule.active ? 'badge-success' : 'badge-secondary'}">
+                                ${rule.active ? '启用' : '禁用'}
+                            </span>
+                        </td>
+                        <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+            
+            updateSelectedCount('pricing');
+        }
 
-                            // 加载运营商表格
+          // 加载运营商表格
 function loadOperatorsTable() {
     const tbody = document.getElementById('operatorsTable');
     tbody.innerHTML = '';
@@ -1030,64 +1090,6 @@ function loadOperatorsTable() {
                 updateSelectedCount('pricing');
                 return;
             }
-            
-            const filterService = document.getElementById('filterService').value;
-            const filterCountry = document.getElementById('filterCountry').value;
-            
-            let filteredRules = appData.pricingRules;
-            
-            if (filterService) {
-                filteredRules = filteredRules.filter(rule => rule.serviceId == filterService);
-            }
-            
-            if (filterCountry) {
-                filteredRules = filteredRules.filter(rule => rule.countryId == filterCountry);
-            }
-            
-            console.log('加载价格规则数据:', filteredRules);
-            console.log('渲染价格表格，数据:', filteredRules);
-            console.log('过滤后的价格规则数量:', filteredRules.length);
-            
-            if (filteredRules.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 20px; color: #6c757d;">
-                            暂无价格规则，请点击"添加价格规则"按钮创建
-                        </td>
-                    </tr>
-                `;
-                updateSelectedCount('pricing');
-                return;
-            }
-            
-            filteredRules.forEach(rule => {
-                const service = appData.services.find(s => s.id == rule.serviceId);
-                const country = appData.countries.find(c => c.id == rule.countryId);
-                
-                if (service && country) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="checkbox" name="pricingCheckbox" value="${rule.id}" onchange="updateSelectedCount('pricing')"></td>
-                        <td>${service.name}</td>
-                        <td>${country.name}</td>
-                        <td>$${rule.price.toFixed(2)}</td>
-                        <td>
-                            <span class="badge ${rule.active ? 'badge-success' : 'badge-secondary'}">
-                                ${rule.active ? '启用' : '禁用'}
-                            </span>
-                        </td>
-                        <td>${new Date(rule.createdAt).toLocaleDateString()}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editPriceRule(${rule.id})">编辑</button>
-                            <button class="btn btn-sm btn-danger" onclick="deletePriceRule(${rule.id})">删除</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                }
-            });
-            
-            updateSelectedCount('pricing');
-        }
 
                         // 批量删除功能 - 修复版本
         function batchDelete(type) {
