@@ -601,12 +601,25 @@
         }
 
         /* 隐藏国家和运营商的价格和数量显示 */
-        .country-numbers, 
-        .country-price,
-        .operator-numbers,
-        .operator-price {
-            display: none;
-        }
+.country-numbers, 
+.country-price {
+    display: none;
+}
+
+/* 显示运营商的价格 */
+.operator-price {
+    display: block;
+    color: var(--success);
+    font-weight: 600;
+    min-width: 60px;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+/* 隐藏运营商的数量显示 */
+.operator-numbers {
+    display: none;
+}
 
         /* === 价格计算区域样式 === */
 .price-calculation {
@@ -1216,6 +1229,9 @@ function renderOperators() {
     const sortedOperators = sortByPinyin(servicesData.operators, 'name');
     
     sortedOperators.forEach(operator => {
+        // 计算该运营商的价格
+        const operatorPrice = calculateOperatorPrice(operator);
+        
         const item = document.createElement('div');
         item.className = 'operator-item';
         item.dataset.id = operator.id;
@@ -1227,7 +1243,7 @@ function renderOperators() {
                 <div class="operator-name">${operator.name}</div>
             </div>
             <div class="operator-numbers">${operator.numbers}</div>
-            <div class="operator-price">${operator.multiplier}倍</div>
+            <div class="operator-price">$${operatorPrice}</div>
         `;
         item.addEventListener('click', function() {
             selectOperator(operator, this);
@@ -1236,76 +1252,80 @@ function renderOperators() {
     });
 }
 
-         // 在页面加载时更新用户信息
-document.addEventListener('DOMContentLoaded', function() {
-    updateUserDropdown();
-    loadDataFromAdmin();  // 加载管理员数据
-    renderServices();
-    renderCountries();
-    renderOperators();    // 渲染运营商
-    setupEventListeners();
-});
+// 计算运营商价格
+function calculateOperatorPrice(operator) {
+    if (!selectedService || !selectedCountry) {
+        return '0.00';
+    }
+    
+    // 查找对应的价格规则
+    const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
+    let basePrice = 0;
+    
+    if (priceRule) {
+        basePrice = priceRule.price;
+    } else {
+        // 如果没有找到价格规则，使用默认价格
+        basePrice = 0.10;
+    }
+    
+    // 根据选择的运营商计算最终价格
+    const finalPrice = basePrice * operator.multiplier;
+    return finalPrice.toFixed(2);
+}
 
-        // 计算服务价格范围
-        function calculateServicePriceRange(serviceId) {
-            const savedPricing = localStorage.getItem('pricingRules');
-            let minPrice = 999, maxPrice = 0;
-            
-            if (savedPricing) {
-                try {
-                    const pricingRules = JSON.parse(savedPricing);
-                    const serviceRules = pricingRules.filter(rule => 
-                        rule.serviceId == serviceId && rule.active === true
-                    );
-                    
-                    serviceRules.forEach(rule => {
-                        if (rule.price < minPrice) minPrice = rule.price;
-                        if (rule.price > maxPrice) maxPrice = rule.price;
-                    });
-                } catch (error) {
-                    console.error('解析价格规则失败:', error);
-                }
+        // 更新所有运营商的价格显示
+function updateOperatorPrices() {
+    if (!selectedService || !selectedCountry) return;
+    
+    document.querySelectorAll('.operator-item').forEach(item => {
+        const operatorId = parseInt(item.dataset.id);
+        const operator = servicesData.operators.find(op => op.id === operatorId);
+        if (operator) {
+            const price = calculateOperatorPrice(operator);
+            const priceElement = item.querySelector('.operator-price');
+            if (priceElement) {
+                priceElement.textContent = `$${price}`;
             }
-            
-            // 如果没有找到价格规则，使用默认范围
-            if (minPrice === 999 || maxPrice === 0) {
-                return "0.10-0.60";
-            }
-            
-            return `${minPrice.toFixed(2)}-${maxPrice.toFixed(2)}`;
         }
+    });
+}
 
         // 选择服务
-        function selectService(service) {
-            selectedService = service;
-            
-            // 隐藏服务列表，显示已选择的服务
-            document.getElementById('servicesList').style.display = 'none';
-            document.getElementById('selectedServiceItem').style.display = 'flex';
-            
-            // 更新UI
-            document.getElementById('selectedServiceIcon').innerHTML = `<i class="${service.icon}"></i>`;
-            document.getElementById('selectedServiceName').textContent = service.name;
-            
-            updatePriceCalculation();
-            updateGetNumberButton();
-        }
+function selectService(service) {
+    selectedService = service;
+    
+    // 隐藏服务列表，显示已选择的服务
+    document.getElementById('servicesList').style.display = 'none';
+    document.getElementById('selectedServiceItem').style.display = 'flex';
+    
+    // 更新UI
+    document.getElementById('selectedServiceIcon').innerHTML = `<i class="${service.icon}"></i>`;
+    document.getElementById('selectedServiceName').textContent = service.name;
+    
+    // 更新运营商价格
+    updateOperatorPrices();
+    updatePriceCalculation();
+    updateGetNumberButton();
+}
 
-        // 选择国家
-        function selectCountry(country) {
-            selectedCountry = country;
-            
-            // 隐藏国家列表，显示已选择的国家
-            document.getElementById('countriesList').style.display = 'none';
-            document.getElementById('selectedCountryItem').style.display = 'flex';
-            
-            // 更新UI
-            document.getElementById('selectedCountryIcon').innerHTML = `<img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
-            document.getElementById('selectedCountryName').textContent = country.name;
-            
-            updatePriceCalculation();
-            updateGetNumberButton();
-        }
+       // 选择国家
+function selectCountry(country) {
+    selectedCountry = country;
+    
+    // 隐藏国家列表，显示已选择的国家
+    document.getElementById('countriesList').style.display = 'none';
+    document.getElementById('selectedCountryItem').style.display = 'flex';
+    
+    // 更新UI
+    document.getElementById('selectedCountryIcon').innerHTML = `<img src="${country.flag}" alt="${country.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
+    document.getElementById('selectedCountryName').textContent = country.name;
+    
+    // 更新运营商价格
+    updateOperatorPrices();
+    updatePriceCalculation();
+    updateGetNumberButton();
+}
 
         function selectOperator(operator, clickedElement) {
             selectedOperator = operator;
