@@ -1208,30 +1208,30 @@ function renderCountries() {
     
     console.log('国家列表渲染完成');
 }
-        // 渲染运营商列表
-        function renderOperators() {
-            const operatorsList = document.getElementById('operatorsList');
-            operatorsList.innerHTML = '';
-            
-            servicesData.operators.forEach(operator => {
-                const item = document.createElement('div');
-                item.className = 'operator-item';
-                item.dataset.id = operator.id;
-                item.innerHTML = `
-                    <div class="operator-info">
-                        <div class="operator-icon-small">
-                            <i class="fas fa-sim-card"></i>
-                        </div>
-                        <div class="operator-name">${operator.name}</div>
-                    </div>
-                    <div class="operator-numbers">${operator.numbers}</div>
-                    <div class="operator-price">$${operator.price.toFixed(2)}</div>
-                `;
-                item.addEventListener('click', () => selectOperator(operator));
-                operatorsList.appendChild(item);
-            });
-        }
-
+       function renderOperators() {
+    const operatorsList = document.getElementById('operatorsList');
+    operatorsList.innerHTML = '';
+    
+    servicesData.operators.forEach(operator => {
+        const item = document.createElement('div');
+        item.className = 'operator-item';
+        item.dataset.id = operator.id;
+        item.innerHTML = `
+            <div class="operator-info">
+                <div class="operator-icon-small">
+                    <i class="fas fa-sim-card"></i>
+                </div>
+                <div class="operator-name">${operator.name}</div>
+            </div>
+            <div class="operator-numbers">${operator.numbers}</div>
+            <div class="operator-price">$${operator.price.toFixed(2)}</div>
+        `;
+        item.addEventListener('click', function() {
+            selectOperator(operator, this);
+        });
+        operatorsList.appendChild(item);
+    });
+}
         // 计算服务价格范围
 function calculateServicePriceRange(serviceId) {
     const savedPricing = localStorage.getItem('pricingRules');
@@ -1293,19 +1293,20 @@ function calculateServicePriceRange(serviceId) {
             updateGetNumberButton();
         }
 
-        // 选择运营商
-        function selectOperator(operator) {
-            selectedOperator = operator;
-            
-            // 更新UI
-            document.querySelectorAll('.operator-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            
-            updateGetNumberButton();
-        }
-
+       function selectOperator(operator, clickedElement) {
+    selectedOperator = operator;
+    
+    // 更新UI
+    document.querySelectorAll('.operator-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    
+    if (clickedElement) {
+        clickedElement.classList.add('selected');
+    }
+    
+    updateGetNumberButton();
+}
         // 更新价格计算
         function updatePriceCalculation() {
             const priceCalculation = document.getElementById('priceCalculation');
