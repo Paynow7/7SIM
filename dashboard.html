@@ -607,6 +607,27 @@
         .operator-price {
             display: none;
         }
+
+        /* === 价格计算区域样式 === */
+.price-calculation {
+    background: var(--light);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    border-left: 4px solid var(--primary);
+    text-align: center;
+}
+
+.total-price {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+/* 隐藏原来的价格项 */
+.price-item {
+    display: none;
+}
     </style>
 </head>
 <body>
@@ -714,20 +735,11 @@
                     </div>
                 </div>
                 
-                <div class="price-calculation" id="priceCalculation" style="display: none;">
-                    <div class="price-item">
-                        <span class="price-label">服务价格:</span>
-                        <span class="price-value" id="servicePriceValue">$0.00</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-label">国家价格:</span>
-                        <span class="price-value" id="countryPriceValue">$0.00</span>
-                    </div>
-                    <div class="total-price">
-                        <span>总计:</span>
-                        <span id="totalPriceValue">$0.00</span>
-                    </div>
-                </div>
+               <div class="price-calculation" id="priceCalculation" style="display: none;">
+    <div class="total-price">
+        <span id="totalPriceValue">售价: $0.00</span>
+    </div>
+</div>
                 
                 <button class="btn btn-primary get-number-btn" id="getNumberBtn" disabled>获取号码</button>
             </div>
@@ -1310,29 +1322,46 @@ document.addEventListener('DOMContentLoaded', function() {
             updateGetNumberButton();
         }
 
-       function updatePriceCalculation() {
+      function updatePriceCalculation() {
     const priceCalculation = document.getElementById('priceCalculation');
     
     if (selectedService && selectedCountry && selectedOperator) {
         priceCalculation.style.display = 'block';
         
-        // 查找对应的价格规则
-        const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
-        let basePrice = 0;
+        // 直接计算最终售价
+        const finalPrice = calculateFinalPrice();
+        document.getElementById('totalPriceValue').textContent = `售价: $${finalPrice}`;
+    } else {
+        priceCalculation.style.display = 'none';
+    }
+}
+
+// 计算最终价格
+function calculateFinalPrice() {
+    if (!selectedService || !selectedCountry || !selectedOperator) {
+        return '0.00';
+    }
+    
+    // 查找对应的价格规则
+    const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
+    let basePrice = 0;
+    
+    if (priceRule) {
+        basePrice = priceRule.price;
+    } else {
+        // 如果没有找到价格规则，使用默认价格
+        basePrice = 0.10;
+    }
+    
+    // 根据选择的运营商计算最终价格
+    const finalPrice = basePrice * selectedOperator.multiplier;
+    return finalPrice.toFixed(2);
+}
         
-        if (priceRule) {
-            basePrice = priceRule.price;
-        } else {
-            // 如果没有找到价格规则，使用默认价格
-            basePrice = 0.10;
-        }
-        
-        // 根据选择的运营商计算最终价格
-        const finalPrice = basePrice * selectedOperator.multiplier;
-        
-        document.getElementById('servicePriceValue').textContent = `$${basePrice.toFixed(2)}`;
-        document.getElementById('countryPriceValue').textContent = `$0.00`;
-        document.getElementById('totalPriceValue').textContent = `$${finalPrice.toFixed(2)}`;
+        // 直接显示最终售价
+        document.getElementById('servicePriceValue').style.display = 'none';
+        document.getElementById('countryPriceValue').style.display = 'none';
+        document.getElementById('totalPriceValue').textContent = `售价: $${finalPrice.toFixed(2)}`;
     } else {
         priceCalculation.style.display = 'none';
     }
@@ -1385,7 +1414,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updateGetNumberButton();
         }
 
-       // 获取号码
+      // 获取号码
 function getNumber() {
     if (!selectedService || !selectedCountry || !selectedOperator) {
         alert('请先选择服务、国家和运营商');
@@ -1393,15 +1422,12 @@ function getNumber() {
     }
     
     // 计算最终价格
-    const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
-    let basePrice = priceRule ? priceRule.price : 0.10;
-    const finalPrice = basePrice * selectedOperator.multiplier;
+    const finalPrice = calculateFinalPrice();
     
-    alert(`成功获取号码！\n服务: ${selectedService.name}\n国家: ${selectedCountry.name}\n运营商: ${selectedOperator.name}\n价格: $${finalPrice.toFixed(2)}`);
+    alert(`成功获取号码！\n服务: ${selectedService.name}\n国家: ${selectedCountry.name}\n运营商: ${selectedOperator.name}\n售价: $${finalPrice}`);
     
     // 这里可以添加实际的获取号码逻辑
 }
-
         // 设置事件监听器
         function setupEventListeners() {
             // 移除选择事件
