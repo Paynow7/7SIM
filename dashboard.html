@@ -1030,12 +1030,27 @@
             }
         }
 
-        // 服务数据 - 完全从 admin 页面添加
-        const servicesData = {
-            services: [],  // 空数组，等待从 admin 添加
-            countries: [], // 空数组，等待从 admin 添加
-            operators: []  // 空数组，等待从 admin 添加
-        };
+       // 服务数据 - 完全从 admin 页面添加
+const servicesData = {
+    services: [],  // 空数组，等待从 admin 添加
+    countries: [], // 空数组，等待从 admin 添加
+    operators: [
+        { 
+            id: 1, 
+            name: "Virtual 4", 
+            numbers: "45,880", 
+            price: 1.00,  // x1 价格
+            multiplier: 1.00
+        },
+        { 
+            id: 2, 
+            name: "Virtual 21", 
+            numbers: "52,341", 
+            price: 1.76,  // 1.76倍价格
+            multiplier: 1.76
+        }
+    ]
+};
 
         // 从 localStorage 加载管理员添加的数据
 function loadDataFromAdmin() {
@@ -1291,29 +1306,32 @@ function loadDataFromAdmin() {
         }
 
         function updatePriceCalculation() {
-            const priceCalculation = document.getElementById('priceCalculation');
-            
-            if (selectedService && selectedCountry) {
-                priceCalculation.style.display = 'block';
-                
-                // 查找对应的价格规则
-                const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
-                let totalPrice = 0;
-                
-                if (priceRule) {
-                    totalPrice = priceRule.price;
-                } else {
-                    // 如果没有找到价格规则，使用默认价格
-                    totalPrice = 0.10;
-                }
-                
-                document.getElementById('servicePriceValue').textContent = `$${totalPrice.toFixed(2)}`;
-                document.getElementById('countryPriceValue').textContent = `$0.00`;
-                document.getElementById('totalPriceValue').textContent = `$${totalPrice.toFixed(2)}`;
-            } else {
-                priceCalculation.style.display = 'none';
-            }
+    const priceCalculation = document.getElementById('priceCalculation');
+    
+    if (selectedService && selectedCountry && selectedOperator) {
+        priceCalculation.style.display = 'block';
+        
+        // 查找对应的价格规则
+        const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
+        let basePrice = 0;
+        
+        if (priceRule) {
+            basePrice = priceRule.price;
+        } else {
+            // 如果没有找到价格规则，使用默认价格
+            basePrice = 0.10;
         }
+        
+        // 根据选择的运营商计算最终价格
+        const finalPrice = basePrice * selectedOperator.multiplier;
+        
+        document.getElementById('servicePriceValue').textContent = `$${basePrice.toFixed(2)}`;
+        document.getElementById('countryPriceValue').textContent = `$0.00`;
+        document.getElementById('totalPriceValue').textContent = `$${finalPrice.toFixed(2)}`;
+    } else {
+        priceCalculation.style.display = 'none';
+    }
+}
 
         // 查找价格规则
         function findPriceRule(serviceId, countryId) {
@@ -1362,18 +1380,22 @@ function loadDataFromAdmin() {
             updateGetNumberButton();
         }
 
-        // 获取号码
-        function getNumber() {
-            if (!selectedService || !selectedCountry || !selectedOperator) {
-                alert('请先选择服务、国家和运营商');
-                return;
-            }
-            
-            const totalPrice = selectedService.price + selectedCountry.price;
-            alert(`成功获取号码！\n服务: ${selectedService.name}\n国家: ${selectedCountry.name}\n运营商: ${selectedOperator.name}\n价格: $${totalPrice.toFixed(2)}`);
-            
-            // 这里可以添加实际的获取号码逻辑
-        }
+       // 获取号码
+function getNumber() {
+    if (!selectedService || !selectedCountry || !selectedOperator) {
+        alert('请先选择服务、国家和运营商');
+        return;
+    }
+    
+    // 计算最终价格
+    const priceRule = findPriceRule(selectedService.id, selectedCountry.id);
+    let basePrice = priceRule ? priceRule.price : 0.10;
+    const finalPrice = basePrice * selectedOperator.multiplier;
+    
+    alert(`成功获取号码！\n服务: ${selectedService.name}\n国家: ${selectedCountry.name}\n运营商: ${selectedOperator.name}\n价格: $${finalPrice.toFixed(2)}`);
+    
+    // 这里可以添加实际的获取号码逻辑
+}
 
         // 设置事件监听器
         function setupEventListeners() {
