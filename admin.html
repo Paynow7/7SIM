@@ -565,48 +565,49 @@
         </div>
     </div>
 
-    <!-- 添加价格规则模态框 -->
-    <div class="modal" id="addPriceModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="priceModalTitle">添加价格规则</h3>
-                <button class="close-modal" onclick="closeModal('addPriceModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="addPriceForm">
-                    <div class="form-group">
-                        <label>选择服务</label>
-                        <select class="form-control" id="priceService" required>
-                            <option value="">选择服务...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>选择国家</label>
-                        <select class="form-control" id="priceCountry" required>
-                            <option value="">选择国家...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>价格 ($)</label>
-                        <input type="number" class="form-control" id="priceAmount" step="0.01" min="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>状态</label>
-                        <select class="form-control" id="priceStatus">
-                            <option value="active">启用</option>
-                            <option value="inactive">禁用</option>
-                        </select>
-                    </div>
-                    <input type="hidden" id="priceModalAction" value="add">
-                    <input type="hidden" id="priceRuleId" value="">
-                </form>
-            </div>
-            <div class="modal-footer" style="text-align: right;">
-                <button class="btn" onclick="closeModal('addPriceModal')">取消</button>
-                <button class="btn btn-primary" onclick="savePriceRule()">保存价格规则</button>
-            </div>
+   <!-- 添加价格规则模态框 -->
+<div class="modal" id="addPriceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="priceModalTitle">添加价格规则</h3>
+            <button class="close-modal" onclick="closeModal('addPriceModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="addPriceForm">
+                <div class="form-group">
+                    <label>选择服务</label>
+                    <select class="form-control" id="priceService" required>
+                        <option value="">选择服务...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>选择国家（可多选）</label>
+                    <select class="form-control" id="priceCountry" multiple size="8" style="height: auto;" required>
+                        <option value="">选择国家...</option>
+                    </select>
+                    <small class="form-text text-muted">按住 Ctrl 键可多选国家</small>
+                </div>
+                <div class="form-group">
+                    <label>价格 ($)</label>
+                    <input type="number" class="form-control" id="priceAmount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select class="form-control" id="priceStatus">
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                </div>
+                <input type="hidden" id="priceModalAction" value="add">
+                <input type="hidden" id="priceRuleId" value="">
+            </form>
+        </div>
+        <div class="modal-footer" style="text-align: right;">
+            <button class="btn" onclick="closeModal('addPriceModal')">取消</button>
+            <button class="btn btn-primary" onclick="savePriceRule()">保存价格规则</button>
         </div>
     </div>
+</div>
 
     <!-- 添加运营商模态框 -->
 <div class="modal" id="addOperatorModal">
@@ -1062,17 +1063,19 @@ function loadCountriesTable() {
         }
 
         function loadCountriesForPricing() {
-            const countrySelect = document.getElementById('priceCountry');
-            const filterCountry = document.getElementById('filterCountry');
-            
-            countrySelect.innerHTML = '<option value="">选择国家...</option>';
-            filterCountry.innerHTML = '<option value="">所有国家</option>';
-            
-            appData.countries.filter(country => country.active).forEach(country => {
-                countrySelect.innerHTML += `<option value="${country.id}">${country.name}</option>`;
-                filterCountry.innerHTML += `<option value="${country.id}">${country.name}</option>`;
-            });
-        }
+    const countrySelect = document.getElementById('priceCountry');
+    const filterCountry = document.getElementById('filterCountry');
+    
+    // 价格规则表单使用多选
+    countrySelect.innerHTML = '<option value="">选择国家...</option>';
+    // 筛选器使用单选
+    filterCountry.innerHTML = '<option value="">所有国家</option>';
+    
+    appData.countries.filter(country => country.active).forEach(country => {
+        countrySelect.innerHTML += `<option value="${country.id}">${country.name}</option>`;
+        filterCountry.innerHTML += `<option value="${country.id}">${country.name}</option>`;
+    });
+}
 
                         function loadPricingTable() {
     const tbody = document.getElementById('pricingTable');
@@ -1520,92 +1523,131 @@ function deleteService(serviceId) {
 
 
         // 价格规则功能
-        function showAddPriceModal() {
-            document.getElementById('priceModalTitle').textContent = '添加价格规则';
-            document.getElementById('addPriceForm').reset();
-            document.getElementById('priceModalAction').value = 'add';
-            document.getElementById('priceRuleId').value = '';
-            document.getElementById('addPriceModal').style.display = 'flex';
-        }
+function showAddPriceModal() {
+    document.getElementById('priceModalTitle').textContent = '添加价格规则';
+    document.getElementById('addPriceForm').reset();
+    document.getElementById('priceModalAction').value = 'add';
+    document.getElementById('priceRuleId').value = '';
+    
+    // 加载国家选项（多选）
+    loadCountriesForMultiSelect();
+    loadServicesForPricing();
+    
+    document.getElementById('addPriceModal').style.display = 'flex';
+}
 
-        function savePriceRule() {
-            const serviceId = parseInt(document.getElementById('priceService').value);
-            const countryId = parseInt(document.getElementById('priceCountry').value);
-            const price = parseFloat(document.getElementById('priceAmount').value);
-            const active = document.getElementById('priceStatus').value === 'active';
-            const action = document.getElementById('priceModalAction').value;
-            const ruleId = document.getElementById('priceRuleId').value;
-            
-            if (!serviceId || !countryId || !price) {
-                alert('请填写完整信息');
-                return;
-            }
-            
-            // 检查是否已存在相同的服务-国家组合
-            const existingRule = appData.pricingRules.find(rule => 
-                rule.serviceId === serviceId && rule.countryId === countryId && rule.id != ruleId
+// 加载国家选项（多选）
+function loadCountriesForMultiSelect() {
+    const countrySelect = document.getElementById('priceCountry');
+    countrySelect.innerHTML = '<option value="">选择国家...</option>';
+    
+    appData.countries.filter(country => country.active).forEach(country => {
+        countrySelect.innerHTML += `<option value="${country.id}">${country.name}</option>`;
+    });
+}
+
+function savePriceRule() {
+    const serviceId = parseInt(document.getElementById('priceService').value);
+    const countrySelect = document.getElementById('priceCountry');
+    const price = parseFloat(document.getElementById('priceAmount').value);
+    const active = document.getElementById('priceStatus').value === 'active';
+    const action = document.getElementById('priceModalAction').value;
+    const ruleId = document.getElementById('priceRuleId').value;
+    
+    if (!serviceId || !price) {
+        alert('请选择服务和输入价格');
+        return;
+    }
+    
+    // 获取选中的多个国家
+    const selectedCountries = Array.from(countrySelect.selectedOptions)
+        .map(option => parseInt(option.value))
+        .filter(value => value); // 过滤掉空值
+    
+    if (selectedCountries.length === 0) {
+        alert('请至少选择一个国家');
+        return;
+    }
+    
+    let createdCount = 0;
+    let updatedCount = 0;
+    let skippedCount = 0;
+    
+    selectedCountries.forEach(countryId => {
+        // 检查是否已存在相同的服务-国家组合
+        const existingRule = appData.pricingRules.find(rule => 
+            rule.serviceId === serviceId && rule.countryId === countryId && rule.id != ruleId
+        );
+        
+        if (existingRule) {
+            // 如果已存在，询问是否覆盖
+            const country = appData.countries.find(c => c.id === countryId);
+            const service = appData.services.find(s => s.id === serviceId);
+            const confirmOverwrite = confirm(
+                `${service.name} - ${country.name} 的价格规则已存在\n` +
+                `现有价格: $${existingRule.price.toFixed(2)}\n` +
+                `新价格: $${price.toFixed(2)}\n\n` +
+                `是否覆盖？`
             );
             
-            if (existingRule) {
-                alert('该服务-国家组合的价格规则已存在，请编辑现有规则');
-                return;
-            }
-            
-            if (action === 'add') {
-                const newRule = {
-                    id: Date.now(),
-                    serviceId,
-                    countryId,
-                    price,
-                    active,
-                    createdAt: new Date().toISOString()
-                };
-                appData.pricingRules.push(newRule);
+            if (confirmOverwrite) {
+                // 覆盖现有规则
+                existingRule.price = price;
+                existingRule.active = active;
+                updatedCount++;
             } else {
-                const ruleIndex = appData.pricingRules.findIndex(rule => rule.id == ruleId);
-                if (ruleIndex !== -1) {
-                    appData.pricingRules[ruleIndex] = {
-                        ...appData.pricingRules[ruleIndex],
-                        serviceId,
-                        countryId,
-                        price,
-                        active
-                    };
-                }
+                skippedCount++;
+                return; // 跳过这个国家
             }
-            
-            saveAppData();
-            loadPricingTable();
-            closeModal('addPriceModal');
-            alert('价格规则保存成功！');
+        } else {
+            // 创建新规则
+            const newRule = {
+                id: Date.now() + Math.random(), // 确保ID唯一
+                serviceId,
+                countryId,
+                price,
+                active,
+                createdAt: new Date().toISOString()
+            };
+            appData.pricingRules.push(newRule);
+            createdCount++;
         }
+    });
+    
+    saveAppData();
+    loadPricingTable();
+    closeModal('addPriceModal');
+    
+    let message = '价格规则保存完成！';
+    if (createdCount > 0) message += ` 新增 ${createdCount} 个规则`;
+    if (updatedCount > 0) message += ` 更新 ${updatedCount} 个规则`;
+    if (skippedCount > 0) message += ` 跳过 ${skippedCount} 个规则`;
+    
+    alert(message);
+}
 
-        function editPriceRule(ruleId) {
-            const rule = appData.pricingRules.find(r => r.id == ruleId);
-            if (rule) {
-                document.getElementById('priceModalTitle').textContent = '编辑价格规则';
-                document.getElementById('priceService').value = rule.serviceId;
-                document.getElementById('priceCountry').value = rule.countryId;
-                document.getElementById('priceAmount').value = rule.price;
-                document.getElementById('priceStatus').value = rule.active ? 'active' : 'inactive';
-                document.getElementById('priceModalAction').value = 'edit';
-                document.getElementById('priceRuleId').value = rule.id;
-                document.getElementById('addPriceModal').style.display = 'flex';
+function editPriceRule(ruleId) {
+    const rule = appData.pricingRules.find(r => r.id == ruleId);
+    if (rule) {
+        document.getElementById('priceModalTitle').textContent = '编辑价格规则';
+        document.getElementById('priceService').value = rule.serviceId;
+        
+        // 对于编辑模式，只选中当前规则的国家
+        const countrySelect = document.getElementById('priceCountry');
+        loadCountriesForMultiSelect(); // 重新加载国家选项
+        Array.from(countrySelect.options).forEach(option => {
+            if (parseInt(option.value) === rule.countryId) {
+                option.selected = true;
             }
-        }
-
-        function deletePriceRule(ruleId) {
-            if (confirm('确定要删除这个价格规则吗？')) {
-                appData.pricingRules = appData.pricingRules.filter(rule => rule.id != ruleId);
-                saveAppData();
-                loadPricingTable();
-                alert('价格规则已删除！');
-            }
-        }
-
-        function filterPricingTable() {
-            loadPricingTable();
-        }
+        });
+        
+        document.getElementById('priceAmount').value = rule.price;
+        document.getElementById('priceStatus').value = rule.active ? 'active' : 'inactive';
+        document.getElementById('priceModalAction').value = 'edit';
+        document.getElementById('priceRuleId').value = rule.id;
+        document.getElementById('addPriceModal').style.display = 'flex';
+    }
+}
 
         // 运营商管理功能
 function showAddOperatorModal() {
@@ -1615,15 +1657,7 @@ function showAddOperatorModal() {
     document.getElementById('operatorId').value = '';
     document.getElementById('addOperatorModal').style.display = 'flex';
 }
-        // 运营商管理功能
-function showAddOperatorModal() {
-    document.getElementById('operatorModalTitle').textContent = '添加运营商';
-    document.getElementById('addOperatorForm').reset();
-    document.getElementById('operatorModalAction').value = 'add';
-    document.getElementById('operatorId').value = '';
-    document.getElementById('addOperatorModal').style.display = 'flex';
-}
-
+        
 // ========== 批量设置价格功能 ==========
 
 // 显示批量设置价格模态框
