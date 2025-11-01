@@ -403,9 +403,6 @@
     <button class="btn btn-danger" onclick="batchDelete('pricing')">
         <i class="fas fa-trash"></i> 批量删除选中价格规则
     </button>
-    <button class="btn btn-primary" onclick="showBatchPriceModal()">
-        <i class="fas fa-edit"></i> 批量设置价格
-    </button>
     <span id="selectedPricingCount">已选择 0 个价格规则</span>
 </div>
             
@@ -649,79 +646,6 @@
     </div>
 </div>
 
-   <!-- 批量设置价格模态框 -->
-<div class="modal" id="batchPriceModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>批量设置价格</h3>
-            <button class="close-modal" onclick="closeModal('batchPriceModal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>选择服务</label>
-                <select class="form-control" id="batchPriceService" required>
-                    <option value="">选择服务...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>价格 ($)</label>
-                <input type="number" class="form-control" id="batchPriceAmount" step="0.01" min="0.01" required>
-            </div>
-            <div class="form-group">
-                <label>状态</label>
-                <select class="form-control" id="batchPriceStatus">
-                    <option value="active">启用</option>
-                    <option value="inactive">禁用</option>
-                </select>
-            </div>
-            
-            <!-- 选中国家和服务信息 -->
-            <div class="selected-info" id="selectedInfo" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-                <h4>批量设置信息</h4>
-                <div id="selectedDetails"></div>
-            </div>
-            
-            <!-- 冲突价格提示 -->
-            <div class="conflict-warning" id="conflictWarning" style="display: none; margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
-                <h4><i class="fas fa-exclamation-triangle"></i> 价格冲突警告</h4>
-                <p id="conflictMessage">以下价格规则已存在，是否覆盖？</p>
-                <div id="conflictRulesList"></div>
-                <div style="margin-top: 10px;">
-                    <button class="btn btn-warning btn-sm" onclick="applyBatchPrice(true)">覆盖现有价格</button>
-                    <button class="btn btn-secondary btn-sm" onclick="closeModal('batchPriceModal')">取消</button>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer" style="text-align: right;">
-            <button class="btn" onclick="closeModal('batchPriceModal')">取消</button>
-            <button class="btn btn-primary" id="applyBatchPriceBtn" onclick="checkBatchPriceConflicts()">应用价格</button>
-        </div>
-    </div>
-</div>
-            
-            <!-- 选中国家列表 -->
-            <div class="selected-countries" id="selectedCountriesList" style="max-height: 200px; overflow-y: auto; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-                <h4>选中的国家 (<span id="selectedCountriesCount">0</span>):</h4>
-                <div id="selectedCountriesNames"></div>
-            </div>
-            
-            <!-- 冲突价格提示 -->
-            <div class="conflict-warning" id="conflictWarning" style="display: none; margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
-                <h4><i class="fas fa-exclamation-triangle"></i> 价格冲突警告</h4>
-                <p id="conflictMessage">以下国家已有价格规则，是否覆盖？</p>
-                <div id="conflictCountriesList"></div>
-                <div style="margin-top: 10px;">
-                    <button class="btn btn-warning btn-sm" onclick="applyBatchPrice(true)">覆盖现有价格</button>
-                    <button class="btn btn-secondary btn-sm" onclick="closeModal('batchPriceModal')">取消</button>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer" style="text-align: right;">
-            <button class="btn" onclick="closeModal('batchPriceModal')">取消</button>
-            <button class="btn btn-primary" id="applyBatchPriceBtn" onclick="checkBatchPriceConflicts()">应用价格</button>
-        </div>
-    </div>
-</div>
 
     <!-- 其他模态框保持不变 -->
 
@@ -1660,15 +1584,6 @@ function showAddOperatorModal() {
         
 // ========== 批量设置价格功能 ==========
 
-// 显示批量设置价格模态框
-function showBatchPriceModal() {
-    const checkboxes = document.querySelectorAll('input[name="pricingCheckbox"]:checked');
-    const selectedRuleIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
-    
-    if (selectedRuleIds.length === 0) {
-        alert('请在价格表格中勾选要设置价格的项目');
-        return;
-    }
     
     // 重置表单
     document.getElementById('batchPriceModal').style.display = 'flex';
