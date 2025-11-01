@@ -168,14 +168,47 @@
             margin: 10px 0;
         }
         
-        .batch-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-        }
+        /* 批量操作样式 */
+.batch-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* 批量设置价格相关样式 */
+.conflict-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.conflict-warning h4 {
+    color: #856404;
+    margin-bottom: 10px;
+}
+
+.selected-countries {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    background: white;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 15px;
+}
+
+.selected-countries h4 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--dark);
+}
 
                 /* 添加徽章样式 */
         .badge {
@@ -364,12 +397,16 @@
                 </div>
             </div>
             
-            <div class="batch-actions">
-                <button class="btn btn-danger" onclick="batchDelete('pricing')">
-                    <i class="fas fa-trash"></i> 批量删除选中价格规则
-                </button>
-                <span id="selectedPricingCount">已选择 0 个价格规则</span>
-            </div>
+            <!-- 在价格设置的批量操作区域添加 -->
+<div class="batch-actions">
+    <button class="btn btn-danger" onclick="batchDelete('pricing')">
+        <i class="fas fa-trash"></i> 批量删除选中价格规则
+    </button>
+    <button class="btn btn-primary" onclick="showBatchPriceModal()">
+        <i class="fas fa-edit"></i> 批量设置价格
+    </button>
+    <span id="selectedPricingCount">已选择 0 个价格规则</span>
+</div>
             
             <table>
                 <thead>
@@ -606,6 +643,56 @@
         <div class="modal-footer" style="text-align: right;">
             <button class="btn" onclick="closeModal('addOperatorModal')">取消</button>
             <button class="btn btn-primary" onclick="saveOperator()">保存运营商</button>
+        </div>
+    </div>
+</div>
+
+    <!-- 批量设置价格模态框 -->
+<div class="modal" id="batchPriceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>批量设置价格</h3>
+            <button class="close-modal" onclick="closeModal('batchPriceModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>选择服务</label>
+                <select class="form-control" id="batchPriceService" required>
+                    <option value="">选择服务...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>价格 ($)</label>
+                <input type="number" class="form-control" id="batchPriceAmount" step="0.01" min="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>状态</label>
+                <select class="form-control" id="batchPriceStatus">
+                    <option value="active">启用</option>
+                    <option value="inactive">禁用</option>
+                </select>
+            </div>
+            
+            <!-- 选中国家列表 -->
+            <div class="selected-countries" id="selectedCountriesList" style="max-height: 200px; overflow-y: auto; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                <h4>选中的国家 (<span id="selectedCountriesCount">0</span>):</h4>
+                <div id="selectedCountriesNames"></div>
+            </div>
+            
+            <!-- 冲突价格提示 -->
+            <div class="conflict-warning" id="conflictWarning" style="display: none; margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
+                <h4><i class="fas fa-exclamation-triangle"></i> 价格冲突警告</h4>
+                <p id="conflictMessage">以下国家已有价格规则，是否覆盖？</p>
+                <div id="conflictCountriesList"></div>
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-warning btn-sm" onclick="applyBatchPrice(true)">覆盖现有价格</button>
+                    <button class="btn btn-secondary btn-sm" onclick="closeModal('batchPriceModal')">取消</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="text-align: right;">
+            <button class="btn" onclick="closeModal('batchPriceModal')">取消</button>
+            <button class="btn btn-primary" id="applyBatchPriceBtn" onclick="checkBatchPriceConflicts()">应用价格</button>
         </div>
     </div>
 </div>
@@ -1503,6 +1590,183 @@ function showAddOperatorModal() {
     document.getElementById('operatorId').value = '';
     document.getElementById('addOperatorModal').style.display = 'flex';
 }
+        // 运营商管理功能
+function showAddOperatorModal() {
+    document.getElementById('operatorModalTitle').textContent = '添加运营商';
+    document.getElementById('addOperatorForm').reset();
+    document.getElementById('operatorModalAction').value = 'add';
+    document.getElementById('operatorId').value = '';
+    document.getElementById('addOperatorModal').style.display = 'flex';
+}
+
+// ========== 批量设置价格功能 ==========
+
+// 显示批量设置价格模态框
+function showBatchPriceModal() {
+    const checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
+    const selectedCountryIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    
+    if (selectedCountryIds.length === 0) {
+        alert('请先选择要设置价格的国家');
+        return;
+    }
+    
+    // 重置表单
+    document.getElementById('batchPriceModal').style.display = 'flex';
+    document.getElementById('batchPriceAmount').value = '';
+    document.getElementById('conflictWarning').style.display = 'none';
+    
+    // 加载服务选项
+    const serviceSelect = document.getElementById('batchPriceService');
+    serviceSelect.innerHTML = '<option value="">选择服务...</option>';
+    appData.services.filter(service => service.active).forEach(service => {
+        serviceSelect.innerHTML += `<option value="${service.id}">${service.name}</option>`;
+    });
+    
+    // 显示选中的国家
+    updateSelectedCountriesList(selectedCountryIds);
+}
+
+// 更新选中国家列表显示
+function updateSelectedCountriesList(countryIds) {
+    const selectedCountriesNames = document.getElementById('selectedCountriesNames');
+    const selectedCountriesCount = document.getElementById('selectedCountriesCount');
+    
+    selectedCountriesNames.innerHTML = '';
+    selectedCountriesCount.textContent = countryIds.length;
+    
+    countryIds.forEach(countryId => {
+        const country = appData.countries.find(c => c.id === countryId);
+        if (country) {
+            selectedCountriesNames.innerHTML += `
+                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #dee2e6;">
+                    <span>${country.name}</span>
+                    <span class="badge badge-secondary">${country.code}</span>
+                </div>
+            `;
+        }
+    });
+}
+
+// 检查价格冲突
+function checkBatchPriceConflicts() {
+    const serviceId = parseInt(document.getElementById('batchPriceService').value);
+    const price = parseFloat(document.getElementById('batchPriceAmount').value);
+    const checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
+    const selectedCountryIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    
+    if (!serviceId || !price) {
+        alert('请选择服务和输入价格');
+        return;
+    }
+    
+    // 检查冲突
+    const conflicts = [];
+    selectedCountryIds.forEach(countryId => {
+        const existingRule = appData.pricingRules.find(rule => 
+            rule.serviceId === serviceId && rule.countryId === countryId
+        );
+        if (existingRule) {
+            const country = appData.countries.find(c => c.id === countryId);
+            conflicts.push({
+                countryId: countryId,
+                countryName: country ? country.name : '未知国家',
+                existingPrice: existingRule.price
+            });
+        }
+    });
+    
+    if (conflicts.length > 0) {
+        // 显示冲突警告
+        showConflictWarning(conflicts, serviceId, price);
+    } else {
+        // 没有冲突，直接应用价格
+        applyBatchPrice(false);
+    }
+}
+
+// 显示冲突警告
+function showConflictWarning(conflicts, serviceId, price) {
+    const conflictMessage = document.getElementById('conflictMessage');
+    const conflictCountriesList = document.getElementById('conflictCountriesList');
+    const conflictWarning = document.getElementById('conflictWarning');
+    
+    conflictMessage.textContent = `以下 ${conflicts.length} 个国家已有价格规则，是否覆盖？`;
+    
+    conflictCountriesList.innerHTML = '';
+    conflicts.forEach(conflict => {
+        conflictCountriesList.innerHTML += `
+            <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                <span>${conflict.countryName}</span>
+                <span>现有价格: $${conflict.existingPrice.toFixed(2)} → 新价格: $${price.toFixed(2)}</span>
+            </div>
+        `;
+    });
+    
+    conflictWarning.style.display = 'block';
+    
+    // 存储当前设置以便后续使用
+    window.currentBatchSettings = {
+        serviceId: serviceId,
+        price: price,
+        status: document.getElementById('batchPriceStatus').value
+    };
+}
+
+// 应用批量价格设置
+function applyBatchPrice(overwrite = false) {
+    const settings = window.currentBatchSettings;
+    if (!settings) return;
+    
+    const checkboxes = document.querySelectorAll('input[name="countryCheckbox"]:checked');
+    const selectedCountryIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    
+    let updatedCount = 0;
+    let createdCount = 0;
+    
+    selectedCountryIds.forEach(countryId => {
+        const existingRuleIndex = appData.pricingRules.findIndex(rule => 
+            rule.serviceId === settings.serviceId && rule.countryId === countryId
+        );
+        
+        if (existingRuleIndex !== -1) {
+            if (overwrite) {
+                // 覆盖现有价格
+                appData.pricingRules[existingRuleIndex].price = settings.price;
+                appData.pricingRules[existingRuleIndex].active = settings.status === 'active';
+                updatedCount++;
+            }
+            // 如果不覆盖，跳过这个国家
+        } else {
+            // 创建新价格规则
+            const newRule = {
+                id: Date.now() + Math.random(), // 确保ID唯一
+                serviceId: settings.serviceId,
+                countryId: countryId,
+                price: settings.price,
+                active: settings.status === 'active',
+                createdAt: new Date().toISOString()
+            };
+            appData.pricingRules.push(newRule);
+            createdCount++;
+        }
+    });
+    
+    saveAppData();
+    loadPricingTable();
+    closeModal('batchPriceModal');
+    
+    let message = '批量价格设置完成！';
+    if (createdCount > 0) message += ` 新增 ${createdCount} 个价格规则`;
+    if (updatedCount > 0) message += ` 更新 ${updatedCount} 个价格规则`;
+    
+    alert(message);
+    
+    // 清除临时存储
+    delete window.currentBatchSettings;
+}
+
+// ========== 结束批量设置价格功能 ==========
 
 function saveOperator() {
     const name = document.getElementById('operatorName').value;
