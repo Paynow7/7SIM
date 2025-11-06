@@ -1718,61 +1718,60 @@ async function regenerateApiKey() {
 }
 
         // 设置事件监听器
-        function setupEventListeners() {
-            // 移除选择事件
-            document.getElementById('removeServiceSelection').addEventListener('click', removeServiceSelection);
-            document.getElementById('removeCountrySelection').addEventListener('click', removeCountrySelection);
+function setupEventListeners() {
+    // 移除选择事件
+    document.getElementById('removeServiceSelection').addEventListener('click', removeServiceSelection);
+    document.getElementById('removeCountrySelection').addEventListener('click', removeCountrySelection);
+    
+    // 获取号码按钮
+    document.getElementById('getNumberBtn').addEventListener('click', getNumber);
+    
+    // 标签切换
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // 移除所有active类
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            // 获取号码按钮
-            document.getElementById('getNumberBtn').addEventListener('click', getNumber);
-            
-            // 标签切换
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // 移除所有active类
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // 添加active类
-                    this.classList.add('active');
-                    document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
-                });
-            });
-            
-            // FAQ展开/收起
-            document.querySelectorAll('.faq-question').forEach(question => {
-                question.addEventListener('click', function() {
-                    const item = this.parentElement;
-                    item.classList.toggle('active');
-                });
-            });
-            
-            // 搜索功能
-            document.getElementById('serviceSearch').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                filterItems('servicesList', searchTerm);
-            });
+            // 添加active类
+            this.classList.add('active');
+            document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
+        });
+    });
+    
+    // FAQ展开/收起
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', function() {
+            const item = this.parentElement;
+            item.classList.toggle('active');
+        });
+    });
+    
+    // 搜索功能
+    document.getElementById('serviceSearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        filterItems('servicesList', searchTerm);
+    });
 
-            document.getElementById('countrySearch').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                filterItems('countriesList', searchTerm);
-            });
+    document.getElementById('countrySearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        filterItems('countriesList', searchTerm);
+    });
 
-            function filterItems(listId, searchTerm) {
-                const items = document.getElementById(listId).querySelectorAll('.service-item, .country-item');
-                
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
+    function filterItems(listId, searchTerm) {
+        const items = document.getElementById(listId).querySelectorAll('.service-item, .country-item');
+        
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
             }
-        }
+        });
+    }
 
-        // === 新增：模态框事件监听 ===
+    // === 新增：模态框事件监听 ===
     const apiKeyModal = document.getElementById('apiKeyModal');
     if (apiKeyModal) {
         apiKeyModal.addEventListener('click', function(e) {
@@ -1781,7 +1780,7 @@ async function regenerateApiKey() {
             }
         });
     }
-}
+}  // <-- 这是 setupEventListeners() 函数的结束
 
 
         // 设置 Firebase 实时数据同步
