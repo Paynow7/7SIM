@@ -643,6 +643,47 @@
 .price-item {
     display: none;
 }
+
+        /* 在现有的CSS最后添加这些样式 */
+
+/* API密钥模态框样式 */
+.api-key-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.api-key-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+}
+
+.api-key-display {
+    background: var(--light);
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    word-break: break-all;
+    font-family: monospace;
+    border: 1px dashed var(--primary);
+}
+
+.api-key-warning {
+    color: var(--danger);
+    font-size: 0.9rem;
+    margin: 10px 0;
+}
     </style>
 </head>
 <body>
@@ -676,11 +717,21 @@
                 <i class="fas fa-wallet" style="margin-right: 10px;"></i>
                 <span>余额: $<span id="dropdownBalance">0.00</span></span>
             </div>
-            <div style="height: 1px; background: var(--light-gray); margin: 5px 0;"></div>
-            <div class="user-dropdown-item" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;" onclick="userLogout()">
-                <i class="fas fa-sign-out-alt" style="margin-right: 10px;"></i>
-                <span>退出登录</span>
-            </div>
+           <div style="height: 1px; background: var(--light-gray); margin: 5px 0;"></div>
+<!-- 添加这2个新选项 -->
+<div class="user-dropdown-item" onclick="showApiKey()" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;">
+    <i class="fas fa-key" style="margin-right: 10px;"></i>
+    <span>查看API密钥</span>
+</div>
+<div class="user-dropdown-item" onclick="regenerateApiKey()" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;">
+    <i class="fas fa-redo" style="margin-right: 10px;"></i>
+    <span>重新生成密钥</span>
+</div>
+<div style="height: 1px; background: var(--light-gray); margin: 5px 0;"></div>
+<div class="user-dropdown-item" style="padding: 10px 20px; cursor: pointer; display: flex; align-items: center;" onclick="userLogout()">
+    <i class="fas fa-sign-out-alt" style="margin-right: 10px;"></i>
+    <span>退出登录</span>
+</div>
         </div>
     </div>
 </div>
@@ -1550,6 +1601,131 @@ function getNumber() {
     
     // 这里可以添加实际的获取号码逻辑
 }
+
+        // ========== API Key 相关函数 - 在 setupEventListeners() 之前添加 ==========
+
+// 生成API Key的函数
+function generateApiKey() {
+    const prefix = '7sim_';
+    const randomPart = Math.random().toString(36).substr(2, 16);
+    const timestamp = Date.now().toString(36);
+    return prefix + randomPart + timestamp;
+}
+
+// 设置用户API Key
+async function setupUserApiKey(user) {
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    
+    if (!userDoc.exists) {
+        // 新用户，生成API Key
+        const apiKey = generateApiKey();
+        await db.collection('users').doc(user.uid).set({
+            apiKey: apiKey,
+            balance: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            isActive: true,
+            apiCalls: 0,
+            lastApiCall: null
+        });
+        console.log('新用户API Key已生成:', apiKey);
+        return apiKey;
+    } else {
+        // 现有用户，返回现有API Key
+        const userData = userDoc.data();
+        console.log('现有用户API Key:', userData.apiKey);
+        return userData.apiKey;
+    }
+}
+
+// 获取用户信息（更新现有函数）
+async function getUserInfo(userId) {
+    try {
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            
+            // 更新余额
+            document.getElementById('balanceAmount').textContent = `$${userData.balance || '0'}`;
+            document.getElementById('dropdownBalance').textContent = (userData.balance || '0.00');
+            
+            // 存储API Key供后续使用
+            window.userApiKey = userData.apiKey;
+            
+            // 更新用户ID显示（缩短显示）
+            document.getElementById('dropdownUserId').textContent = userId.substring(0, 8) + '...';
+        }
+    } catch (error) {
+        console.error('获取用户信息失败:', error);
+    }
+}
+
+// 显示API密钥模态框
+async function showApiKey() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    // 确保有API Key
+    if (!window.userApiKey) {
+        await getUserInfo(user.uid);
+    }
+    
+    document.getElementById('apiKeyValue').textContent = window.userApiKey || '未生成';
+    document.getElementById('apiKeyModal').style.display = 'flex';
+    
+    // 关闭用户下拉菜单
+    document.getElementById('userDropdown').style.display = 'none';
+}
+
+// 关闭API密钥模态框
+function closeApiKeyModal() {
+    document.getElementById('apiKeyModal').style.display = 'none';
+}
+
+// 复制API Key
+function copyApiKey() {
+    const apiKey = document.getElementById('apiKeyValue').textContent;
+    navigator.clipboard.writeText(apiKey).then(() => {
+        alert('API密钥已复制到剪贴板');
+    }).catch(err => {
+        console.error('复制失败:', err);
+        alert('复制失败，请手动复制');
+    });
+}
+
+// 重新生成API Key
+async function regenerateApiKey() {
+    if (!confirm('确定要重新生成API密钥吗？旧的密钥将立即失效！')) {
+        return;
+    }
+    
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    try {
+        const newApiKey = generateApiKey();
+        await db.collection('users').doc(user.uid).update({
+            apiKey: newApiKey,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        window.userApiKey = newApiKey;
+        document.getElementById('apiKeyValue').textContent = newApiKey;
+        
+        alert('API密钥已重新生成！');
+    } catch (error) {
+        console.error('重新生成API密钥失败:', error);
+        alert('操作失败，请重试');
+    }
+}
+
+// 点击模态框外部关闭
+document.getElementById('apiKeyModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeApiKeyModal();
+    }
+});
+
+// ========== 到这里结束，后面是原有的 setupEventListeners() 函数 ==========
         // 设置事件监听器
         function setupEventListeners() {
             // 移除选择事件
@@ -1708,6 +1884,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     try {
         updateUserDropdown();
+
+         const user = firebase.auth().currentUser;
+        if (user) {
+            await setupUserApiKey(user);
+        }
         
         // 加载数据（现在是异步的）
         await loadDataFromAdmin();
@@ -1728,6 +1909,32 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('Dashboard 初始化失败:', error);
     }
 });
+
+        <!-- API密钥模态框 -->
+<div class="api-key-modal" id="apiKeyModal">
+    <div class="api-key-modal-content">
+        <h3 style="margin-bottom: 20px;">您的API密钥</h3>
+        <div class="api-key-display" id="apiKeyValue">
+            加载中...
+        </div>
+        <div class="api-key-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            请妥善保管此密钥，不要泄露给他人！
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn btn-primary" onclick="copyApiKey()">
+                <i class="fas fa-copy"></i> 复制密钥
+            </button>
+            <button class="btn btn-outline" onclick="regenerateApiKey()">
+                <i class="fas fa-redo"></i> 重新生成
+            </button>
+            <button class="btn" onclick="closeApiKeyModal()" style="margin-left: auto;">
+                关闭
+            </button>
+        </div>
+    </div>
+</div>
+        
     </script>
 </body>
 </html>
