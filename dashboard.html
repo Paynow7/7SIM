@@ -9,6 +9,7 @@
     <!-- 添加 Firebase 库 -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script>
         // 使用和 index.html 相同的 Firebase 配置
         const firebaseConfig = {
@@ -21,6 +22,7 @@
         };
         // 初始化 Firebase
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
     </script>
     <style>
         :root {
@@ -1062,27 +1064,118 @@ const servicesData = {
     operators: []  // 空数组，等待从 admin 添加
 };
 
-// 从 localStorage 加载管理员添加的数据
-function loadDataFromAdmin() {
+// 从 Firebase 加载平台数据
+async function loadDataFromAdmin() {
+    try {
+        console.log('开始从 Firebase 加载平台数据...');
+        
+        // 1. 先尝试从 Firebase 加载
+        const doc = await db.collection('platformData').doc('globalSettings').get();
+        
+        if (doc.exists) {
+            const firebaseData = doc.data();
+            console.log('从 Firebase 加载数据成功:', firebaseData);
+            
+            // 清空现有数据
+            servicesData.services = [];
+            servicesData.countries = [];
+            servicesData.operators = [];
+            
+            // 加载国家数据
+            if (firebaseData.countries && firebaseData.countries.length > 0) {
+                console.log('从 Firebase 找到国家数据，数量:', firebaseData.countries.length);
+                
+                firebaseData.countries.forEach((country, index) => {
+                    if (country.active !== false) {
+                        servicesData.countries.push({
+                            id: country.id,
+                            name: country.name,
+                            flag: country.flag
+                        });
+                    }
+                });
+            }
+            
+            // 加载服务数据
+            if (firebaseData.services && firebaseData.services.length > 0) {
+                console.log('从 Firebase 找到服务数据，数量:', firebaseData.services.length);
+                
+                firebaseData.services.forEach((service, index) => {
+                    if (service.active !== false) {
+                        servicesData.services.push({
+                            id: service.id,
+                            name: service.name,
+                            icon: service.icon || 'fas fa-mobile-alt',
+                            numbers: '0',
+                            price: 0
+                        });
+                    }
+                });
+            }
+            
+            // 加载运营商数据
+            if (firebaseData.operators && firebaseData.operators.length > 0) {
+                console.log('从 Firebase 找到运营商数据，数量:', firebaseData.operators.length);
+                
+                firebaseData.operators.forEach((operator, index) => {
+                    if (operator.active !== false) {
+                        servicesData.operators.push({
+                            id: operator.id,
+                            name: operator.displayName || operator.name,
+                            numbers: '0',
+                            price: operator.multiplier,
+                            multiplier: operator.multiplier
+                        });
+                    }
+                });
+            }
+            
+            // 加载价格规则
+            if (firebaseData.pricingRules && firebaseData.pricingRules.length > 0) {
+                console.log('从 Firebase 找到价格规则，数量:', firebaseData.pricingRules.length);
+                localStorage.setItem('pricingRules', JSON.stringify(firebaseData.pricingRules));
+            }
+            
+            // 更新本地存储作为备份
+            localStorage.setItem('appData', JSON.stringify(firebaseData));
+            
+        } else {
+            // 2. Firebase 没有数据，回退到本地存储
+            console.log('Firebase 无数据，使用本地存储');
+            loadFromLocalStorage();
+        }
+        
+        console.log('数据加载完成:', {
+            services: servicesData.services.length,
+            countries: servicesData.countries.length,
+            operators: servicesData.operators.length
+        });
+        
+    } catch (error) {
+        console.error('从 Firebase 加载数据失败，使用本地数据:', error);
+        // 降级到本地存储
+        loadFromLocalStorage();
+    }
+}
+
+// 从本地存储加载数据的辅助函数
+function loadFromLocalStorage() {
     const savedData = localStorage.getItem('appData');
     console.log('从 localStorage 读取的数据:', savedData);
     
     if (savedData) {
         try {
             const adminData = JSON.parse(savedData);
-            console.log('解析后的管理员数据:', adminData);
             
             // 清空现有数据
             servicesData.services = [];
             servicesData.countries = [];
-            servicesData.operators = []; // 清空运营商数据
+            servicesData.operators = [];
             
             // 加载国家数据
             if (adminData.countries && adminData.countries.length > 0) {
-                console.log('找到国家数据，数量:', adminData.countries.length);
-                
                 adminData.countries.forEach((country, index) => {
-                    if (country.active !== false) { // 只加载活跃的国家
+                    if (country.active !== false) {
                         servicesData.countries.push({
                             id: country.id,
                             name: country.name,
@@ -1094,46 +1187,36 @@ function loadDataFromAdmin() {
             
             // 加载服务数据
             if (adminData.services && adminData.services.length > 0) {
-                console.log('找到服务数据，数量:', adminData.services.length);
-                
                 adminData.services.forEach((service, index) => {
-                    if (service.active !== false) { // 只加载活跃的服务
+                    if (service.active !== false) {
                         servicesData.services.push({
                             id: service.id,
                             name: service.name,
                             icon: service.icon || 'fas fa-mobile-alt',
-                            numbers: '0', // 默认值
-                            price: 0 // 默认值
+                            numbers: '0',
+                            price: 0
                         });
                     }
                 });
             }
             
-            // 加载运营商数据 - 新增这部分
+            // 加载运营商数据
             if (adminData.operators && adminData.operators.length > 0) {
-                console.log('找到运营商数据，数量:', adminData.operators.length);
-                
                 adminData.operators.forEach((operator, index) => {
-                    if (operator.active !== false) { // 只加载活跃的运营商
+                    if (operator.active !== false) {
                         servicesData.operators.push({
                             id: operator.id,
-                            name: operator.displayName || operator.name, // 使用显示名称
-                            numbers: '0', // 默认值，可以根据需要调整
-                            price: operator.multiplier, // 价格倍数
-                            multiplier: operator.multiplier // 保留倍数用于计算
+                            name: operator.displayName || operator.name,
+                            numbers: '0',
+                            price: operator.multiplier,
+                            multiplier: operator.multiplier
                         });
                     }
                 });
             }
             
-            console.log('加载完成后的数据:', {
-                services: servicesData.services.length,
-                countries: servicesData.countries.length,
-                operators: servicesData.operators.length
-            });
-            
         } catch (error) {
-            console.error('加载管理员数据失败:', error);
+            console.error('加载本地数据失败:', error);
         }
     } else {
         console.log('localStorage 中没有 appData 数据');
@@ -1522,6 +1605,58 @@ function getNumber() {
             }
         }
 
+        // 设置 Firebase 实时数据同步
+function setupRealtimeSync() {
+    // 监听 Firebase 数据变化
+    db.collection('platformData').doc('globalSettings')
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                const firebaseData = doc.data();
+                console.log('检测到云端数据更新，重新加载...');
+                
+                // 重新加载数据
+                loadDataFromAdmin().then(() => {
+                    // 重新渲染界面
+                    renderServices();
+                    renderCountries();
+                    renderOperators();
+                    updateOperatorPrices();
+                    
+                    // 显示更新通知
+                    showDataUpdateNotification();
+                });
+            }
+        }, (error) => {
+            console.error('实时同步错误:', error);
+        });
+}
+
+// 显示数据更新通知
+function showDataUpdateNotification() {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: 500;
+    `;
+    notification.textContent = '数据已更新';
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动移除
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
         // 监听 admin 数据更新
         window.addEventListener('appDataUpdated', function() {
             console.log('检测到管理员数据更新，重新加载数据...');
@@ -1567,15 +1702,31 @@ function getNumber() {
 
         // 初始化最后更新时间
         window.lastDataUpdate = localStorage.getItem('lastUpdate');
-        // 初始化页面
-document.addEventListener('DOMContentLoaded', function() {
-    updateUserDropdown();
-    loadDataFromAdmin();
-    renderServices();
-    renderCountries();
-    renderOperators();
-    updateOperatorPrices(); // 新增这一行
-    setupEventListeners();
+       // 初始化页面
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Dashboard 页面加载完成，开始初始化...');
+    
+    try {
+        updateUserDropdown();
+        
+        // 加载数据（现在是异步的）
+        await loadDataFromAdmin();
+        
+        // 渲染界面
+        renderServices();
+        renderCountries();
+        renderOperators();
+        updateOperatorPrices();
+        setupEventListeners();
+        
+        // 启动实时同步
+        setupRealtimeSync();
+        
+        console.log('Dashboard 初始化完成');
+        
+    } catch (error) {
+        console.error('Dashboard 初始化失败:', error);
+    }
 });
     </script>
 </body>
