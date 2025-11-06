@@ -683,41 +683,80 @@ let appData = {
     users: []
 };
 
-     function initData() {
+     // 从 Firebase 和本地存储加载数据
+async function initData() {
     console.log('开始初始化数据...');
-    const savedData = localStorage.getItem('appData');
     
-    if (savedData) {
-        try {
+    try {
+        // 1. 先尝试从 Firebase 加载最新数据
+        const doc = await db.collection('platformData').doc('globalSettings').get();
+        
+        if (doc.exists) {
+            const firebaseData = doc.data();
+            console.log('从 Firebase 加载数据成功:', firebaseData);
+            
+            // 使用 Firebase 数据，但保留本地的一些设置
+            appData = {
+                countries: firebaseData.countries || [],
+                services: firebaseData.services || [],
+                operators: firebaseData.operators || [],
+                pricingRules: firebaseData.pricingRules || [],
+                paymentMethods: firebaseData.paymentMethods || [],
+                users: appData.users || [] // 保留本地的用户数据
+            };
+            
+            // 同时更新本地存储
+            localStorage.setItem('appData', JSON.stringify(appData));
+            localStorage.setItem('pricingRules', JSON.stringify(appData.pricingRules));
+            
+        } else {
+            // 2. Firebase 没有数据，使用本地存储
+            console.log('Firebase 无数据，使用本地存储');
+            const savedData = localStorage.getItem('appData');
+            
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                appData = {
+                    countries: parsedData.countries || [],
+                    services: parsedData.services || [],
+                    operators: parsedData.operators || [],
+                    pricingRules: parsedData.pricingRules || [],
+                    paymentMethods: parsedData.paymentMethods || [],
+                    users: parsedData.users || []
+                };
+            } else {
+                // 3. 都没有数据，使用默认数据
+                console.log('本地也无数据，使用默认数据');
+                initDefaultData();
+            }
+        }
+    } catch (error) {
+        console.error('从 Firebase 加载数据失败，使用本地数据:', error);
+        // 降级到本地存储
+        const savedData = localStorage.getItem('appData');
+        if (savedData) {
             const parsedData = JSON.parse(savedData);
-            // 确保所有必要的属性都存在
             appData = {
                 countries: parsedData.countries || [],
                 services: parsedData.services || [],
-                operators: parsedData.operators || [],  // 添加这一行
+                operators: parsedData.operators || [],
                 pricingRules: parsedData.pricingRules || [],
                 paymentMethods: parsedData.paymentMethods || [],
                 users: parsedData.users || []
             };
-            console.log('成功加载数据:', appData);
-        } catch (error) {
-            console.error('解析数据失败:', error);
+        } else {
             initDefaultData();
         }
-    } else {
-        console.log('没有找到保存的数据，使用默认数据');
-        initDefaultData();
     }
     
     // 确保数据结构完整
     if (!appData.countries) appData.countries = [];
     if (!appData.services) appData.services = [];
-    if (!appData.operators) appData.operators = [];  // 添加这一行
+    if (!appData.operators) appData.operators = [];
     if (!appData.pricingRules) appData.pricingRules = [];
     
     console.log('数据初始化完成:', appData);
 }
-
 function initDefaultData() {
     appData = {
         countries: [
@@ -753,15 +792,33 @@ function initDefaultData() {
     };
     saveAppData();
 }
-        // 在 admin.html 的 saveAppData 函数中增强
-function saveAppData() {
-    localStorage.setItem('appData', JSON.stringify(appData));
-    
-    // 单独保存价格规则，方便 dashboard 读取
-    localStorage.setItem('pricingRules', JSON.stringify(appData.pricingRules));
-    
-    // 通知所有打开的 dashboard 页面更新数据
-    notifyDashboardUpdate();
+       // 保存数据到 Firebase 和本地存储
+async function saveAppData() {
+    try {
+        // 1. 保存到本地存储（本地备份）
+        localStorage.setItem('appData', JSON.stringify(appData));
+        localStorage.setItem('pricingRules', JSON.stringify(appData.pricingRules));
+        
+        // 2. 保存到 Firebase（全局同步）
+        await db.collection('platformData').doc('globalSettings').set({
+            services: appData.services,
+            countries: appData.countries,
+            operators: appData.operators,
+            pricingRules: appData.pricingRules,
+            paymentMethods: appData.paymentMethods,
+            lastUpdated: new Date(),
+            updatedBy: currentAdmin
+        }, { merge: true }); // 使用 merge 避免覆盖其他字段
+        
+        console.log('数据已同步到 Firebase');
+        
+        // 3. 通知所有打开的 dashboard 页面更新数据
+        notifyDashboardUpdate();
+        
+    } catch (error) {
+        console.error('保存到 Firebase 失败:', error);
+        alert('数据保存到云端失败，但已保存到本地');
+    }
 }
 
 // 增强通知机制
@@ -1714,35 +1771,97 @@ function deleteOperator(operatorId) {
             });
         }
 
+        // 设置实时数据同步监听
+function setupRealtimeSync() {
+    // 监听 Firebase 数据变化（其他管理员修改时）
+    db.collection('platformData').doc('globalSettings')
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                const firebaseData = doc.data();
+                console.log('检测到远程数据更新:', firebaseData);
+                
+                // 更新本地数据
+                appData.services = firebaseData.services || appData.services;
+                appData.countries = firebaseData.countries || appData.countries;
+                appData.operators = firebaseData.operators || appData.operators;
+                appData.pricingRules = firebaseData.pricingRules || appData.pricingRules;
+                
+                // 更新本地存储
+                localStorage.setItem('appData', JSON.stringify(appData));
+                localStorage.setItem('pricingRules', JSON.stringify(appData.pricingRules));
+                
+                // 重新加载当前标签页
+                const currentTab = document.querySelector('.nav-item.active').dataset.tab;
+                loadTabData(currentTab);
+                
+                // 显示更新通知
+                showSyncNotification('数据已从云端同步更新');
+            }
+        }, (error) => {
+            console.error('实时同步错误:', error);
+        });
+}
+
+// 显示同步通知
+function showSyncNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: 500;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动移除
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
                        // 页面加载完成后初始化
-        function initializeAdmin() {
-            console.log('Admin页面加载完成，开始初始化数据...');
-            
-            // 先初始化数据
-            initData();
-            
-            // 等待数据完全初始化后再加载表格
-            setTimeout(() => {
-                console.log('数据初始化完成，开始加载表格...');
-                console.log('当前appData:', appData);
-                console.log('国家数据:', appData.countries);
-                console.log('服务数据:', appData.services);
-                console.log('价格规则数据:', appData.pricingRules);
-                
-                // 强制确保数据结构完整
-                if (!appData.countries) appData.countries = [];
-                if (!appData.services) appData.services = [];
-                if (!appData.pricingRules) appData.pricingRules = [];
-                
-                if (appData.countries && Array.isArray(appData.countries)) {
-                    loadTabData('countries');
-                } else {
-                    console.error('国家数据初始化失败，重新初始化...');
-                    initDefaultData();
-                    loadTabData('countries');
-                }
-            }, 100);
+       // 页面加载完成后初始化
+async function initializeAdmin() {
+    console.log('Admin页面加载完成，开始初始化数据...');
+    
+    try {
+        // 先初始化数据（现在是异步的）
+        await initData();
+        
+        console.log('数据初始化完成，开始加载表格...');
+        console.log('当前appData:', appData);
+        
+        // 强制确保数据结构完整
+        if (!appData.countries) appData.countries = [];
+        if (!appData.services) appData.services = [];
+        if (!appData.operators) appData.operators = [];
+        if (!appData.pricingRules) appData.pricingRules = [];
+        
+        if (appData.countries && Array.isArray(appData.countries)) {
+            loadTabData('countries');
+        } else {
+            console.error('国家数据初始化失败，重新初始化...');
+            initDefaultData();
+            loadTabData('countries');
         }
+        
+        // 启动实时同步监听
+        setupRealtimeSync();
+        
+    } catch (error) {
+        console.error('初始化失败:', error);
+        alert('系统初始化失败，请刷新页面');
+    }
+}
         // 使用DOMContentLoaded确保页面加载完成
         document.addEventListener('DOMContentLoaded', initializeAdmin);
 
