@@ -1092,11 +1092,17 @@
         });
 
         // 更新用户下拉菜单信息
-        function updateUserDropdown() {
-            // 这里应该从实际的用户数据获取
-            document.getElementById('dropdownUserId').textContent = 'USER123456';
-            document.getElementById('dropdownBalance').textContent = '15.80';
-        }
+function updateUserDropdown() {
+    const user = firebase.auth().currentUser;
+    if (user) {
+        // 先显示用户ID（后面getUserInfo会更新为缩短版本）
+        document.getElementById('dropdownUserId').textContent = '加载中...';
+        document.getElementById('dropdownBalance').textContent = '0.00';
+        
+        // 获取完整的用户信息（包括API Key和余额）
+        getUserInfo(user.uid);
+    }
+}
 
         // 用户退出登录
         function userLogout() {
@@ -1909,8 +1915,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('Dashboard 初始化失败:', error);
     }
 });
+        
+    </script>
 
-        <!-- API密钥模态框 -->
+     <!-- API密钥模态框 -->
 <div class="api-key-modal" id="apiKeyModal">
     <div class="api-key-modal-content">
         <h3 style="margin-bottom: 20px;">您的API密钥</h3>
@@ -1934,7 +1942,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>
     </div>
 </div>
-        
-    </script>
 </body>
 </html>
