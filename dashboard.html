@@ -1084,13 +1084,6 @@
             dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
         });
 
-        // 点击其他地方关闭下拉菜单
-        window.addEventListener('click', function(e) {
-            if (!e.target.matches('#userAvatar') && !e.target.closest('#userDropdown')) {
-                document.getElementById('userDropdown').style.display = 'none';
-            }
-        });
-
         // 更新用户下拉菜单信息
 function updateUserDropdown() {
     const user = firebase.auth().currentUser;
@@ -1786,6 +1779,15 @@ document.getElementById('apiKeyModal').addEventListener('click', function(e) {
                 });
             }
         }
+
+        // 点击模态框外部关闭
+document.getElementById('apiKeyModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeApiKeyModal();
+    }
+});
+
+// ========== 到这里结束，后面是原有的 setupEventListeners() 函数 ==========
 
         // 设置 Firebase 实时数据同步
 function setupRealtimeSync() {
