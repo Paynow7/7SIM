@@ -719,6 +719,259 @@
 .payment-header.active i {
     transform: rotate(180deg);
 }
+
+        /* 付款方式样式 */
+.payment-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.payment-header h2 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+
+.payment-header p {
+    color: var(--gray);
+    font-size: 1.1rem;
+}
+
+.payment-methods-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.payment-method-card {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.payment-method-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.15);
+}
+
+.payment-method-header {
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.method-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.method-info {
+    flex: 1;
+}
+
+.method-info h3 {
+    margin-bottom: 5px;
+    color: var(--dark);
+    font-size: 1.3rem;
+}
+
+.method-info p {
+    color: var(--gray);
+    margin: 0;
+}
+
+.payment-method-header .fa-chevron-right {
+    color: var(--gray);
+    transition: transform 0.3s ease;
+}
+
+.payment-method-card.active .fa-chevron-right {
+    transform: rotate(90deg);
+    color: var(--primary);
+}
+
+.payment-method-details {
+    display: none;
+    padding: 0;
+}
+
+.payment-method-card.active .payment-method-details {
+    display: block;
+}
+
+/* 加密货币选项 */
+.crypto-options {
+    padding: 20px;
+}
+
+.crypto-option {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.crypto-option:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+    transform: translateX(5px);
+}
+
+.crypto-option:last-child {
+    margin-bottom: 0;
+}
+
+.crypto-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff6b35, #f7931a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-size: 1.3rem;
+}
+
+.crypto-info h4 {
+    margin-bottom: 5px;
+    color: var(--dark);
+}
+
+.crypto-info p {
+    color: var(--gray);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* 信用卡选项 */
+.card-option {
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    margin: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.card-option:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+}
+
+.card-icon {
+    display: flex;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.card-icon i {
+    font-size: 2rem;
+}
+
+.card-icon .fa-cc-visa {
+    color: #1a1f71;
+}
+
+.card-icon .fa-cc-mastercard {
+    color: #eb001b;
+}
+
+.card-info h4 {
+    margin-bottom: 10px;
+    color: var(--dark);
+}
+
+.fee-details {
+    color: var(--gray);
+}
+
+.fee-details div {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fee-details i {
+    width: 16px;
+    color: var(--primary);
+}
+
+/* 银行转账选项 */
+.bank-options {
+    padding: 20px;
+}
+
+.bank-option {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.bank-option:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+    transform: translateX(5px);
+}
+
+.bank-option:last-child {
+    margin-bottom: 0;
+}
+
+.bank-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-size: 1.3rem;
+}
+
+.bank-info h4 {
+    margin-bottom: 10px;
+    color: var(--dark);
+}
     </style>
 </head>
 <body>
@@ -731,95 +984,21 @@
                     <span>7SIM</span>
                 </a>
                   
-               <div style="display: flex; align-items: center;">
-    <!-- 合并钱包和充值功能 -->
+              <div style="display: flex; align-items: center;">
+    <!-- 简化的钱包按钮 -->
     <div class="wallet-recharge-btn" style="position: relative;">
         <button class="btn btn-primary" id="walletRechargeBtn" style="display: flex; align-items: center; gap: 8px;">
             <i class="fas fa-wallet"></i>
             <span id="balanceAmount">$0</span>
             <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
         </button>
-        <div class="payment-dropdown" id="paymentDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.15); border-radius: 8px; padding: 15px; min-width: 280px; z-index: 1000; margin-top: 10px;">
-            <h4 style="margin-bottom: 15px; color: var(--dark);">选择付款方式</h4>
-            
-            <!-- 加密货币 -->
-            <div class="payment-option">
-                <div class="payment-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; cursor: pointer; border-radius: 6px; background: var(--light);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fab fa-bitcoin" style="color: #f7931a;"></i>
-                        <span style="font-weight: 500;">加密货币</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="payment-details" style="display: none; padding: 15px; background: #f8f9fa; border-radius: 6px; margin-top: 5px;">
-                    <div class="crypto-option" style="padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px; margin-bottom: 8px; cursor: pointer;">
-                        <div style="font-weight: 500;">TRC-20 USDT</div>
-                    </div>
-                    <div class="crypto-option" style="padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px; margin-bottom: 8px; cursor: pointer;">
-                        <div style="font-weight: 500;">TRC-20 USDC</div>
-                    </div>
-                    <div class="crypto-option" style="padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px; margin-bottom: 8px; cursor: pointer;">
-                        <div style="font-weight: 500;">ERC-20 USDT</div>
-                    </div>
-                    <div class="crypto-option" style="padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px; cursor: pointer;">
-                        <div style="font-weight: 500;">ERC-20 USDC</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 信用卡 -->
-            <div class="payment-option" style="margin-top: 10px;">
-                <div class="payment-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; cursor: pointer; border-radius: 6px; background: var(--light);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-credit-card" style="color: #1a1f71;"></i>
-                        <span style="font-weight: 500;">VISA/MASTER CARD</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="payment-details" style="display: none; padding: 15px; background: #f8f9fa; border-radius: 6px; margin-top: 5px;">
-                    <div class="card-option" style="padding: 15px; border: 1px solid var(--light-gray); border-radius: 6px; cursor: pointer;">
-                        <div style="font-weight: 500; margin-bottom: 8px;">Credit Card South Africa</div>
-                        <div style="font-size: 0.85rem; color: var(--gray);">
-                            <div>手续费: 3.9% + $0.05</div>
-                            <div>最低手续费: $0.05</div>
-                            <div>最低付款金额: $0.4</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 银行转账 -->
-            <div class="payment-option" style="margin-top: 10px;">
-                <div class="payment-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; cursor: pointer; border-radius: 6px; background: var(--light);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-university" style="color: #28a745;"></i>
-                        <span style="font-weight: 500;">银行转账</span>
-                    </div>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="payment-details" style="display: none; padding: 15px; background: #f8f9fa; border-radius: 6px; margin-top: 5px;">
-                    <!-- Pix Brazil -->
-                    <div class="bank-option" style="padding: 15px; border: 1px solid var(--light-gray); border-radius: 6px; margin-bottom: 10px; cursor: pointer;">
-                        <div style="font-weight: 500; margin-bottom: 8px;">Pix - Brazil</div>
-                        <div style="font-size: 0.85rem; color: var(--gray);">
-                            <div>手续费: 3.75% + $0.35</div>
-                            <div>最低手续费: $0.35</div>
-                            <div>最低付款金额: $0.4</div>
-                        </div>
-                    </div>
-                    <!-- PSE Colombia -->
-                    <div class="bank-option" style="padding: 15px; border: 1px solid var(--light-gray); border-radius: 6px; cursor: pointer;">
-                        <div style="font-weight: 500; margin-bottom: 8px;">PSE - Colombia</div>
-                        <div style="font-size: 0.85rem; color: var(--gray);">
-                            <div>手续费: 4.25% + $0.01</div>
-                            <div>最低手续费: $0.01</div>
-                            <div>最低付款金额: $0.02</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
+    
+    <!-- 用户菜单保持不变 -->
+    <div class="user-menu" style="position: relative; margin-left: 15px;">
+        <!-- 用户菜单内容保持不变 -->
+    </div>
+</div>
     
     <!-- 用户菜单保持不变 -->
     <div class="user-menu" style="position: relative; margin-left: 15px;">
@@ -930,12 +1109,13 @@
             <!-- 右侧面板 - 服务信息 -->
             <div class="right-panel">
                 <div class="service-details">
-                    <div class="service-tabs">
-                        <div class="tab active" data-tab="home">主页</div>
-                        <div class="tab" data-tab="faq">FAQ</div>
-                        <div class="tab" data-tab="api">API</div>
-                        <div class="tab" data-tab="purchase">怎么购买？</div>
-                    </div>
+                   <div class="service-tabs">
+    <div class="tab active" data-tab="home">主页</div>
+    <div class="tab" data-tab="faq">FAQ</div>
+    <div class="tab" data-tab="api">API</div>
+    <div class="tab" data-tab="purchase">怎么购买？</div>
+    <div class="tab" data-tab="payment" style="display: none;">付款</div>
+</div>
                     
                     <!-- 主页内容 -->
                     <div class="tab-content active" id="home-tab">
@@ -1185,6 +1365,136 @@
                                 <div class="step-content">
                                     <h3>接收短信</h3>
                                     <p>使用获取的号码注册服务，系统会自动接收并显示验证码短信。</p>
+                                </div><!-- 在现有的标签页后面添加付款面板 -->
+<div class="tab-content" id="payment-tab" style="display: none;">
+    <div class="payment-container">
+        <div class="payment-header">
+            <h2><i class="fas fa-credit-card"></i> 选择付款方式</h2>
+            <p>选择最适合您的付款方式来为账户充值</p>
+        </div>
+        
+        <div class="payment-methods-grid">
+            <!-- 加密货币 -->
+            <div class="payment-method-card" data-method="crypto">
+                <div class="payment-method-header">
+                    <div class="method-icon">
+                        <i class="fab fa-bitcoin"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>加密货币</h3>
+                        <p>使用主流加密货币支付</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="payment-method-details">
+                    <div class="crypto-options">
+                        <div class="crypto-option" data-network="TRC-20" data-coin="USDT">
+                            <div class="crypto-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="crypto-info">
+                                <h4>TRC-20 USDT</h4>
+                                <p>Tether (TRC20 Network)</p>
+                            </div>
+                        </div>
+                        <div class="crypto-option" data-network="TRC-20" data-coin="USDC">
+                            <div class="crypto-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="crypto-info">
+                                <h4>TRC-20 USDC</h4>
+                                <p>USD Coin (TRC20 Network)</p>
+                            </div>
+                        </div>
+                        <div class="crypto-option" data-network="ERC-20" data-coin="USDT">
+                            <div class="crypto-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="crypto-info">
+                                <h4>ERC-20 USDT</h4>
+                                <p>Tether (ERC20 Network)</p>
+                            </div>
+                        </div>
+                        <div class="crypto-option" data-network="ERC-20" data-coin="USDC">
+                            <div class="crypto-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="crypto-info">
+                                <h4>ERC-20 USDC</h4>
+                                <p>USD Coin (ERC20 Network)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 信用卡 -->
+            <div class="payment-method-card" data-method="card">
+                <div class="payment-method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>VISA/MASTER CARD</h3>
+                        <p>使用信用卡或借记卡支付</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="payment-method-details">
+                    <div class="card-option">
+                        <div class="card-icon">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                        </div>
+                        <div class="card-info">
+                            <h4>Credit Card - South Africa</h4>
+                            <div class="fee-details">
+                                <div><i class="fas fa-percentage"></i> 手续费: 3.9% + $0.05</div>
+                                <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.05</div>
+                                <div><i class="fas fa-dollar-sign"></i> 最低付款金额: $0.4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 银行转账 -->
+            <div class="payment-method-card" data-method="bank">
+                <div class="payment-method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>银行转账</h3>
+                        <p>通过银行系统转账支付</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="payment-method-details">
+                    <div class="bank-options">
+                        <div class="bank-option" data-bank="pix">
+                            <div class="bank-icon">
+                                <i class="fas fa-money-check-alt"></i>
+                            </div>
+                            <div class="bank-info">
+                                <h4>Pix - Brazil</h4>
+                                <div class="fee-details">
+                                    <div><i class="fas fa-percentage"></i> 手续费: 3.75% + $0.35</div>
+                                    <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.35</div>
+                                    <div><i class="fas fa-dollar-sign"></i> 最低付款金额: $0.4</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bank-option" data-bank="pse">
+                            <div class="bank-icon">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <div class="bank-info">
+                                <h4>PSE - Colombia</h4>
+                                <div class="fee-details">
+                                    <div><i class="fas fa-percentage"></i> 手续费: 4.25% + $0.01</div>
+                                    <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.01</div>
+                                    <div><i class="fas fa-dollar-sign"></i> 最低付款金额: $0.02</div>
                                 </div>
                             </div>
                         </div>
@@ -1193,6 +1503,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <script>
         // 用户菜单功能
@@ -1834,64 +2145,76 @@ async function regenerateApiKey() {
     }
 }
 
-        // 钱包充值按钮功能
+       // 钱包充值按钮功能
 function setupWalletRecharge() {
     const walletRechargeBtn = document.getElementById('walletRechargeBtn');
-    const paymentDropdown = document.getElementById('paymentDropdown');
     
-    // 点击钱包按钮显示/隐藏支付选项
-    walletRechargeBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        paymentDropdown.style.display = paymentDropdown.style.display === 'block' ? 'none' : 'block';
+    // 点击钱包按钮显示付款面板
+    walletRechargeBtn.addEventListener('click', function() {
+        // 切换到付款标签页
+        switchToPaymentTab();
     });
     
-    // 点击支付选项头部展开/收起详情
-    document.querySelectorAll('.payment-header').forEach(header => {
-        header.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const details = this.nextElementSibling;
-            const isActive = this.classList.contains('active');
+    // 付款方式卡片点击事件
+    document.querySelectorAll('.payment-method-card').forEach(card => {
+        const header = card.querySelector('.payment-method-header');
+        
+        header.addEventListener('click', function() {
+            // 切换当前卡片的展开状态
+            const isActive = card.classList.contains('active');
             
-            // 关闭所有其他详情
-            document.querySelectorAll('.payment-details').forEach(d => {
-                d.style.display = 'none';
-            });
-            document.querySelectorAll('.payment-header').forEach(h => {
-                h.classList.remove('active');
+            // 关闭所有其他卡片
+            document.querySelectorAll('.payment-method-card').forEach(c => {
+                c.classList.remove('active');
             });
             
-            // 切换当前详情
+            // 切换当前卡片
             if (!isActive) {
-                details.style.display = 'block';
-                this.classList.add('active');
+                card.classList.add('active');
             }
         });
     });
     
-    // 点击具体支付方式
+    // 具体支付选项点击事件
     document.querySelectorAll('.crypto-option, .card-option, .bank-option').forEach(option => {
         option.addEventListener('click', function(e) {
             e.stopPropagation();
-            const method = this.querySelector('div').textContent;
-            alert(`您选择了: ${method}\n\n请稍后...支付功能正在开发中`);
-            paymentDropdown.style.display = 'none';
+            
+            let methodName = '';
+            if (this.classList.contains('crypto-option')) {
+                const network = this.getAttribute('data-network');
+                const coin = this.getAttribute('data-coin');
+                methodName = `${network} ${coin}`;
+            } else if (this.classList.contains('card-option')) {
+                methodName = 'Credit Card - South Africa';
+            } else if (this.classList.contains('bank-option')) {
+                const bank = this.getAttribute('data-bank');
+                methodName = bank === 'pix' ? 'Pix - Brazil' : 'PSE - Colombia';
+            }
+            
+            alert(`您选择了: ${methodName}\n\n请稍后...支付功能正在开发中`);
         });
     });
-    
-    // 点击页面其他地方关闭支付下拉菜单
-    document.addEventListener('click', function() {
-        paymentDropdown.style.display = 'none';
-        document.querySelectorAll('.payment-details').forEach(d => {
-            d.style.display = 'none';
-        });
-        document.querySelectorAll('.payment-header').forEach(h => {
-            h.classList.remove('active');
-        });
+}
+
+// 切换到付款标签页
+function switchToPaymentTab() {
+    // 隐藏所有标签内容
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
     });
     
-    // 阻止支付下拉菜单内部点击事件冒泡
-    paymentDropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
+    // 移除所有标签的活动状态
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // 显示付款标签页
+    document.getElementById('payment-tab').style.display = 'block';
+    
+    // 关闭所有展开的付款卡片
+    document.querySelectorAll('.payment-method-card').forEach(card => {
+        card.classList.remove('active');
     });
 }
 
@@ -1906,16 +2229,17 @@ function setupEventListeners() {
     
     // 标签切换
     document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            // 移除所有active类
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            // 添加active类
-            this.classList.add('active');
-            document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
-        });
+    tab.addEventListener('click', function() {
+        // 移除所有active类
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // 添加active类
+        this.classList.add('active');
+        const tabId = `${this.dataset.tab}-tab`;
+        document.getElementById(tabId).classList.add('active');
     });
+});
     
     // FAQ展开/收起
     document.querySelectorAll('.faq-question').forEach(question => {
