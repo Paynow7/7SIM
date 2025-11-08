@@ -984,19 +984,24 @@
                     <span>7SIM</span>
                 </a>
                   
-              <div style="display: flex; align-items: center;">
-    <!-- 简化的钱包按钮 -->
+              <div style="display: flex; align-items: center; gap: 15px;">
+    <!-- 钱包按钮 - 修复位置 -->
     <div class="wallet-recharge-btn" style="position: relative;">
-        <button class="btn btn-primary" id="walletRechargeBtn" style="display: flex; align-items: center; gap: 8px;">
+        <button class="btn btn-primary" id="walletRechargeBtn" style="display: flex; align-items: center; gap: 8px; padding: 8px 15px;">
             <i class="fas fa-wallet"></i>
             <span id="balanceAmount">$0</span>
             <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
         </button>
     </div>
     
-    <!-- 用户菜单保持不变 -->
-    <div class="user-menu" style="position: relative; margin-left: 15px;">
-        <!-- 用户菜单内容保持不变 -->
+    <!-- 用户菜单 -->
+    <div class="user-menu" style="position: relative;">
+        <div class="user-avatar" id="userAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--light-gray); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="user-dropdown" id="userDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; min-width: 200px; z-index: 1000; margin-top: 10px;">
+            <!-- 用户下拉菜单内容保持不变 -->
+        </div>
     </div>
 </div>
     
@@ -2378,7 +2383,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         updateOperatorPrices();
         setupEventListeners();
 
-        setupWalletRecharge();
+       // 确保这一行存在且位置正确
+        setupWalletRecharge(); // <-- 这行必须在所有DOM元素加载后调用
         
         // 启动实时同步
         setupRealtimeSync();
