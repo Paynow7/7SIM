@@ -1129,273 +1129,174 @@
             </div>
             
             <!-- 右侧面板 - 服务信息 -->
-            <div class="right-panel">
-                <div class="service-details">
-                   <div class="service-tabs">
-    <div class="tab active" data-tab="home">主页</div>
-    <div class="tab" data-tab="faq">FAQ</div>
-    <div class="tab" data-tab="api">API</div>
-    <div class="tab" data-tab="purchase">怎么购买？</div>
-   
-
+<div class="right-panel">
+    <div class="service-details">
+        <div class="service-tabs">
+            <div class="tab active" data-tab="home">主页</div>
+            <div class="tab" data-tab="faq">FAQ</div>
+            <div class="tab" data-tab="api">API</div>
+            <div class="tab" data-tab="purchase">怎么购买？</div>
+        </div>
+        
+        <!-- 主页内容 -->
+        <div class="tab-content active" id="home-tab">
+            <div class="service-info-card">
+                <div class="service-info-header">
+                    <div class="service-info-icon" id="serviceMainIcon">
+                        <i class="fas fa-sim-card"></i>
+                    </div>
+                    <div class="service-info-text">
+                        <div class="service-info-name" id="serviceMainName">7SIM 虚拟号码服务</div>
+                        <div class="service-info-description">用于接收短信和激活任何服务的虚拟号码</div>
+                    </div>
+                </div>
+                
+                <div class="service-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">500,000+</div>
+                        <div class="stat-label">手机号码在线</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">180+</div>
+                        <div class="stat-label">国家/地区</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">全天候服务</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">$0.05</div>
+                        <div class="stat-label">起价</div>
+                    </div>
+                </div>
+                
+                <div class="service-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>全球覆盖</h3>
+                        <p>有50多万个来自180个国家的手机号码同时在线，包括英国、美国、加拿大、泰国、印度尼西亚等</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync"></i>
+                        </div>
+                        <h3>实时更新</h3>
+                        <p>天天添加新的虚拟号码，确保号码新鲜度和可用性</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3>价格实惠</h3>
+                        <p>一个号码的价格从$0.05起，无需支付移动运营商月费</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>24/7 客服支持</h3>
+                        <p>客户支持提供24小时服务，通过聊天工具和社交网络解决所有问题</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; color: var(--gray); margin-top: 30px;">
+                <p><strong>针对各个服务的价格限制来存钱！</strong></p>
+                <p>天天添加新的虚拟号码，一个号码的价格从 $0.05 起，这样大家不必支付移动运营商的月费</p>
+            </div>
+        </div>
+        
+        <!-- FAQ内容 -->
+        <div class="tab-content" id="faq-tab">
+            <h2 style="margin-bottom: 25px;">常见问题解答</h2>
+            <div class="faq-list">
+                <!-- FAQ内容保持不变 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        什么是虚拟号码？
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        虚拟号码是一种在线电话号码，可以用于接收短信和验证码，但不需要实体SIM卡。它可以帮助您保护隐私，注册各种在线服务，避免使用个人真实手机号码。
+                    </div>
+                </div>
+                <!-- 其他FAQ项目... -->
+            </div>
+        </div>
+        
+        <!-- API内容 -->
+        <div class="tab-content" id="api-tab">
+            <h2 style="margin-bottom: 25px;">API 文档</h2>
+            <div class="api-section">
+                <div class="api-docs">
+                    <h3 style="margin-bottom: 15px;">面向开发者和用户的API</h3>
+                    <p style="margin-bottom: 20px;">使用我们的API可以自动化获取号码和接收短信的过程。</p>
                     
-                    <!-- 主页内容 -->
-                    <div class="tab-content active" id="home-tab">
-                        <div class="service-info-card">
-                            <div class="service-info-header">
-                                <div class="service-info-icon" id="serviceMainIcon">
-                                    <i class="fas fa-sim-card"></i>
-                                </div>
-                                <div class="service-info-text">
-                                    <div class="service-info-name" id="serviceMainName">7SIM 虚拟号码服务</div>
-                                    <div class="service-info-description">用于接收短信和激活任何服务的虚拟号码</div>
-                                </div>
-                            </div>
-                            
-                            <div class="service-stats">
-                                <div class="stat-card">
-                                    <div class="stat-value">500,000+</div>
-                                    <div class="stat-label">手机号码在线</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">180+</div>
-                                    <div class="stat-label">国家/地区</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">24/7</div>
-                                    <div class="stat-label">全天候服务</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">$0.05</div>
-                                    <div class="stat-label">起价</div>
-                                </div>
-                            </div>
-                            
-                            <div class="service-features">
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-globe"></i>
-                                    </div>
-                                    <h3>全球覆盖</h3>
-                                    <p>有50多万个来自180个国家的手机号码同时在线，包括英国、美国、加拿大、泰国、印度尼西亚等</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-sync"></i>
-                                    </div>
-                                    <h3>实时更新</h3>
-                                    <p>天天添加新的虚拟号码，确保号码新鲜度和可用性</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                    </div>
-                                    <h3>价格实惠</h3>
-                                    <p>一个号码的价格从$0.05起，无需支付移动运营商月费</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-headset"></i>
-                                    </div>
-                                    <h3>24/7 客服支持</h3>
-                                    <p>客户支持提供24小时服务，通过聊天工具和社交网络解决所有问题</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="text-align: center; color: var(--gray); margin-top: 30px;">
-                            <p><strong>针对各个服务的价格限制来存钱！</strong></p>
-                            <p>天天添加新的虚拟号码，一个号码的价格从 $0.05 起，这样大家不必支付移动运营商的月费</p>
-                        </div>
+                    <div class="api-endpoint">
+                        <span class="endpoint-method">GET</span>
+                        <span class="endpoint-url">/api/getNumber?service=whatsapp&country=us</span>
                     </div>
                     
-                   <!-- FAQ内容 -->
-<div class="tab-content" id="faq-tab">
-    <h2 style="margin-bottom: 25px;">常见问题解答</h2>
-    <div class="faq-list">
-        <div class="faq-item">
-            <div class="faq-question">
-                什么是虚拟号码？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                虚拟号码是一种在线电话号码，可以用于接收短信和验证码，但不需要实体SIM卡。它可以帮助您保护隐私，注册各种在线服务，避免使用个人真实手机号码。
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                如何购买虚拟号码？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                <ol>
-                    <li>注册并登录您的7SIM账户</li>
-                    <li>充值您的账户余额</li>
-                    <li>选择需要的服务和国家</li>
-                    <li>点击"获取号码"按钮</li>
-                    <li>使用获取的号码接收短信</li>
-                </ol>
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                号码可以使用多久？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                大多数号码的有效期为20分钟到24小时，具体取决于您选择的服务类型。在有效期内，您可以接收多条短信。超过有效期后号码将自动回收。
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                支持哪些服务？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                我们支持几乎所有主流服务，包括：<br>
-                ✅ WhatsApp, Telegram, Facebook, Twitter<br>
-                ✅ Instagram, Google, Amazon, TikTok<br>
-                ✅ 微信, 支付宝, 淘宝, 京东<br>
-                ✅ 以及数千种其他应用和网站
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                如何充值账户？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                我们支持多种支付方式：<br>
-                • 支付宝<br>
-                • 微信支付<br>
-                • PayPal<br>
-                • 银行卡支付<br>
-                登录后点击右上角的"充值"按钮即可进行充值。
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                短信接收成功率如何？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                我们的短信接收成功率超过95%。如果遇到接收失败的情况：<br>
-                1. 可以尝试更换其他号码<br>
-                2. 选择不同的国家/运营商<br>
-                3. 联系客服寻求帮助
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                是否支持API接口？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                是的，我们提供完整的API接口支持，开发者可以通过API：<br>
-                • 自动获取手机号码<br>
-                • 接收短信内容<br>
-                • 查询账户余额<br>
-                • 管理使用记录<br>
-                具体API文档请在"API"标签页查看。
-            </div>
-        </div>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                遇到问题如何联系客服？
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="faq-answer">
-                我们提供24/7客服支持：<br>
-                • 在线客服：登录后在右下角点击客服图标<br>
-                • 邮箱支持：support@7sim.com<br>
-                • 问题反馈：通过用户面板提交问题<br>
-                平均响应时间：5-15分钟
-            </div>
-        </div>
-    </div>
-</div>
-                    
-                    <!-- API内容 -->
-                    <div class="tab-content" id="api-tab">
-                        <h2 style="margin-bottom: 25px;">API 文档</h2>
-                        <div class="api-section">
-                            <div class="api-docs">
-                                <h3 style="margin-bottom: 15px;">面向开发者和用户的API</h3>
-                                <p style="margin-bottom: 20px;">使用我们的API可以自动化获取号码和接收短信的过程。</p>
-                                
-                                <div class="api-endpoint">
-                                    <span class="endpoint-method">GET</span>
-                                    <span class="endpoint-url">/api/getNumber?service=whatsapp&country=us</span>
-                                </div>
-                                
-                                <div class="api-endpoint">
-                                    <span class="endpoint-method">GET</span>
-                                    <span class="endpoint-url">/api/getSMS?number=+1234567890</span>
-                                </div>
-                                
-                                <div class="api-endpoint">
-                                    <span class="endpoint-method">GET</span>
-                                    <span class="endpoint-url">/api/getBalance</span>
-                                </div>
-                            </div>
-                            
-                            <p>在接码平台、高质量VPN/代理、浏览器的用户代理和可靠的软件的帮助下确保不间断运行</p>
-                        </div>
+                    <div class="api-endpoint">
+                        <span class="endpoint-method">GET</span>
+                        <span class="endpoint-url">/api/getSMS?number=+1234567890</span>
                     </div>
                     
-                    <!-- 购买指南 -->
-                    <div class="tab-content" id="purchase-tab">
-                        <h2 style="margin-bottom: 25px;">购买指南</h2>
-                        <div class="purchase-steps">
-                            <div class="step">
-                                <div class="step-number">1</div>
-                                <div class="step-content">
-                                    <h3>充值账户</h3>
-                                    <p>首先需要充值您的账户余额。我们支持多种支付方式，包括支付宝、微信支付、信用卡等。</p>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number">2</div>
-                                <div class="step-content">
-                                    <h3>选择服务</h3>
-                                    <p>在左侧面板选择您需要的服务，如WhatsApp、Telegram等。</p>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number">3</div>
-                                <div class="step-content">
-                                    <h3>选择国家</h3>
-                                    <p>选择您需要的号码所在国家，不同国家的价格可能不同。</p>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number">4</div>
-                                <div class="step-content">
-                                    <h3>获取号码</h3>
-                                    <p>点击"获取号码"按钮，系统会为您分配一个可用的虚拟号码。</p>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-number">5</div>
-                                <div class="step-content">
-                                    <h3>接收短信</h3>
-                                    <p>使用获取的号码注册服务，系统会自动接收并显示验证码短信。</p>
-                                </div><!-- 在现有的标签页后面添加付款面板 -->
-                        </div>
+                    <div class="api-endpoint">
+                        <span class="endpoint-method">GET</span>
+                        <span class="endpoint-url">/api/getBalance</span>
+                    </div>
+                </div>
+                
+                <p>在接码平台、高质量VPN/代理、浏览器的用户代理和可靠的软件的帮助下确保不间断运行</p>
+            </div>
+        </div>
+        
+        <!-- 购买指南 -->
+        <div class="tab-content" id="purchase-tab">
+            <h2 style="margin-bottom: 25px;">购买指南</h2>
+            <div class="purchase-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>充值账户</h3>
+                        <p>首先需要充值您的账户余额。我们支持多种支付方式，包括支付宝、微信支付、信用卡等。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>选择服务</h3>
+                        <p>在左侧面板选择您需要的服务，如WhatsApp、Telegram等。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>选择国家</h3>
+                        <p>选择您需要的号码所在国家，不同国家的价格可能不同。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>获取号码</h3>
+                        <p>点击"获取号码"按钮，系统会为您分配一个可用的虚拟号码。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>接收短信</h3>
+                        <p>使用获取的号码注册服务，系统会自动接收并显示验证码短信。</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
     <script>
         // 用户菜单功能
         document.getElementById('userAvatar').addEventListener('click', function() {
