@@ -972,6 +972,47 @@
     margin-bottom: 10px;
     color: var(--dark);
 }
+
+        /* 付款覆盖层样式 */
+.payment-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    overflow-y: auto;
+}
+
+.payment-overlay-content {
+    background: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.close-overlay {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray);
+    padding: 5px;
+}
+
+.close-overlay:hover {
+    color: var(--danger);
+}
     </style>
 </head>
 <body>
@@ -1090,7 +1131,7 @@
     <div class="tab" data-tab="faq">FAQ</div>
     <div class="tab" data-tab="api">API</div>
     <div class="tab" data-tab="purchase">怎么购买？</div>
-    <div class="tab" data-tab="payment">付款</div>
+   
 
                     
                     <!-- 主页内容 -->
@@ -1342,137 +1383,6 @@
                                     <h3>接收短信</h3>
                                     <p>使用获取的号码注册服务，系统会自动接收并显示验证码短信。</p>
                                 </div><!-- 在现有的标签页后面添加付款面板 -->
-<div class="tab-content" id="payment-tab">
-    <div class="payment-container">
-        <div class="payment-header">
-            <h2><i class="fas fa-credit-card"></i> 选择付款方式</h2>
-            <p>选择最适合您的付款方式来为账户充值</p>
-        </div>
-        
-        <div class="payment-methods-grid">
-            <!-- 加密货币 -->
-            <div class="payment-method-card" data-method="crypto">
-                <div class="payment-method-header">
-                    <div class="method-icon">
-                        <i class="fab fa-bitcoin"></i>
-                    </div>
-                    <div class="method-info">
-                        <h3>加密货币</h3>
-                        <p>使用主流加密货币支付</p>
-                    </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="payment-method-details">
-                    <div class="crypto-options">
-                        <div class="crypto-option" data-network="TRC-20" data-coin="USDT">
-                            <div class="crypto-icon">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div class="crypto-info">
-                                <h4>TRC-20 USDT</h4>
-                                <p>Tether (TRC20 Network)</p>
-                            </div>
-                        </div>
-                        <div class="crypto-option" data-network="TRC-20" data-coin="USDC">
-                            <div class="crypto-icon">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div class="crypto-info">
-                                <h4>TRC-20 USDC</h4>
-                                <p>USD Coin (TRC20 Network)</p>
-                            </div>
-                        </div>
-                        <div class="crypto-option" data-network="ERC-20" data-coin="USDT">
-                            <div class="crypto-icon">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div class="crypto-info">
-                                <h4>ERC-20 USDT</h4>
-                                <p>Tether (ERC20 Network)</p>
-                            </div>
-                        </div>
-                        <div class="crypto-option" data-network="ERC-20" data-coin="USDC">
-                            <div class="crypto-icon">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div class="crypto-info">
-                                <h4>ERC-20 USDC</h4>
-                                <p>USD Coin (ERC20 Network)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 信用卡 -->
-            <div class="payment-method-card" data-method="card">
-                <div class="payment-method-header">
-                    <div class="method-icon">
-                        <i class="fas fa-credit-card"></i>
-                    </div>
-                    <div class="method-info">
-                        <h3>VISA/MASTER CARD</h3>
-                        <p>使用信用卡或借记卡支付</p>
-                    </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="payment-method-details">
-                    <div class="card-option">
-                        <div class="card-icon">
-                            <i class="fab fa-cc-visa"></i>
-                            <i class="fab fa-cc-mastercard"></i>
-                        </div>
-                        <div class="card-info">
-                            <h4>Credit Card - South Africa</h4>
-                            <div class="fee-details">
-                                <div><i class="fas fa-percentage"></i> 手续费: 3.9% + $0.05</div>
-                                <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.05</div>
-                                <div><i class="fas fa-dollar-sign"></i> 最低付款金额: $0.4</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 银行转账 -->
-            <div class="payment-method-card" data-method="bank">
-                <div class="payment-method-header">
-                    <div class="method-icon">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <div class="method-info">
-                        <h3>银行转账</h3>
-                        <p>通过银行系统转账支付</p>
-                    </div>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-                <div class="payment-method-details">
-                    <div class="bank-options">
-                        <div class="bank-option" data-bank="pix">
-                            <div class="bank-icon">
-                                <i class="fas fa-money-check-alt"></i>
-                            </div>
-                            <div class="bank-info">
-                                <h4>Pix - Brazil</h4>
-                                <div class="fee-details">
-                                    <div><i class="fas fa-percentage"></i> 手续费: 3.75% + $0.35</div>
-                                    <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.35</div>
-                                    <div><i class="fas fa-dollar-sign"></i> 最低付款金额: $0.4</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bank-option" data-bank="pse">
-                            <div class="bank-icon">
-                                <i class="fas fa-landmark"></i>
-                            </div>
-                            <div class="bank-info">
-                                <h4>PSE - Colombia</h4>
-                                <div class="fee-details">
-                                    <div><i class="fas fa-percentage"></i> 手续费: 4.25% + $0.01</div>
-                                    <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.01</div>
-                                    <div><i class="fas fa-dollar-sign"></i> 最低付款金额: $0.02</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -2122,29 +2032,25 @@ async function regenerateApiKey() {
 }
 
        // 钱包充值按钮功能
+// 钱包充值按钮功能 - 使用覆盖层方案
 function setupWalletRecharge() {
     const walletRechargeBtn = document.getElementById('walletRechargeBtn');
     
-    // 点击钱包按钮显示付款面板
     walletRechargeBtn.addEventListener('click', function() {
-        // 切换到付款标签页
-        switchToPaymentTab();
+        showPaymentOverlay();
     });
     
-    // 付款方式卡片点击事件
+    // 保留原有的付款卡片交互逻辑
     document.querySelectorAll('.payment-method-card').forEach(card => {
         const header = card.querySelector('.payment-method-header');
         
         header.addEventListener('click', function() {
-            // 切换当前卡片的展开状态
             const isActive = card.classList.contains('active');
             
-            // 关闭所有其他卡片
             document.querySelectorAll('.payment-method-card').forEach(c => {
                 c.classList.remove('active');
             });
             
-            // 切换当前卡片
             if (!isActive) {
                 card.classList.add('active');
             }
@@ -2173,42 +2079,16 @@ function setupWalletRecharge() {
     });
 }
 
-// 切换到付款标签页
-function switchToPaymentTab() {
-    console.log('开始切换到付款标签页...');
-    
-    // 获取所有相关元素
-    const paymentTab = document.getElementById('payment-tab');
-    const paymentTabButton = document.querySelector('.tab[data-tab="payment"]');
-    
-    console.log('付款标签页内容:', paymentTab);
-    console.log('付款标签按钮:', paymentTabButton);
-    
-    if (!paymentTab || !paymentTabButton) {
-        console.error('找不到付款标签页元素');
-        return;
-    }
-    
-    // 1. 隐藏所有标签内容
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.style.display = 'none';
-        content.classList.remove('active');
-    });
-    
-    // 2. 移除所有标签按钮的激活状态
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // 3. 显示并激活付款标签页
-    paymentTab.style.display = 'block';
-    paymentTab.classList.add('active');
-    paymentTabButton.classList.add('active');
-    
-    console.log('付款标签页激活完成');
-    console.log('付款内容显示状态:', paymentTab.style.display);
-    console.log('付款内容active类:', paymentTab.classList.contains('active'));
-    console.log('付款按钮active类:', paymentTabButton.classList.contains('active'));
+// 显示付款覆盖层
+function showPaymentOverlay() {
+    document.getElementById('paymentOverlay').style.display = 'block';
+    document.body.style.overflow = 'hidden'; // 防止背景滚动
+}
+
+// 关闭付款覆盖层
+function closePaymentOverlay() {
+    document.getElementById('paymentOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto'; // 恢复滚动
 }
 
         // 设置事件监听器
@@ -2407,6 +2287,94 @@ document.addEventListener('DOMContentLoaded', async function() {
             <button class="btn" onclick="closeApiKeyModal()" style="margin-left: auto;">
                 关闭
             </button>
+        </div>
+    </div>
+</div>
+
+        <!-- 付款覆盖层 -->
+<div class="payment-overlay" id="paymentOverlay">
+    <div class="payment-overlay-content">
+        <div class="container">
+            <div class="overlay-header">
+                <h2 style="margin: 0; color: var(--primary);">
+                    <i class="fas fa-credit-card"></i> 账户充值
+                </h2>
+                <button class="close-overlay" onclick="closePaymentOverlay()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- 这里放入您原来的付款内容 -->
+            <div class="payment-container">
+                <div class="payment-header">
+                    <h2><i class="fas fa-credit-card"></i> 选择付款方式</h2>
+                    <p>选择最适合您的付款方式来为账户充值</p>
+                </div>
+                
+                <div class="payment-methods-grid">
+                    <!-- 加密货币部分 -->
+                    <div class="payment-method-card" data-method="crypto">
+                        <div class="payment-method-header">
+                            <div class="method-icon">
+                                <i class="fab fa-bitcoin"></i>
+                            </div>
+                            <div class="method-info">
+                                <h3>加密货币</h3>
+                                <p>使用主流加密货币支付</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="payment-method-details">
+                            <div class="crypto-options">
+                                <div class="crypto-option" data-network="TRC-20" data-coin="USDT">
+                                    <div class="crypto-icon">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                    <div class="crypto-info">
+                                        <h4>TRC-20 USDT</h4>
+                                        <p>Tether (TRC20 Network)</p>
+                                    </div>
+                                </div>
+                                <!-- 其他加密货币选项 -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 信用卡部分 -->
+                    <div class="payment-method-card" data-method="card">
+                        <div class="payment-method-header">
+                            <div class="method-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="method-info">
+                                <h3>VISA/MASTER CARD</h3>
+                                <p>使用信用卡或借记卡支付</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="payment-method-details">
+                            <!-- 信用卡内容 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 银行转账部分 -->
+                    <div class="payment-method-card" data-method="bank">
+                        <div class="payment-method-header">
+                            <div class="method-icon">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <div class="method-info">
+                                <h3>银行转账</h3>
+                                <p>通过银行系统转账支付</p>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="payment-method-details">
+                            <!-- 银行转账内容 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
