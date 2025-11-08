@@ -2175,18 +2175,38 @@ function setupWalletRecharge() {
 
 // 切换到付款标签页
 function switchToPaymentTab() {
+    console.log('开始切换到付款标签页...');
+    
     // 隐藏所有标签内容
     document.querySelectorAll('.tab-content').forEach(content => {
+        console.log('隐藏内容:', content.id);
         content.style.display = 'none';
+        content.classList.remove('active');
     });
     
     // 移除所有标签的活动状态
     document.querySelectorAll('.tab').forEach(tab => {
+        console.log('移除标签激活状态:', tab.textContent);
         tab.classList.remove('active');
     });
     
-    // 显示付款标签页
-    document.getElementById('payment-tab').style.display = 'block';
+    // 显示付款标签页并激活
+    const paymentTab = document.getElementById('payment-tab');
+    const paymentTabButton = document.querySelector('.tab[data-tab="payment"]');
+    
+    console.log('付款标签页元素:', paymentTab);
+    console.log('付款标签按钮:', paymentTabButton);
+    
+    if (paymentTab && paymentTabButton) {
+        paymentTab.style.display = 'block';
+        paymentTab.classList.add('active');
+        paymentTabButton.classList.add('active');
+        console.log('成功激活付款标签页');
+    } else {
+        console.error('找不到付款标签页元素');
+        if (!paymentTab) console.error('找不到 #payment-tab 元素');
+        if (!paymentTabButton) console.error('找不到 .tab[data-tab="payment"] 元素');
+    }
     
     // 关闭所有展开的付款卡片
     document.querySelectorAll('.payment-method-card').forEach(card => {
