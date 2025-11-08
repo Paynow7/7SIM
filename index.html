@@ -115,6 +115,8 @@
         .btn-outline:hover {
             background: var(--primary);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .btn-primary {
@@ -124,6 +126,8 @@
 
         .btn-primary:hover {
             background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .user-avatar {
@@ -193,6 +197,8 @@
 
         .btn-light:hover {
             background: var(--light-gray);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         /* 服务区域样式 */
@@ -274,8 +280,8 @@
         }
 
         .country-card:hover, .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .flag {
@@ -352,7 +358,7 @@
             font-size: 1.3rem;
         }
 
-        /* 注册/登录模态框 */
+        /* 模态框样式 */
         .modal {
             display: none;
             position: fixed;
@@ -703,16 +709,43 @@
             font-size: 0.8rem;
             margin-top: 5px;
         }
-        
-        .test-mode-notice {
-            background-color: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 15px;
-            text-align: center;
+
+        /* 更多卡片样式 */
+        .more-card {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .more-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+        }
+
+        .more-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* 忘记密码链接样式 */
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
             font-size: 0.9rem;
-            color: #0c5460;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -742,7 +775,7 @@
                     <div id="userInfo" style="display: none;">
                         <div class="wallet-info">
                             <i class="fas fa-wallet"></i>
-                            <span id="balanceAmount">¥0.00</span>
+                            <span id="balanceAmount">$0.00</span>
                         </div>
                         <button class="btn btn-primary" id="rechargeBtn">充值</button>
                         <div class="user-menu">
@@ -776,8 +809,8 @@
             <h1>全球接码服务，安全便捷</h1>
             <p>7SIM提供全球手机号码接收短信验证码服务，支持数千种应用和网站，保护您的隐私安全。</p>
             <div class="hero-buttons">
-                <button class="btn btn-light">立即体验</button>
-                <button class="btn btn-outline">了解更多</button>
+                <button class="btn btn-light" id="startExperience">立即体验</button>
+                <button class="btn btn-outline" id="learnMore">了解更多</button>
             </div>
         </div>
     </section>
@@ -799,32 +832,71 @@
                     <div class="country-card">
                         <img src="https://flagcdn.com/w80/us.png" alt="美国" class="flag">
                         <div class="country-name">美国</div>
-                        <div class="country-price">¥1.20/条</div>
+                        <div class="country-price">$0.05起/条</div>
                     </div>
                     <div class="country-card">
                         <img src="https://flagcdn.com/w80/gb.png" alt="英国" class="flag">
                         <div class="country-name">英国</div>
-                        <div class="country-price">¥1.50/条</div>
+                        <div class="country-price">$0.06起/条</div>
                     </div>
                     <div class="country-card">
                         <img src="https://flagcdn.com/w80/cn.png" alt="中国" class="flag">
                         <div class="country-name">中国</div>
-                        <div class="country-price">¥0.80/条</div>
+                        <div class="country-price">$0.03起/条</div>
                     </div>
                     <div class="country-card">
                         <img src="https://flagcdn.com/w80/ru.png" alt="俄罗斯" class="flag">
                         <div class="country-name">俄罗斯</div>
-                        <div class="country-price">¥1.00/条</div>
+                        <div class="country-price">$0.04起/条</div>
                     </div>
                     <div class="country-card">
                         <img src="https://flagcdn.com/w80/jp.png" alt="日本" class="flag">
                         <div class="country-name">日本</div>
-                        <div class="country-price">¥1.30/条</div>
+                        <div class="country-price">$0.05起/条</div>
                     </div>
                     <div class="country-card">
                         <img src="https://flagcdn.com/w80/de.png" alt="德国" class="flag">
                         <div class="country-name">德国</div>
-                        <div class="country-price">¥1.40/条</div>
+                        <div class="country-price">$0.06起/条</div>
+                    </div>
+                    <!-- 新增国家 -->
+                    <div class="country-card">
+                        <img src="https://flagcdn.com/w80/fr.png" alt="法国" class="flag">
+                        <div class="country-name">法国</div>
+                        <div class="country-price">$0.05起/条</div>
+                    </div>
+                    <div class="country-card">
+                        <img src="https://flagcdn.com/w80/ca.png" alt="加拿大" class="flag">
+                        <div class="country-name">加拿大</div>
+                        <div class="country-price">$0.05起/条</div>
+                    </div>
+                    <div class="country-card">
+                        <img src="https://flagcdn.com/w80/au.png" alt="澳大利亚" class="flag">
+                        <div class="country-name">澳大利亚</div>
+                        <div class="country-price">$0.06起/条</div>
+                    </div>
+                    <div class="country-card">
+                        <img src="https://flagcdn.com/w80/kr.png" alt="韩国" class="flag">
+                        <div class="country-name">韩国</div>
+                        <div class="country-price">$0.04起/条</div>
+                    </div>
+                    <div class="country-card">
+                        <img src="https://flagcdn.com/w80/in.png" alt="印度" class="flag">
+                        <div class="country-name">印度</div>
+                        <div class="country-price">$0.03起/条</div>
+                    </div>
+                    <div class="country-card">
+                        <img src="https://flagcdn.com/w80/br.png" alt="巴西" class="flag">
+                        <div class="country-name">巴西</div>
+                        <div class="country-price">$0.04起/条</div>
+                    </div>
+                    <!-- 更多国家卡片 -->
+                    <div class="country-card more-card" onclick="showAllCountries()">
+                        <div class="more-icon">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                        <div class="country-name">更多国家</div>
+                        <div class="country-price">180+ 国家</div>
                     </div>
                 </div>
             </div>
@@ -836,42 +908,93 @@
                             <i class="fab fa-whatsapp"></i>
                         </div>
                         <div class="app-name">WhatsApp</div>
-                        <div class="app-price">¥1.50/条</div>
+                        <div class="app-price">$0.06起/条</div>
                     </div>
                     <div class="app-card">
                         <div class="app-icon">
                             <i class="fab fa-telegram"></i>
                         </div>
                         <div class="app-name">Telegram</div>
-                        <div class="app-price">¥1.20/条</div>
+                        <div class="app-price">$0.05起/条</div>
                     </div>
                     <div class="app-card">
                         <div class="app-icon">
                             <i class="fab fa-google"></i>
                         </div>
                         <div class="app-name">Google</div>
-                        <div class="app-price">¥1.80/条</div>
+                        <div class="app-price">$0.07起/条</div>
                     </div>
                     <div class="app-card">
                         <div class="app-icon">
                             <i class="fab fa-facebook"></i>
                         </div>
                         <div class="app-name">Facebook</div>
-                        <div class="app-price">¥2.00/条</div>
+                        <div class="app-price">$0.08起/条</div>
                     </div>
                     <div class="app-card">
                         <div class="app-icon">
                             <i class="fab fa-twitter"></i>
                         </div>
                         <div class="app-name">Twitter</div>
-                        <div class="app-price">¥1.60/条</div>
+                        <div class="app-price">$0.06起/条</div>
                     </div>
                     <div class="app-card">
                         <div class="app-icon">
                             <i class="fab fa-instagram"></i>
                         </div>
                         <div class="app-name">Instagram</div>
-                        <div class="app-price">¥1.70/条</div>
+                        <div class="app-price">$0.07起/条</div>
+                    </div>
+                    <!-- 新增应用 -->
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <i class="fab fa-tiktok"></i>
+                        </div>
+                        <div class="app-name">TikTok</div>
+                        <div class="app-price">$0.08起/条</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <div class="app-name">Discord</div>
+                        <div class="app-price">$0.05起/条</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <i class="fab fa-amazon"></i>
+                        </div>
+                        <div class="app-name">Amazon</div>
+                        <div class="app-price">$0.07起/条</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <i class="fab fa-microsoft"></i>
+                        </div>
+                        <div class="app-name">Microsoft</div>
+                        <div class="app-price">$0.06起/条</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <i class="fab fa-apple"></i>
+                        </div>
+                        <div class="app-name">Apple</div>
+                        <div class="app-price">$0.07起/条</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <i class="fab fa-line"></i>
+                        </div>
+                        <div class="app-name">Line</div>
+                        <div class="app-price">$0.06起/条</div>
+                    </div>
+                    <!-- 更多应用卡片 -->
+                    <div class="app-card more-card" onclick="showAllApps()">
+                        <div class="more-icon">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                        <div class="app-name">更多应用</div>
+                        <div class="app-price">1000+ 应用</div>
                     </div>
                 </div>
             </div>
@@ -912,7 +1035,7 @@
                         <i class="fas fa-money-bill-wave"></i>
                     </div>
                     <h3>价格实惠</h3>
-                    <p>多种套餐选择，满足不同用户的需求</p>
+                    <p>多种套餐选择，价格从$0.03起，满足不同用户需求</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -939,9 +1062,6 @@
                 <h2>注册账户</h2>
                 <button class="close-modal">&times;</button>
             </div>
-            <div class="test-mode-notice">
-                <i class="fas fa-flask"></i> 测试模式：同一个邮箱可重复注册，用于功能测试
-            </div>
             <form id="registerForm">
                 <div class="form-group">
                     <label for="reg-email">电子邮箱</label>
@@ -949,7 +1069,7 @@
                 </div>
                 <div class="form-group">
                     <label for="reg-password">密码</label>
-                    <input type="password" id="reg-password" class="form-control" placeholder="请输入密码" required>
+                    <input type="password" id="reg-password" class="form-control" placeholder="请输入密码（至少6位）" required>
                 </div>
                 <div class="form-group">
                     <label for="reg-confirm-password">确认密码</label>
@@ -984,9 +1104,32 @@
                     <label for="login-password">密码</label>
                     <input type="password" id="login-password" class="form-control" placeholder="请输入密码" required>
                 </div>
+                <div class="forgot-password">
+                    <a href="#" id="forgotPassword">忘记密码？</a>
+                </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">登录</button>
                 <div class="form-footer">
                     <p>还没有账户？ <a href="#" id="toRegister">立即注册</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 忘记密码模态框 -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>重置密码</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="reset-email">电子邮箱</label>
+                    <input type="email" id="reset-email" class="form-control" placeholder="请输入您的注册邮箱" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">发送重置邮件</button>
+                <div class="form-footer">
+                    <p>想起密码了？ <a href="#" id="backToLogin">返回登录</a></p>
                 </div>
             </form>
         </div>
@@ -1003,12 +1146,12 @@
                 <div class="form-group">
                     <label>选择充值金额</label>
                     <div class="payment-amounts">
-                        <div class="amount-option" data-amount="10">¥10</div>
-                        <div class="amount-option" data-amount="50">¥50</div>
-                        <div class="amount-option" data-amount="100">¥100</div>
-                        <div class="amount-option" data-amount="200">¥200</div>
-                        <div class="amount-option" data-amount="500">¥500</div>
-                        <div class="amount-option" data-amount="1000">¥1000</div>
+                        <div class="amount-option" data-amount="10">$10</div>
+                        <div class="amount-option" data-amount="50">$50</div>
+                        <div class="amount-option" data-amount="100">$100</div>
+                        <div class="amount-option" data-amount="200">$200</div>
+                        <div class="amount-option" data-amount="500">$500</div>
+                        <div class="amount-option" data-amount="1000">$1000</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -1065,65 +1208,65 @@
     </div>
 
     <!-- FAQ 区域 -->
-<section class="features" id="faq" style="background: #f8f9fa;">
-    <div class="container">
-        <div class="section-title">
-            <h2>常见问题</h2>
-            <p>用户最关心的问题解答</p>
+    <section class="features" id="faq" style="background: #f8f9fa;">
+        <div class="container">
+            <div class="section-title">
+                <h2>常见问题</h2>
+                <p>用户最关心的问题解答</p>
+            </div>
+            <div class="faq-list" style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
+                        什么是虚拟号码？
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 20px; display: none;">
+                        虚拟号码是一种在线电话号码，可以用于接收短信和验证码，但不需要实体SIM卡。它可以帮助您保护隐私，注册各种在线服务，避免使用个人真实手机号码。
+                    </div>
+                </div>
+                
+                <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
+                        如何购买虚拟号码？
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 20px; display: none;">
+                        <ol>
+                            <li>注册并登录您的7SIM账户</li>
+                            <li>充值您的账户余额</li>
+                            <li>选择需要的服务和国家</li>
+                            <li>点击"获取号码"按钮</li>
+                            <li>使用获取的号码接收短信</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
+                        号码可以使用多久？
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 20px; display: none;">
+                        大多数号码的有效期为20分钟到24小时，具体取决于您选择的服务类型。在有效期内，您可以接收多条短信。超过有效期后号码将自动回收。
+                    </div>
+                </div>
+                
+                <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
+                        支持哪些服务？
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 20px; display: none;">
+                        我们支持几乎所有主流服务，包括：<br>
+                        ✅ WhatsApp, Telegram, Facebook, Twitter<br>
+                        ✅ Instagram, Google, Amazon, TikTok<br>
+                        ✅ 微信, 支付宝, 淘宝, 京东<br>
+                        ✅ 以及数千种其他应用和网站
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="faq-list" style="max-width: 800px; margin: 0 auto;">
-            <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
-                    什么是虚拟号码？
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer" style="padding: 20px; display: none;">
-                    虚拟号码是一种在线电话号码，可以用于接收短信和验证码，但不需要实体SIM卡。它可以帮助您保护隐私，注册各种在线服务，避免使用个人真实手机号码。
-                </div>
-            </div>
-            
-            <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
-                    如何购买虚拟号码？
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer" style="padding: 20px; display: none;">
-                    <ol>
-                        <li>注册并登录您的7SIM账户</li>
-                        <li>充值您的账户余额</li>
-                        <li>选择需要的服务和国家</li>
-                        <li>点击"获取号码"按钮</li>
-                        <li>使用获取的号码接收短信</li>
-                    </ol>
-                </div>
-            </div>
-            
-            <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
-                    号码可以使用多久？
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer" style="padding: 20px; display: none;">
-                    大多数号码的有效期为20分钟到24小时，具体取决于您选择的服务类型。在有效期内，您可以接收多条短信。超过有效期后号码将自动回收。
-                </div>
-            </div>
-            
-            <div class="faq-item" style="background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <div class="faq-question" style="padding: 20px; background: var(--light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
-                    支持哪些服务？
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer" style="padding: 20px; display: none;">
-                    我们支持几乎所有主流服务，包括：<br>
-                    ✅ WhatsApp, Telegram, Facebook, Twitter<br>
-                    ✅ Instagram, Google, Amazon, TikTok<br>
-                    ✅ 微信, 支付宝, 淘宝, 京东<br>
-                    ✅ 以及数千种其他应用和网站
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
     <!-- 页脚 -->
     <footer>
@@ -1165,7 +1308,7 @@
         </div>
     </footer>
 
-       <script>
+    <script>
         // Firebase配置
         const firebaseConfig = {
             apiKey: "AIzaSyAKcWEdi_Zd-CAJYtEiwkbNNs7ibOp6HG4",
@@ -1184,7 +1327,7 @@
         // 全局变量
         let resendCooldown = 0;
         let resendTimer = null;
-        let useLocalStorage = false; // 标记是否使用本地存储
+        let useLocalStorage = false;
 
         // 检查Firestore连接
         function checkFirestoreConnection() {
@@ -1207,16 +1350,15 @@
                 console.log('初始化完成，使用存储方式:', useLocalStorage ? 'localStorage' : 'Firestore');
             });
 
+            // 标签切换功能
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
             
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // 移除所有活动状态
                     tabBtns.forEach(b => b.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
                     
-                    // 添加当前活动状态
                     btn.classList.add('active');
                     const tabId = btn.getAttribute('data-tab') + '-tab';
                     document.getElementById(tabId).classList.add('active');
@@ -1231,6 +1373,7 @@
             const loginModal = document.getElementById('loginModal');
             const rechargeModal = document.getElementById('rechargeModal');
             const apiKeyModal = document.getElementById('apiKeyModal');
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
             const closeModalBtns = document.querySelectorAll('.close-modal');
             const toLogin = document.getElementById('toLogin');
             const toRegister = document.getElementById('toRegister');
@@ -1238,28 +1381,21 @@
             const userDropdown = document.getElementById('userDropdown');
             const logoutBtn = document.getElementById('logoutBtn');
             
-            // 显示模态框函数
+            // 显示/隐藏模态框函数
             function showModal(modal) {
                 modal.style.display = 'flex';
             }
             
-            // 隐藏模态框函数
             function hideModal(modal) {
                 modal.style.display = 'none';
             }
             
-            registerBtn.addEventListener('click', () => {
-                showModal(registerModal);
-            });
-            
-            loginBtn.addEventListener('click', () => {
-                showModal(loginModal);
-            });
+            // 模态框事件绑定
+            registerBtn.addEventListener('click', () => showModal(registerModal));
+            loginBtn.addEventListener('click', () => showModal(loginModal));
             
             if (rechargeBtn) {
-                rechargeBtn.addEventListener('click', () => {
-                    showModal(rechargeModal);
-                });
+                rechargeBtn.addEventListener('click', () => showModal(rechargeModal));
             }
             
             closeModalBtns.forEach(btn => {
@@ -1268,6 +1404,7 @@
                     hideModal(loginModal);
                     hideModal(rechargeModal);
                     hideModal(apiKeyModal);
+                    hideModal(forgotPasswordModal);
                 });
             });
             
@@ -1285,26 +1422,18 @@
             
             // 点击模态框外部关闭
             window.addEventListener('click', (e) => {
-                if (e.target === registerModal) {
-                    hideModal(registerModal);
-                }
-                if (e.target === loginModal) {
-                    hideModal(loginModal);
-                }
-                if (e.target === rechargeModal) {
-                    hideModal(rechargeModal);
-                }
-                if (e.target === apiKeyModal) {
-                    hideModal(apiKeyModal);
-                }
+                if (e.target === registerModal) hideModal(registerModal);
+                if (e.target === loginModal) hideModal(loginModal);
+                if (e.target === rechargeModal) hideModal(rechargeModal);
+                if (e.target === apiKeyModal) hideModal(apiKeyModal);
+                if (e.target === forgotPasswordModal) hideModal(forgotPasswordModal);
             });
             
-            // 用户头像点击事件
+            // 用户菜单功能
             userAvatar.addEventListener('click', () => {
                 userDropdown.classList.toggle('show');
             });
             
-            // 点击其他地方关闭用户下拉菜单
             window.addEventListener('click', (e) => {
                 if (!e.target.matches('#userAvatar') && !e.target.closest('#userDropdown')) {
                     userDropdown.classList.remove('show');
@@ -1321,6 +1450,60 @@
                 });
             });
             
+            // 忘记密码功能
+            const forgotPasswordBtn = document.getElementById('forgotPassword');
+            const backToLoginBtn = document.getElementById('backToLogin');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+
+            forgotPasswordBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                hideModal(loginModal);
+                showModal(forgotPasswordModal);
+            });
+
+            backToLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                hideModal(forgotPasswordModal);
+                showModal(loginModal);
+            });
+
+            // 忘记密码表单提交
+            forgotPasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('reset-email').value;
+                
+                auth.sendPasswordResetEmail(email)
+                    .then(() => {
+                        alert('密码重置邮件已发送到您的邮箱，请查收并按照说明重置密码。');
+                        hideModal(forgotPasswordModal);
+                        forgotPasswordForm.reset();
+                    })
+                    .catch((error) => {
+                        console.error('发送重置邮件失败:', error);
+                        if (error.code === 'auth/user-not-found') {
+                            alert('该邮箱尚未注册，请检查邮箱地址是否正确。');
+                        } else {
+                            alert('发送重置邮件失败: ' + error.message);
+                        }
+                    });
+            });
+            
+            // 英雄区域按钮功能
+            const startExperienceBtn = document.getElementById('startExperience');
+            const learnMoreBtn = document.getElementById('learnMore');
+
+            startExperienceBtn.addEventListener('click', function() {
+                document.getElementById('services').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            });
+
+            learnMoreBtn.addEventListener('click', function() {
+                document.getElementById('features').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            });
+
             // 充值功能
             const amountOptions = document.querySelectorAll('.amount-option');
             const paymentMethods = document.querySelectorAll('.payment-method');
@@ -1351,12 +1534,9 @@
                     return;
                 }
                 
-                // 模拟充值成功
-                alert(`充值成功！金额：¥${selectedAmount}，支付方式：${selectedMethod}`);
+                alert(`充值成功！金额：$${selectedAmount}，支付方式：${selectedMethod}`);
                 hideModal(rechargeModal);
                 
-                // 在实际应用中，这里应该调用支付接口并更新用户余额
-                // 这里我们只是模拟更新余额
                 const currentUser = auth.currentUser;
                 if (currentUser) {
                     updateUserBalance(currentUser.uid, parseFloat(selectedAmount));
@@ -1369,7 +1549,6 @@
             const generateApiKeyBtn = document.getElementById('generateApiKey');
             const apiKeyValue = document.getElementById('apiKeyValue');
             
-            // 显示API密钥
             showApiKeyBtn.addEventListener('click', () => {
                 const currentUser = auth.currentUser;
                 if (currentUser) {
@@ -1380,7 +1559,7 @@
                             showApiKeyBtn.onclick = () => {
                                 apiKeyValue.textContent = '************************';
                                 showApiKeyBtn.textContent = '显示';
-                                showApiKeyBtn.onclick = showApiKeyBtn.onclick; // 恢复原函数
+                                showApiKeyBtn.onclick = showApiKeyBtn.onclick;
                             };
                         } else {
                             alert('您还没有生成API密钥');
@@ -1389,7 +1568,6 @@
                 }
             });
             
-            // 复制API密钥
             copyApiKeyBtn.addEventListener('click', () => {
                 if (apiKeyValue.textContent !== '************************') {
                     navigator.clipboard.writeText(apiKeyValue.textContent).then(() => {
@@ -1402,7 +1580,6 @@
                 }
             });
             
-            // 生成新的API密钥
             generateApiKeyBtn.addEventListener('click', () => {
                 const currentUser = auth.currentUser;
                 if (currentUser) {
@@ -1413,7 +1590,7 @@
                         showApiKeyBtn.onclick = () => {
                             apiKeyValue.textContent = '************************';
                             showApiKeyBtn.textContent = '显示';
-                            showApiKeyBtn.onclick = showApiKeyBtn.onclick; // 恢复原函数
+                            showApiKeyBtn.onclick = showApiKeyBtn.onclick;
                         };
                         alert('新的API密钥已生成');
                     }).catch(error => {
@@ -1439,20 +1616,18 @@
                 }
             });
 
-            // 修复注册表单提交处理
+            // 注册表单提交处理
             document.getElementById('registerForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const email = document.getElementById('reg-email').value;
                 const password = document.getElementById('reg-password').value;
                 const confirmPassword = document.getElementById('reg-confirm-password').value;
                 
-                // 显示加载状态
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.textContent;
                 submitBtn.textContent = '注册中...';
                 submitBtn.disabled = true;
                 
-                // 验证密码匹配
                 if (password !== confirmPassword) {
                     alert('两次输入的密码不一致');
                     submitBtn.textContent = originalText;
@@ -1460,7 +1635,6 @@
                     return;
                 }
                 
-                // 验证密码长度
                 if (password.length < 6) {
                     alert('密码长度至少6位');
                     submitBtn.textContent = originalText;
@@ -1470,32 +1644,22 @@
                 
                 console.log('开始注册:', email);
                 
-                // 直接创建新用户
                 auth.createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         const user = userCredential.user;
                         console.log('Firebase 用户创建成功:', user.uid);
-                        
-                        // 发送邮箱验证
-                        return user.sendEmailVerification().then(() => {
-                            console.log('验证邮件发送成功');
-                            return user;
-                        });
+                        return enhancedEmailVerification(user);
                     })
-                    .then((user) => {
-                        // 创建用户文档
-                        return createUserDocument(user.uid, email);
+                    .then(() => {
+                        const user = auth.currentUser;
+                        if (user) {
+                            return createUserDocument(user.uid, email);
+                        }
                     })
                     .then((apiKey) => {
-                        console.log('用户文档创建完成');
-                        alert('注册成功！\n\n邮箱验证邮件已发送到您的邮箱，请查收并验证。\n\n您的API Key: ' + apiKey + '\n请妥善保存此密钥！');
+                        console.log('注册流程完成');
                         hideModal(registerModal);
-                        
-                        // 重置表单
                         document.getElementById('registerForm').reset();
-                        
-                        // 自动跳转到登录模态框
-                        showModal(loginModal);
                     })
                     .catch((error) => {
                         console.error('注册失败:', error);
@@ -1524,42 +1688,37 @@
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
                 
-                // 使用Firebase登录用户
                 auth.signInWithEmailAndPassword(email, password)
                     .then((userCredential) => {
-                        // 登录成功
                         const user = userCredential.user;
                         
                         if (!user.emailVerified) {
-                            alert('您的邮箱尚未验证，请检查您的邮箱并完成验证。');
-                            verificationNotice.style.display = 'block';
-                            // 强制退出登录，不让用户进入系统
-                            auth.signOut();
-                        } else {
-                            // 邮箱已验证，检查是否为管理员
-                            checkUserRole(user.uid).then(isAdmin => {
-                                if (isAdmin) {
-                                    // 管理员跳转到admin.html
-                                    window.location.href = 'admin.html';
-                                } else {
-                                    // 普通用户跳转到dashboard.html
-                                    window.location.href = 'dashboard.html';
-                                }
+                            alert(`邮箱尚未验证 🔐\n\n请先验证您的邮箱：${user.email}\n\n我们已重新发送验证邮件到您的邮箱，请查收并完成验证。`);
+                            
+                            return user.sendEmailVerification().then(() => {
+                                return auth.signOut().then(() => {
+                                    throw new Error('EMAIL_NOT_VERIFIED');
+                                });
                             });
+                        } else {
+                            // 直接跳转到dashboard，不检查管理员权限
+                            window.location.href = 'dashboard.html';
                         }
-                        
-                        hideModal(loginModal);
                     })
                     .catch((error) => {
+                        if (error.message === 'EMAIL_NOT_VERIFIED') {
+                            return;
+                        }
                         console.error('登录失败:', error);
                         
-                        // 如果是用户不存在，提示注册
                         if (error.code === 'auth/user-not-found') {
                             alert('该邮箱尚未注册，请先注册账户。');
                             hideModal(loginModal);
                             showModal(registerModal);
                         } else if (error.code === 'auth/wrong-password') {
-                            alert('密码错误，请重新输入。');
+                            alert('密码错误，请重新输入。\n\n忘记密码？点击"忘记密码"重置。');
+                        } else if (error.code === 'auth/too-many-requests') {
+                            alert('登录尝试次数过多，请稍后再试或重置密码。');
                         } else {
                             alert('登录失败: ' + error.message);
                         }
@@ -1570,7 +1729,6 @@
             auth.onAuthStateChanged((user) => {
                 updateUI();
                 if (user) {
-                    // 用户登录后显示验证状态
                     if (!user.emailVerified) {
                         verificationNotice.style.display = 'block';
                     } else {
@@ -1581,26 +1739,54 @@
             
             // 初始化UI
             updateUI();
+            
+            // FAQ 交互功能
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const answer = this.nextElementSibling;
+                    const icon = this.querySelector('i');
+                    
+                    if (answer.style.display === 'block') {
+                        answer.style.display = 'none';
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                    } else {
+                        answer.style.display = 'block';
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                    }
+                });
+            });
         });
+        
+        // 更多国家/应用功能
+        function showAllCountries() {
+            alert('我们支持全球180多个国家的手机号码！\n\n包括：\n• 欧洲：意大利、西班牙、荷兰、瑞士等\n• 亚洲：泰国、越南、马来西亚、新加坡等\n• 美洲：墨西哥、阿根廷、智利等\n• 非洲：南非、尼日利亚、埃及等\n\n登录后查看完整国家列表和实时价格。');
+            showModal(document.getElementById('loginModal'));
+        }
+
+        function showAllApps() {
+            alert('我们支持1000多种应用和网站！\n\n包括：\n• 社交：Snapchat、LinkedIn、Reddit等\n• 电商：Shopee、eBay、AliExpress等\n• 游戏：Steam、Epic Games、PlayStation等\n• 金融：PayPal、Binance、Revolut等\n• 其他：Uber、Airbnb、Netflix等\n\n登录后查看完整应用列表和实时价格。');
+            showModal(document.getElementById('loginModal'));
+        }
         
         // 重新发送验证邮件函数
         function resendVerificationEmail(user) {
             const resendVerificationBtn = document.getElementById('resendVerification');
             const resendCountdown = document.getElementById('resendCountdown');
             
-            // 禁用按钮并开始倒计时
             resendVerificationBtn.disabled = true;
-            resendCooldown = 60; // 60秒冷却时间
+            resendCooldown = 60;
             
             user.sendEmailVerification()
                 .then(() => {
                     alert('邮箱验证邮件已重新发送到您的邮箱！');
                     
-                    // 显示倒计时
                     resendCountdown.style.display = 'block';
                     updateResendCountdown();
                     
-                    // 启动倒计时器
                     resendTimer = setInterval(updateResendCountdown, 1000);
                 })
                 .catch((error) => {
@@ -1632,33 +1818,49 @@
             const userInfo = document.getElementById('userInfo');
             
             if (user) {
-                // 用户已登录
                 guestButtons.style.display = 'none';
                 userInfo.style.display = 'flex';
-                
-                // 更新余额显示
                 updateBalanceDisplay(user.uid);
                 
-                // 更新用户头像显示
                 const userAvatar = document.getElementById('userAvatar');
                 if (user.email) {
                     userAvatar.innerHTML = `<i class="fas fa-user"></i>`;
                 }
             } else {
-                // 用户未登录
                 guestButtons.style.display = 'flex';
                 userInfo.style.display = 'none';
             }
         }
         
-        // 创建用户文档函数（智能选择存储方式）
+        // 优化邮箱验证流程
+        function enhancedEmailVerification(user) {
+            return new Promise((resolve, reject) => {
+                user.sendEmailVerification()
+                    .then(() => {
+                        console.log('验证邮件发送成功');
+                        
+                        const email = user.email;
+                        alert(`注册成功！🎉\n\n验证邮件已发送到：${email}\n\n请完成以下步骤：\n1. 检查您的收件箱（包括垃圾邮件）\n2. 点击邮件中的验证链接\n3. 验证后即可登录使用服务\n\n💡 提示：验证邮件可能在1-2分钟内到达`);
+                        
+                        return auth.signOut();
+                    })
+                    .then(() => {
+                        console.log('用户已退出，等待邮箱验证');
+                        updateUI();
+                        resolve();
+                    })
+                    .catch((error) => {
+                        console.error('邮箱验证流程失败:', error);
+                        reject(error);
+                    });
+            });
+        }
+        
+        // 创建用户文档函数
         function createUserDocument(uid, email) {
             return new Promise((resolve, reject) => {
                 const apiKey = generateRandomApiKey();
                 console.log('生成API Key:', apiKey);
-                
-                const adminEmails = ['admin@7sim.com', 'your-admin-email@gmail.com'];
-                const isAdmin = adminEmails.includes(email);
                 
                 const userData = {
                     email: email,
@@ -1666,12 +1868,10 @@
                     createdAt: new Date().toISOString(),
                     apiKey: apiKey,
                     lastLogin: new Date().toISOString(),
-                    isAdmin: isAdmin,
                     verified: false
                 };
                 
                 if (!useLocalStorage) {
-                    // 尝试使用 Firestore
                     db.collection('users').doc(uid).set(userData)
                         .then(() => {
                             console.log('用户文档保存到 Firestore 成功');
@@ -1680,12 +1880,10 @@
                         .catch((error) => {
                             console.error('Firestore 保存失败，切换到 localStorage:', error);
                             useLocalStorage = true;
-                            // 回退到 localStorage
                             saveToLocalStorage(uid, userData);
                             resolve(apiKey);
                         });
                 } else {
-                    // 直接使用 localStorage
                     saveToLocalStorage(uid, userData);
                     resolve(apiKey);
                 }
@@ -1705,7 +1903,7 @@
             }
         }
 
-        // 更新余额显示（智能选择存储方式）
+        // 更新余额显示
         function updateBalanceDisplay(uid) {
             if (!useLocalStorage) {
                 db.collection('users').doc(uid).get()
@@ -1713,7 +1911,7 @@
                         if (doc.exists) {
                             const userData = doc.data();
                             const balanceAmount = document.getElementById('balanceAmount');
-                            balanceAmount.textContent = `¥${userData.balance.toFixed(2)}`;
+                            balanceAmount.textContent = `$${userData.balance.toFixed(2)}`;
                         }
                     })
                     .catch((error) => {
@@ -1732,45 +1930,10 @@
                 const userData = users[uid];
                 if (userData) {
                     const balanceAmount = document.getElementById('balanceAmount');
-                    balanceAmount.textContent = `¥${userData.balance.toFixed(2)}`;
+                    balanceAmount.textContent = `$${userData.balance.toFixed(2)}`;
                 }
             } catch (error) {
                 console.error('localStorage 获取余额失败:', error);
-            }
-        }
-        
-        // 检查用户角色
-        function checkUserRole(uid) {
-            return new Promise((resolve) => {
-                if (!useLocalStorage) {
-                    db.collection('users').doc(uid).get()
-                        .then((doc) => {
-                            if (doc.exists) {
-                                const userData = doc.data();
-                                resolve(userData.isAdmin || false);
-                            } else {
-                                resolve(false);
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Firestore 检查用户角色失败，切换到 localStorage:', error);
-                            useLocalStorage = true;
-                            resolve(checkRoleFromLocalStorage(uid));
-                        });
-                } else {
-                    resolve(checkRoleFromLocalStorage(uid));
-                }
-            });
-        }
-
-        function checkRoleFromLocalStorage(uid) {
-            try {
-                const users = JSON.parse(localStorage.getItem('7sim_users') || '{}');
-                const userData = users[uid];
-                return userData ? (userData.isAdmin || false) : false;
-            } catch (error) {
-                console.error('localStorage 检查用户角色失败:', error);
-                return false;
             }
         }
         
@@ -1798,7 +1961,6 @@
                         console.error('获取用户数据失败:', error);
                     });
             } else {
-                // 更新 localStorage 中的余额
                 try {
                     const users = JSON.parse(localStorage.getItem('7sim_users') || '{}');
                     if (users[uid]) {
@@ -1856,7 +2018,7 @@
             }
         }
         
-        // 获取用户API密钥（智能选择存储方式）
+        // 获取用户API密钥
         function getUserApiKey(uid) {
             return new Promise((resolve) => {
                 if (!useLocalStorage) {
@@ -1889,29 +2051,6 @@
                 return null;
             }
         }
-
-                   // FAQ 交互功能
-        document.addEventListener('DOMContentLoaded', function() {
-            const faqQuestions = document.querySelectorAll('.faq-question');
-            
-            faqQuestions.forEach(question => {
-                question.addEventListener('click', function() {
-                    const answer = this.nextElementSibling;
-                    const icon = this.querySelector('i');
-                    
-                    // 切换显示/隐藏
-                    if (answer.style.display === 'block') {
-                        answer.style.display = 'none';
-                        icon.classList.remove('fa-chevron-up');
-                        icon.classList.add('fa-chevron-down');
-                    } else {
-                        answer.style.display = 'block';
-                        icon.classList.remove('fa-chevron-down');
-                        icon.classList.add('fa-chevron-up');
-                    }
-                });
-            });
-        });
     </script>
 </body>
 </html>
