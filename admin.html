@@ -696,8 +696,7 @@ let appData = {
     users: []
 };
 
-    // 修改 initData 函数，添加更详细的错误处理
-async function initData() {
+    async function initData() {
     console.log('开始初始化数据...');
     
     try {
@@ -705,22 +704,26 @@ async function initData() {
         
         if (doc.exists) {
             const firebaseData = doc.data();
-            console.log('Firebase 数据详情:', {
-                services: firebaseData.services,
-                countries: firebaseData.countries,
-                pricingRules: firebaseData.pricingRules,
-                operators: firebaseData.operators
+            console.log('从 Firebase 加载的数据详情:', {
+                servicesCount: firebaseData.services?.length || 0,
+                pricingRulesCount: firebaseData.pricingRules?.length || 0,
+                operatorsCount: firebaseData.operators?.length || 0
             });
             
-            // 确保所有数据字段都存在
+            // 确保所有数据字段都存在 - 修复这里！
             appData = {
                 countries: firebaseData.countries || [],
                 services: firebaseData.services || [],
                 operators: firebaseData.operators || [],
                 pricingRules: firebaseData.pricingRules || [],
                 paymentMethods: firebaseData.paymentMethods || [],
-                users: appData.users || []
+                users: firebaseData.users || appData.users || []  // 修复用户数据继承
             };
+            
+            console.log('更新后的 appData:', {
+                servicesCount: appData.services.length,
+                pricingRulesCount: appData.pricingRules.length
+            });
             
         } else {
             console.warn('Firebase 中没有找到数据，使用默认数据');
@@ -965,7 +968,7 @@ function loadCountriesTable() {
     
     updateSelectedCount('countries');
 }
-                      function loadServicesTable() {
+                     function loadServicesTable() {
     try {
         const tbody = document.getElementById('servicesTable');
         if (!tbody) {
@@ -976,6 +979,7 @@ function loadCountriesTable() {
         tbody.innerHTML = '';
         
         console.log('加载服务数据:', appData.services);
+        console.log('服务数量:', appData.services.length);
         
         if (!appData.services || appData.services.length === 0) {
             tbody.innerHTML = `
@@ -985,6 +989,7 @@ function loadCountriesTable() {
                     </td>
                 </tr>
             `;
+            updateSelectedCount('services');  // 确保调用这个
             return;
         }
         
@@ -1010,6 +1015,8 @@ function loadCountriesTable() {
             `;
             tbody.appendChild(row);
         });
+        
+        updateSelectedCount('services');  // 确保调用这个
         
     } catch (error) {
         console.error('加载服务表格失败:', error);
@@ -1866,7 +1873,7 @@ function hideLoadingState() {
     if (loadingEl) loadingEl.remove();
 }
        
-       async function initializeAdmin() {
+      async function initializeAdmin() {
     console.log('Admin页面加载完成，开始初始化数据...');
     
     try {
@@ -1874,12 +1881,18 @@ function hideLoadingState() {
         await initData();
         
         console.log('数据加载完成，开始渲染界面');
+        console.log('当前数据状态:', {
+            services: appData.services,
+            pricingRules: appData.pricingRules,
+            users: appData.users
+        });
         
         // 显示加载状态
         showLoadingState();
         
         // 加载默认标签页
         const currentTab = getCurrentTab();
+        console.log('当前标签页:', currentTab);
         await loadTabData(currentTab);
         
         // 隐藏加载状态
@@ -1892,7 +1905,7 @@ function hideLoadingState() {
         console.error('初始化失败:', error);
         showErrorState('系统初始化失败，请刷新页面');
     }
-}  // 这里缺少了这个结束括号
+}
         
        
         // 使用DOMContentLoaded确保页面加载完成
