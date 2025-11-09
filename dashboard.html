@@ -1252,6 +1252,33 @@
     margin: 5px 0;
     font-weight: 500;
 }
+
+        /* 语言切换器样式 */
+.language-switcher {
+    margin-right: 10px;
+}
+
+.language-dropdown {
+    border: 1px solid var(--light-gray);
+}
+
+.language-option {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    color: var(--dark);
+}
+
+.language-option:hover {
+    background-color: var(--light);
+    color: var(--primary);
+}
+
+.language-option.active {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+}
         
     </style>
 </head>
@@ -1266,6 +1293,18 @@
                 </a>
                   
               <div style="display: flex; align-items: center; gap: 15px;">
+                  <!-- 语言切换按钮 - 新增 -->
+                <div class="language-switcher" style="position: relative;">
+                    <button class="btn btn-outline" id="languageSwitch" style="display: flex; align-items: center; gap: 8px; padding: 8px 15px;">
+                        <i class="fas fa-globe"></i>
+                        <span id="currentLanguage">中文</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                    </button>
+                    <div class="language-dropdown" id="languageDropdown" style="display: none; position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; min-width: 120px; z-index: 1000; margin-top: 5px;">
+                        <div class="language-option" data-lang="zh">中文</div>
+                        <div class="language-option" data-lang="en">English</div>
+                    </div>
+                </div>
     <!-- 钱包按钮 - 修复位置 -->
     <div class="wallet-recharge-btn" style="position: relative;">
         <button class="btn btn-primary" id="walletRechargeBtn" style="display: flex; align-items: center; gap: 8px; padding: 8px 15px;">
@@ -2425,6 +2464,344 @@ function setupRealtimeSync() {
         });
 }
 
+        // ========== 多语言支持 ==========
+
+// 语言包
+const languagePack = {
+    zh: {
+        // 导航栏
+        nav: {
+            home: "主页",
+            services: "服务",
+            pricing: "价格",
+            faq: "FAQ",
+            api: "API"
+        },
+        
+        // 左侧面板
+        leftPanel: {
+            selectService: "选择服务",
+            searchService: "寻找网站或者APP",
+            selectCountry: "选择国家", 
+            searchCountry: "寻找国家",
+            selectOperator: "选择运营商",
+            getNumber: "获取号码"
+        },
+        
+        // 右侧面板 - 标签页
+        tabs: {
+            home: "主页",
+            faq: "FAQ", 
+            api: "API",
+            purchase: "怎么购买？"
+        },
+        
+        // 主页内容
+        home: {
+            title: "7SIM 虚拟号码服务",
+            description: "用于接收短信和激活任何服务的虚拟号码",
+            numbersOnline: "手机号码在线",
+            countries: "国家/地区",
+            support: "全天候服务", 
+            startingPrice: "起价",
+            globalCoverage: "全球覆盖",
+            realtimeUpdate: "实时更新",
+            affordablePrice: "价格实惠",
+            customerSupport: "24/7 客服支持",
+            saveMoney: "针对各个服务的价格限制来存钱！",
+            dailyUpdate: "天天添加新的虚拟号码，一个号码的价格从 $0.05 起，这样大家不必支付移动运营商的月费"
+        },
+        
+        // FAQ
+        faq: {
+            title: "常见问题解答",
+            questions: {
+                whatIsVirtualNumber: "什么是虚拟号码？",
+                howToBuy: "如何购买虚拟号码？",
+                numberValidity: "号码可以使用多久？",
+                supportedServices: "支持哪些服务？",
+                howToRecharge: "如何充值账户？",
+                successRate: "短信接收成功率如何？",
+                apiSupport: "是否支持API接口？",
+                contactSupport: "遇到问题如何联系客服？"
+            }
+        },
+        
+        // API
+        api: {
+            title: "API 文档",
+            description: "面向开发者和用户的API",
+            usage: "使用我们的API可以自动化获取号码和接收短信的过程。",
+            note: "在接码平台、高质量VPN/代理、浏览器的用户代理和可靠的软件的帮助下确保不间断运行"
+        },
+        
+        // 购买指南
+        purchase: {
+            title: "购买指南",
+            steps: {
+                recharge: "充值账户",
+                selectService: "选择服务", 
+                selectCountry: "选择国家",
+                getNumber: "获取号码",
+                receiveSMS: "接收短信"
+            }
+        },
+        
+        // 支付相关
+        payment: {
+            recharge: "充值",
+            selectPayment: "选择付款方式",
+            crypto: "加密货币",
+            creditCard: "信用卡",
+            bankTransfer: "银行转账",
+            lowestFee: "最低手续费",
+            minPayment: "最低付款金额"
+        },
+        
+        // 通用
+        common: {
+            language: "中文",
+            balance: "余额",
+            logout: "退出登录",
+            confirm: "确认",
+            cancel: "取消",
+            copy: "复制",
+            close: "关闭"
+        }
+    },
+    
+    en: {
+        // Navigation
+        nav: {
+            home: "Home",
+            services: "Services", 
+            pricing: "Pricing",
+            faq: "FAQ",
+            api: "API"
+        },
+        
+        // Left Panel
+        leftPanel: {
+            selectService: "Select Service",
+            searchService: "Find website or APP", 
+            selectCountry: "Select Country",
+            searchCountry: "Find country",
+            selectOperator: "Select Operator", 
+            getNumber: "Get Number"
+        },
+        
+        // Right Panel - Tabs
+        tabs: {
+            home: "Home",
+            faq: "FAQ",
+            api: "API", 
+            purchase: "How to Buy?"
+        },
+        
+        // Home Content
+        home: {
+            title: "7SIM Virtual Number Service",
+            description: "Virtual numbers for receiving SMS and activating any services",
+            numbersOnline: "Phone Numbers Online",
+            countries: "Countries/Regions", 
+            support: "24/7 Support",
+            startingPrice: "Starting Price",
+            globalCoverage: "Global Coverage",
+            realtimeUpdate: "Real-time Update", 
+            affordablePrice: "Affordable Price",
+            customerSupport: "24/7 Customer Support",
+            saveMoney: "Save money with service-specific price limits!",
+            dailyUpdate: "New virtual numbers added daily, starting from $0.05 per number, so you don't have to pay monthly fees to mobile operators"
+        },
+        
+        // FAQ
+        faq: {
+            title: "Frequently Asked Questions",
+            questions: {
+                whatIsVirtualNumber: "What is a virtual number?",
+                howToBuy: "How to buy virtual numbers?",
+                numberValidity: "How long can numbers be used?",
+                supportedServices: "Which services are supported?",
+                howToRecharge: "How to recharge account?",
+                successRate: "What is the SMS reception success rate?",
+                apiSupport: "Is API interface supported?",
+                contactSupport: "How to contact support if I have problems?"
+            }
+        },
+        
+        // API
+        api: {
+            title: "API Documentation", 
+            description: "API for developers and users",
+            usage: "Use our API to automate the process of getting numbers and receiving SMS.",
+            note: "Ensure uninterrupted operation with the help of SMS platforms, high-quality VPNs/proxies, browser user agents, and reliable software"
+        },
+        
+        // Purchase Guide
+        purchase: {
+            title: "Purchase Guide",
+            steps: {
+                recharge: "Recharge Account",
+                selectService: "Select Service",
+                selectCountry: "Select Country", 
+                getNumber: "Get Number",
+                receiveSMS: "Receive SMS"
+            }
+        },
+        
+        // Payment Related
+        payment: {
+            recharge: "Recharge",
+            selectPayment: "Select Payment Method",
+            crypto: "Cryptocurrency",
+            creditCard: "Credit Card", 
+            bankTransfer: "Bank Transfer",
+            lowestFee: "Lowest Fee",
+            minPayment: "Minimum Payment"
+        },
+        
+        // Common
+        common: {
+            language: "English",
+            balance: "Balance", 
+            logout: "Logout",
+            confirm: "Confirm",
+            cancel: "Cancel",
+            copy: "Copy",
+            close: "Close"
+        }
+    }
+};
+
+// 当前语言
+let currentLanguage = 'zh';
+
+// 切换语言函数
+function switchLanguage(lang) {
+    if (languagePack[lang]) {
+        currentLanguage = lang;
+        localStorage.setItem('preferredLanguage', lang);
+        applyLanguage(lang);
+        updateLanguageButton();
+    }
+}
+
+// 应用语言包
+function applyLanguage(lang) {
+    const texts = languagePack[lang];
+    
+    // 更新导航栏
+    document.querySelectorAll('.nav-links a').forEach((link, index) => {
+        const keys = Object.keys(texts.nav);
+        if (texts.nav[keys[index]]) {
+            link.textContent = texts.nav[keys[index]];
+        }
+    });
+    
+    // 更新左侧面板
+    document.querySelectorAll('.panel-section h3').forEach((header, index) => {
+        const keys = ['selectService', 'selectCountry', 'selectOperator'];
+        if (texts.leftPanel[keys[index]]) {
+            header.textContent = texts.leftPanel[keys[index]];
+        }
+    });
+    
+    document.getElementById('serviceSearch').placeholder = texts.leftPanel.searchService;
+    document.getElementById('countrySearch').placeholder = texts.leftPanel.searchCountry;
+    document.getElementById('getNumberBtn').textContent = texts.leftPanel.getNumber;
+    
+    // 更新标签页
+    document.querySelectorAll('.tab').forEach((tab, index) => {
+        const keys = Object.keys(texts.tabs);
+        if (texts.tabs[keys[index]]) {
+            tab.textContent = texts.tabs[keys[index]];
+        }
+    });
+    
+    // 更新主页内容
+    const homeTexts = texts.home;
+    document.getElementById('serviceMainName').textContent = homeTexts.title;
+    document.querySelector('.service-info-description').textContent = homeTexts.description;
+    
+    document.querySelectorAll('.stat-label').forEach((label, index) => {
+        const keys = ['numbersOnline', 'countries', 'support', 'startingPrice'];
+        if (homeTexts[keys[index]]) {
+            label.textContent = homeTexts[keys[index]];
+        }
+    });
+    
+    document.querySelectorAll('.feature-card h3').forEach((title, index) => {
+        const keys = ['globalCoverage', 'realtimeUpdate', 'affordablePrice', 'customerSupport'];
+        if (homeTexts[keys[index]]) {
+            title.textContent = homeTexts[keys[index]];
+        }
+    });
+    
+    // 更新FAQ标题
+    const faqTitle = document.querySelector('#faq-tab h2');
+    if (faqTitle && texts.faq.title) {
+        faqTitle.textContent = texts.faq.title;
+    }
+    
+    // 更新API标题
+    const apiTitle = document.querySelector('#api-tab h2');
+    if (apiTitle && texts.api.title) {
+        apiTitle.textContent = texts.api.title;
+    }
+    
+    // 更新购买指南标题
+    const purchaseTitle = document.querySelector('#purchase-tab h2');
+    if (purchaseTitle && texts.purchase.title) {
+        purchaseTitle.textContent = texts.purchase.title;
+    }
+    
+    // 更新语言按钮
+    document.getElementById('currentLanguage').textContent = texts.common.language;
+}
+
+// 更新语言按钮状态
+function updateLanguageButton() {
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === currentLanguage) {
+            option.classList.add('active');
+        }
+    });
+}
+
+// 初始化语言设置
+function initializeLanguage() {
+    const savedLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+    switchLanguage(savedLanguage);
+}
+
+// 设置语言切换事件
+function setupLanguageSwitcher() {
+    const languageBtn = document.getElementById('languageSwitch');
+    const languageDropdown = document.getElementById('languageDropdown');
+    
+    // 切换下拉菜单显示
+    languageBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        languageDropdown.style.display = 
+            languageDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    
+    // 语言选项点击事件
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang');
+            switchLanguage(lang);
+            languageDropdown.style.display = 'none';
+        });
+    });
+    
+    // 点击页面其他区域关闭下拉菜单
+    document.addEventListener('click', function() {
+        languageDropdown.style.display = 'none';
+    });
+}
+
         // 支付表单功能
 function showPaymentForm(paymentType, paymentMethod) {
     // 隐藏所有表单
@@ -2576,6 +2953,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('Dashboard 页面加载完成，开始初始化...');
     
     try {
+        initializeLanguage();
+        setupLanguageSwitcher();
         updateUserDropdown();
 
          const user = firebase.auth().currentUser;
