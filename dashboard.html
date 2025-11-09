@@ -1018,6 +1018,241 @@
 .close-overlay:hover {
     color: var(--danger);
 }
+
+        /* 支付选项手续费样式 */
+.crypto-fee {
+    margin-left: auto;
+    padding: 4px 8px;
+    background: var(--success);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* 加密货币图标颜色 */
+.crypto-icon.usdt {
+    background: linear-gradient(135deg, #26A17B, #50AF95);
+}
+
+.crypto-icon.usdc {
+    background: linear-gradient(135deg, #2775CA, #3A8CFF);
+}
+
+.crypto-icon.ethereum {
+    background: linear-gradient(135deg, #627EEA, #8A92B2);
+}
+
+/* Pix图标样式 */
+.pix-option {
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    margin: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.pix-option:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+}
+
+.pix-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #32BB77, #28A745);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    color: white;
+    font-size: 1.3rem;
+}
+
+/* 支付表单样式 */
+.payment-form-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-form-container {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.payment-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.payment-form-content {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--light-gray);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* 加密货币选择样式 */
+.crypto-selection {
+    border: 1px solid var(--light-gray);
+    border-radius: 6px;
+    padding: 12px;
+    background: var(--light);
+    cursor: pointer;
+}
+
+.selected-crypto {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.crypto-icon-small {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+}
+
+/* 钱包地址样式 */
+.wallet-info {
+    background: var(--light);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.wallet-address {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+}
+
+.wallet-address code {
+    flex: 1;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.btn-copy {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.warning-text {
+    color: var(--danger);
+    font-size: 0.9rem;
+    margin: 10px 0 0;
+}
+
+/* 二维码样式 */
+.qr-code-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.qr-code-placeholder {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed var(--light-gray);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: var(--gray);
+}
+
+.qr-code-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+/* 按钮样式 */
+.btn-confirm {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+}
+
+.fee-calculation {
+    background: var(--light);
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.fee-calculation p {
+    margin: 5px 0;
+    font-weight: 500;
+}
+        
     </style>
 </head>
 <body>
@@ -2190,6 +2425,106 @@ function setupRealtimeSync() {
         });
 }
 
+        // 支付表单功能
+function showPaymentForm(paymentType, paymentMethod) {
+    // 隐藏所有表单
+    document.querySelectorAll('.payment-form').forEach(form => {
+        form.style.display = 'none';
+    });
+    
+    // 显示对应的表单
+    const formId = paymentType + 'Form';
+    const form = document.getElementById(formId);
+    if (form) {
+        form.style.display = 'block';
+    }
+    
+    // 更新标题
+    const title = document.getElementById('paymentFormTitle');
+    title.textContent = `${paymentMethod} - 支付`;
+    
+    // 显示表单
+    document.getElementById('paymentFormOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closePaymentForm() {
+    document.getElementById('paymentFormOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// 复制功能
+function copyWalletAddress() {
+    const address = document.getElementById('walletAddress').textContent;
+    navigator.clipboard.writeText(address).then(() => {
+        alert('钱包地址已复制到剪贴板');
+    });
+}
+
+function copyPixKey() {
+    const key = document.getElementById('pixKey').textContent;
+    navigator.clipboard.writeText(key).then(() => {
+        alert('Pix密钥已复制到剪贴板');
+    });
+}
+
+// 确认支付函数
+function confirmCryptoPayment() {
+    const amount = document.getElementById('cryptoAmount').value;
+    if (!amount || amount < 0.4) {
+        alert('请输入有效的充值金额（最低$0.4）');
+        return;
+    }
+    alert(`加密货币支付确认！金额: $${amount}`);
+    closePaymentForm();
+}
+
+function confirmCardPayment() {
+    const amount = document.getElementById('cardAmount').value;
+    if (!amount || amount < 0.4) {
+        alert('请输入有效的充值金额（最低$0.4）');
+        return;
+    }
+    alert(`信用卡支付确认！金额: $${amount}`);
+    closePaymentForm();
+}
+
+function confirmPixPayment() {
+    const amount = document.getElementById('pixAmount').value;
+    if (!amount || amount < 0.4) {
+        alert('请输入有效的充值金额（最低$0.4）');
+        return;
+    }
+    alert(`Pix支付确认！金额: $${amount}\n请完成支付后等待确认。`);
+    closePaymentForm();
+}
+
+// 更新支付选项点击事件
+function setupPaymentOptions() {
+    // 加密货币选项
+    document.querySelectorAll('.crypto-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const network = this.getAttribute('data-network');
+            const coin = this.getAttribute('data-coin');
+            showPaymentForm('crypto', `${network} ${coin}`);
+        });
+    });
+    
+    // 信用卡选项
+    document.querySelectorAll('.card-option').forEach(option => {
+        option.addEventListener('click', function() {
+            showPaymentForm('card', 'Credit Card - South Africa');
+        });
+    });
+    
+    // Pix选项
+    document.querySelectorAll('.pix-option').forEach(option => {
+        option.addEventListener('click', function() {
+            showPaymentForm('pix', 'Pix - Brazil');
+        });
+    });
+}
+
 
         // 监听 admin 数据更新
         window.addEventListener('appDataUpdated', function() {
@@ -2260,6 +2595,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
        // 确保这一行存在且位置正确
         setupWalletRecharge(); // <-- 这行必须在所有DOM元素加载后调用
+
+        // 新增：初始化支付选项
+        setupPaymentOptions();  
         
         // 启动实时同步
         setupRealtimeSync();
@@ -2320,67 +2658,261 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 <div class="payment-methods-grid">
                     <!-- 加密货币部分 -->
-                    <div class="payment-method-card" data-method="crypto">
-                        <div class="payment-method-header">
-                            <div class="method-icon">
-                                <i class="fab fa-bitcoin"></i>
+<div class="payment-method-card" data-method="crypto">
+    <div class="payment-method-header">
+        <div class="method-icon">
+            <i class="fab fa-bitcoin"></i>
+        </div>
+        <div class="method-info">
+            <h3>加密货币</h3>
+            <p>使用主流加密货币支付</p>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+    </div>
+    <div class="payment-method-details">
+        <div class="crypto-options">
+            <!-- TRC20 USDT -->
+            <div class="crypto-option" data-network="TRC-20" data-coin="USDT" data-type="crypto">
+                <div class="crypto-icon usdt">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="crypto-info">
+                    <h4>TRC-20 USDT</h4>
+                    <p>Tether (TRC20 Network) - 手续费低，快速到账</p>
+                </div>
+                <div class="crypto-fee">
+                    <span>手续费: 0%</span>
+                </div>
+            </div>
+            
+            <!-- TRC20 USDC -->
+            <div class="crypto-option" data-network="TRC-20" data-coin="USDC" data-type="crypto">
+                <div class="crypto-icon usdc">
+                    <i class="fas fa-circle"></i>
+                </div>
+                <div class="crypto-info">
+                    <h4>TRC-20 USDC</h4>
+                    <p>USD Coin (TRC20 Network) - 完全抵押</p>
+                </div>
+                <div class="crypto-fee">
+                    <span>手续费: 0%</span>
+                </div>
+            </div>
+            
+            <!-- ERC20 USDT -->
+            <div class="crypto-option" data-network="ERC-20" data-coin="USDT" data-type="crypto">
+                <div class="crypto-icon ethereum">
+                    <i class="fab fa-ethereum"></i>
+                </div>
+                <div class="crypto-info">
+                    <h4>ERC-20 USDT</h4>
+                    <p>Tether (ERC20 Network) - 广泛支持</p>
+                </div>
+                <div class="crypto-fee">
+                    <span>手续费: 0%</span>
+                </div>
+            </div>
+            
+            <!-- ERC20 USDC -->
+            <div class="crypto-option" data-network="ERC-20" data-coin="USDC" data-type="crypto">
+                <div class="crypto-icon usdc">
+                    <i class="fab fa-ethereum"></i>
+                </div>
+                <div class="crypto-info">
+                    <h4>ERC-20 USDC</h4>
+                    <p>USD Coin (ERC20 Network) - 以太坊网络</p>
+                </div>
+                <div class="crypto-fee">
+                    <span>手续费: 0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 信用卡部分 -->
+<div class="payment-method-card" data-method="card">
+    <div class="payment-method-header">
+        <div class="method-icon">
+            <i class="fas fa-credit-card"></i>
+        </div>
+        <div class="method-info">
+            <h3>Credit Card - South Africa</h3>
+            <p>使用VISA/MASTERCARD信用卡支付</p>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+    </div>
+    <div class="payment-method-details">
+        <div class="card-option" data-type="card" data-country="south-africa">
+            <div class="card-icon">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+            </div>
+            <div class="card-info">
+                <h4>South Africa Credit Card</h4>
+                <div class="fee-details">
+                    <div><i class="fas fa-percentage"></i> 手续费: 3.9% + $0.05</div>
+                    <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.05</div>
+                    <div><i class="fas fa-hand-holding-usd"></i> 最低付款金额: $0.4</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pix支付部分 -->
+<div class="payment-method-card" data-method="pix">
+    <div class="payment-method-header">
+        <div class="method-icon">
+            <i class="fas fa-barcode"></i>
+        </div>
+        <div class="method-info">
+            <h3>Pix - Brazil</h3>
+            <p>巴西即时支付系统</p>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+    </div>
+    <div class="payment-method-details">
+        <div class="pix-option" data-type="pix" data-country="brazil">
+            <div class="pix-icon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="pix-info">
+                <h4>Pix - Brazil</h4>
+                <div class="fee-details">
+                    <div><i class="fas fa-percentage"></i> 手续费: 3.75% + $0.35</div>
+                    <div><i class="fas fa-money-bill-wave"></i> 最低手续费: $0.35</div>
+                    <div><i class="fas fa-hand-holding-usd"></i> 最低付款金额: $0.4</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+                <!-- 支付表单覆盖层 -->
+<div class="payment-form-overlay" id="paymentFormOverlay">
+    <div class="payment-form-container">
+        <div class="payment-form-header">
+            <h2 id="paymentFormTitle">支付信息</h2>
+            <button class="close-form" onclick="closePaymentForm()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="payment-form-content">
+            <!-- 加密货币支付表单 -->
+            <div class="payment-form" id="cryptoForm" style="display: none;">
+                <div class="form-group">
+                    <label>充值金额 (USD)</label>
+                    <input type="number" id="cryptoAmount" placeholder="输入充值金额" min="0.4" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>选择加密货币</label>
+                    <div class="crypto-selection">
+                        <div class="selected-crypto" id="selectedCrypto">
+                            <div class="crypto-icon-small">
+                                <i class="fas fa-coins"></i>
                             </div>
-                            <div class="method-info">
-                                <h3>加密货币</h3>
-                                <p>使用主流加密货币支付</p>
-                            </div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="payment-method-details">
-                            <div class="crypto-options">
-                                <div class="crypto-option" data-network="TRC-20" data-coin="USDT">
-                                    <div class="crypto-icon">
-                                        <i class="fas fa-coins"></i>
-                                    </div>
-                                    <div class="crypto-info">
-                                        <h4>TRC-20 USDT</h4>
-                                        <p>Tether (TRC20 Network)</p>
-                                    </div>
-                                </div>
-                                <!-- 其他加密货币选项 -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 信用卡部分 -->
-                    <div class="payment-method-card" data-method="card">
-                        <div class="payment-method-header">
-                            <div class="method-icon">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                            <div class="method-info">
-                                <h3>VISA/MASTER CARD</h3>
-                                <p>使用信用卡或借记卡支付</p>
-                            </div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="payment-method-details">
-                            <!-- 信用卡内容 -->
-                        </div>
-                    </div>
-                    
-                    <!-- 银行转账部分 -->
-                    <div class="payment-method-card" data-method="bank">
-                        <div class="payment-method-header">
-                            <div class="method-icon">
-                                <i class="fas fa-university"></i>
-                            </div>
-                            <div class="method-info">
-                                <h3>银行转账</h3>
-                                <p>通过银行系统转账支付</p>
-                            </div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="payment-method-details">
-                            <!-- 银行转账内容 -->
+                            <span id="selectedCryptoText">请选择加密货币</span>
                         </div>
                     </div>
                 </div>
+                <div class="wallet-info">
+                    <h4><i class="fas fa-wallet"></i> 收款钱包地址</h4>
+                    <div class="wallet-address">
+                        <code id="walletAddress">TBAf8JYpP3E7Lx5vQ2nR9mK6...</code>
+                        <button class="btn-copy" onclick="copyWalletAddress()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="warning-text"><i class="fas fa-exclamation-triangle"></i> 请勿向此地址发送其他加密货币</p>
+                </div>
+                <div class="conversion-info">
+                    <p>≈ <span id="cryptoEquivalent">0.000000</span> <span id="cryptoCurrency">USDT</span></p>
+                </div>
+                <button class="btn btn-primary btn-confirm" onclick="confirmCryptoPayment()">
+                    <i class="fas fa-check"></i> 确认支付
+                </button>
+            </div>
+            
+            <!-- 信用卡支付表单 -->
+            <div class="payment-form" id="cardForm" style="display: none;">
+                <div class="form-group">
+                    <label>充值金额 (USD)</label>
+                    <input type="number" id="cardAmount" placeholder="输入充值金额" min="0.4" step="0.01">
+                </div>
+                <div class="fee-calculation">
+                    <p>手续费: <span id="cardFee">$0.00</span></p>
+                    <p>实际到账: <span id="cardNetAmount">$0.00</span></p>
+                </div>
+                <div class="form-group">
+                    <label>持卡人姓名</label>
+                    <input type="text" id="cardHolderName" placeholder="与卡片上姓名一致">
+                </div>
+                <div class="form-group">
+                    <label>卡号</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>有效期</label>
+                        <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" id="cardCVV" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="cardEmail" placeholder="接收收据的邮箱">
+                </div>
+                <button class="btn btn-primary btn-confirm" onclick="confirmCardPayment()">
+                    <i class="fas fa-lock"></i> 安全支付
+                </button>
+            </div>
+            
+            <!-- Pix支付表单 -->
+            <div class="payment-form" id="pixForm" style="display: none;">
+                <div class="form-group">
+                    <label>充值金额 (USD)</label>
+                    <input type="number" id="pixAmount" placeholder="输入充值金额" min="0.4" step="0.01">
+                </div>
+                <div class="fee-calculation">
+                    <p>手续费: <span id="pixFee">$0.00</span></p>
+                    <p>实际到账: <span id="pixNetAmount">$0.00</span></p>
+                </div>
+                <div class="pix-qr-section">
+                    <h4><i class="fas fa-qrcode"></i> Pix二维码</h4>
+                    <div class="qr-code-container">
+                        <div class="qr-code-placeholder">
+                            <i class="fas fa-qrcode"></i>
+                            <p>二维码加载中...</p>
+                        </div>
+                    </div>
+                    <div class="pix-instructions">
+                        <h5>支付说明:</h5>
+                        <ol>
+                            <li>打开您的银行APP</li>
+                            <li>选择Pix支付</li>
+                            <li>扫描上方二维码</li>
+                            <li>确认支付金额</li>
+                            <li>完成支付</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="pix-key">
+                    <label>Pix密钥 (备用)</label>
+                    <div class="pix-key-value">
+                        <code id="pixKey">00020126580014br.gov.bcb.pix0136a5a6c8d9-e0f1-2345-6789-abc123def456</code>
+                        <button class="btn-copy" onclick="copyPixKey()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-confirm" onclick="confirmPixPayment()">
+                    <i class="fas fa-check"></i> 我已支付
+                </button>
             </div>
         </div>
     </div>
