@@ -1894,15 +1894,6 @@ function hideLoadingState() {
     }
 }  // 这里缺少了这个结束括号
         
-    
-        
-        // 启动实时同步监听
-        setupRealtimeSync();
-        
-    } catch (error) {
-        console.error('初始化失败:', error);
-        alert('系统初始化失败，请刷新页面');
-    }
        
         // 使用DOMContentLoaded确保页面加载完成
         document.addEventListener('DOMContentLoaded', initializeAdmin);
