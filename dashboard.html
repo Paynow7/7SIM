@@ -2802,6 +2802,129 @@ function setupLanguageSwitcher() {
     });
 }
 
+        // 核心国家翻译映射
+const countryTranslations = {
+    '中国': 'China',
+    '美国': 'United States', 
+    '英国': 'United Kingdom',
+    '加拿大': 'Canada',
+    '澳大利亚': 'Australia',
+    '日本': 'Japan',
+    '韩国': 'South Korea',
+    '德国': 'Germany',
+    '法国': 'France',
+    '意大利': 'Italy',
+    '西班牙': 'Spain',
+    '俄罗斯': 'Russia',
+    '巴西': 'Brazil',
+    '印度': 'India',
+    '泰国': 'Thailand',
+    '越南': 'Vietnam',
+    '马来西亚': 'Malaysia',
+    '印度尼西亚': 'Indonesia',
+    '菲律宾': 'Philippines',
+    '新加坡': 'Singapore'
+    // 可以继续添加更多常用国家...
+};
+
+// 智能翻译函数
+function translateCountryName(countryName, targetLang) {
+    if (targetLang === 'en') {
+        // 中文 -> 英文
+        return countryTranslations[countryName] || countryName;
+    } else {
+        // 英文 -> 中文（反向查找）
+        const entry = Object.entries(countryTranslations).find(([zh, en]) => en === countryName);
+        return entry ? entry[0] : countryName;
+    }
+}
+
+// ========== 多语言支持 ==========
+
+// 语言包
+const languagePack = {
+    zh: {
+        // ... 保持您现有的中文翻译 ...
+        // 左侧面板
+        leftPanel: {
+            selectService: "选择服务",
+            searchService: "寻找网站或者APP",
+            selectCountry: "选择国家", 
+            searchCountry: "寻找国家",
+            selectOperator: "选择运营商",
+            getNumber: "获取号码"
+        },
+        // ... 其他翻译保持不变 ...
+    },
+    
+    en: {
+        // ... 保持您现有的英文翻译 ...
+        // Left Panel
+        leftPanel: {
+            selectService: "Select Service",
+            searchService: "Find website or APP", 
+            selectCountry: "Select Country",
+            searchCountry: "Find country",
+            selectOperator: "Select Operator", 
+            getNumber: "Get Number"
+        },
+        // ... 其他翻译保持不变 ...
+    }
+};
+
+// 当前语言
+let currentLanguage = 'zh';
+
+// 切换语言函数 - 修改版本
+function switchLanguage(lang) {
+    if (languagePack[lang]) {
+        currentLanguage = lang;
+        localStorage.setItem('preferredLanguage', lang);
+        
+        // 动态更新所有国家的显示名称
+        if (servicesData.countries && servicesData.countries.length > 0) {
+            servicesData.countries.forEach(country => {
+                country.displayName = translateCountryName(country.name, lang);
+            });
+        }
+        
+        applyLanguage(lang);
+        updateLanguageButton();
+        
+        // 重新渲染国家列表
+        renderCountries();
+    }
+}
+
+// 应用语言包函数 - 保持您现有的
+function applyLanguage(lang) {
+    // ... 您现有的applyLanguage函数代码 ...
+}
+
+// 更新语言按钮状态 - 保持您现有的
+function updateLanguageButton() {
+    // ... 您现有的updateLanguageButton函数代码 ...
+}
+
+// 初始化语言设置 - 修改版本
+function initializeLanguage() {
+    const savedLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+    
+    // 初始化国家显示名称
+    if (servicesData.countries && servicesData.countries.length > 0) {
+        servicesData.countries.forEach(country => {
+            country.displayName = translateCountryName(country.name, savedLanguage);
+        });
+    }
+    
+    switchLanguage(savedLanguage);
+}
+
+// 设置语言切换事件 - 保持您现有的
+function setupLanguageSwitcher() {
+    // ... 您现有的setupLanguageSwitcher函数代码 ...
+}
+
         // 支付表单功能
 function showPaymentForm(paymentType, paymentMethod) {
     // 隐藏所有表单
@@ -2953,21 +3076,30 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('Dashboard 页面加载完成，开始初始化...');
     
     try {
+        // 先初始化语言系统
         initializeLanguage();
         setupLanguageSwitcher();
+        
         updateUserDropdown();
 
-         const user = firebase.auth().currentUser;
+        const user = firebase.auth().currentUser;
         if (user) {
             await setupUserApiKey(user);
         }
         
-        // 加载数据（现在是异步的）
+        // 加载数据
         await loadDataFromAdmin();
+        
+        // 数据加载后再次确保国家名称翻译正确
+        if (servicesData.countries && servicesData.countries.length > 0) {
+            servicesData.countries.forEach(country => {
+                country.displayName = translateCountryName(country.name, currentLanguage);
+            });
+        }
         
         // 渲染界面
         renderServices();
-        renderCountries();
+        renderCountries(); // 这会使用翻译后的名称
         renderOperators();
         updateOperatorPrices();
         setupEventListeners();
