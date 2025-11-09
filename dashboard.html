@@ -1860,12 +1860,21 @@ function loadFromLocalStorage() {
         console.log('localStorage 中没有 appData 数据');
     }
 }
-         // 按中文拼音排序
-        function sortByPinyin(array, key = 'name') {
-            return array.sort((a, b) => {
-                return a[key].localeCompare(b[key], 'zh-CN');
-            });
-        }
+         // 修复后的按中文拼音排序函数
+function sortByPinyin(array, key = 'name') {
+    return array.sort((a, b) => {
+        // 添加空值检查
+        const aValue = a[key] || '';
+        const bValue = b[key] || '';
+        
+        // 如果都是空值，保持原顺序
+        if (!aValue && !bValue) return 0;
+        if (!aValue) return 1; // 空值排在后面
+        if (!bValue) return -1; // 空值排在后面
+        
+        return aValue.localeCompare(bValue, 'zh-CN');
+    });
+}
 
         // 全局变量
         let selectedService = null;
@@ -1901,39 +1910,44 @@ function calculateServicePriceRange(serviceId) {
     return `${minPrice.toFixed(2)}-${maxPrice.toFixed(2)}`;
 }
 
-               // 渲染服务列表
-        function renderServices() {
-            const servicesList = document.getElementById('servicesList');
-            servicesList.innerHTML = '';
-            
-            if (servicesData.services.length === 0) {
-                servicesList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无服务，请在管理页面添加</div>';
-                return;
-            }
-            
-            // 按拼音排序
-            const sortedServices = sortByPinyin(servicesData.services, 'name');
-            
-            sortedServices.forEach(service => {
-                const priceRange = calculateServicePriceRange(service.id);
-                
-                const item = document.createElement('div');
-                item.className = 'service-item';
-                item.dataset.id = service.id;
-                item.innerHTML = `
-                    <div class="service-info">
-                        <div class="service-icon-small">
-                            <i class="${service.icon}"></i>
-                        </div>
-                        <div class="service-name">${service.name}</div>
-                    </div>
-                    <div class="service-numbers">${service.numbers}</div>
-                    <div class="price-range">$${priceRange}</div>
-                `;
-                item.addEventListener('click', () => selectService(service));
-                servicesList.appendChild(item);
-            });
-        }
+               // 渲染服务列表 - 添加空值检查
+function renderServices() {
+    const servicesList = document.getElementById('servicesList');
+    servicesList.innerHTML = '';
+    
+    if (servicesData.services.length === 0) {
+        servicesList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无服务，请在管理页面添加</div>';
+        return;
+    }
+    
+    // 过滤有效服务
+    const validServices = servicesData.services.filter(service => 
+        service && service.name
+    );
+    
+    // 按拼音排序
+    const sortedServices = sortByPinyin(validServices, 'name');
+    
+    sortedServices.forEach(service => {
+        const priceRange = calculateServicePriceRange(service.id);
+        
+        const item = document.createElement('div');
+        item.className = 'service-item';
+        item.dataset.id = service.id;
+        item.innerHTML = `
+            <div class="service-info">
+                <div class="service-icon-small">
+                    <i class="${service.icon || 'fas fa-mobile-alt'}"></i>
+                </div>
+                <div class="service-name">${service.name}</div>
+            </div>
+            <div class="service-numbers">${service.numbers}</div>
+            <div class="price-range">$${priceRange}</div>
+        `;
+        item.addEventListener('click', () => selectService(service));
+        servicesList.appendChild(item);
+    });
+}
         
              // 渲染国家列表 - 修改版本
 function renderCountries() {
@@ -1947,19 +1961,32 @@ function renderCountries() {
         return;
     }
     
+    // 过滤掉没有名称的国家
+    const validCountries = servicesData.countries.filter(country => 
+        country && (country.name || country.displayName)
+    );
+    
+    if (validCountries.length === 0) {
+        countriesList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">没有有效的国家数据</div>';
+        return;
+    }
+    
     // 使用displayName（经过翻译的名称）进行排序和显示
-    const sortedCountries = sortByPinyin(servicesData.countries, 'displayName');
+    const sortedCountries = sortByPinyin(validCountries, 'displayName');
     
     sortedCountries.forEach(country => {
+        const displayName = country.displayName || country.name || '未知国家';
+        const flagUrl = country.flag || 'https://flagcdn.com/w40/un.png';
+        
         const item = document.createElement('div');
         item.className = 'country-item';
         item.dataset.id = country.id;
         item.innerHTML = `
             <div class="country-info">
                 <div class="country-flag-small">
-                    <img src="${country.flag}" alt="${country.displayName}" onerror="this.src='https://flagcdn.com/w40/un.png'">
+                    <img src="${flagUrl}" alt="${displayName}" onerror="this.src='https://flagcdn.com/w40/un.png'">
                 </div>
-                <div class="country-name">${country.displayName}</div>
+                <div class="country-name">${displayName}</div>
             </div>
         `;
         item.addEventListener('click', () => selectCountry(country));
