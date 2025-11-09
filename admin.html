@@ -561,6 +561,20 @@
         border-width: 0.5px;
     }
 }
+
+        /* 在现有的CSS中添加表格容器样式 */
+.data-table-container {
+    overflow-x: auto;
+    margin: 0 -15px;
+    padding: 0 15px;
+}
+
+/* 确保移动端菜单按钮在手机端显示 */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -645,22 +659,23 @@
                 <span id="selectedCount">已选择 0 个国家</span>
             </div>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th width="30"><input type="checkbox" id="selectAllCountries" onchange="toggleSelectAll('countries')"></th>
-                        <th>国家名称</th>
-                        <th>国旗</th>
-                        <th>代码</th>
-                        <th>状态</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="countriesTable">
-                    <!-- 动态加载 -->
-                </tbody>
-            </table>
-        </div>
+            <div class="data-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th width="30"><input type="checkbox" id="selectAllCountries" onchange="toggleSelectAll('countries')"></th>
+                <th>国家名称</th>
+                <th>国旗</th>
+                <th>代码</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="countriesTable">
+            <!-- 动态加载 -->
+        </tbody>
+    </table>
+</div>
 
         <!-- 服务设置 -->
         <div class="content-card" id="services">
@@ -678,22 +693,24 @@
                 <span id="selectedServicesCount">已选择 0 个服务</span>
             </div>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th width="30"><input type="checkbox" id="selectAllServices" onchange="toggleSelectAll('services')"></th>
-                        <th>服务名称</th>
-                        <th>图标</th>
-                        <th>代码</th>
-                        <th>状态</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="servicesTable">
-                    <!-- 动态加载 -->
-                </tbody>
-            </table>
-        </div>
+           <div class="data-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th width="30"><input type="checkbox" id="selectAllServices" onchange="toggleSelectAll('services')"></th>
+                <th>服务名称</th>
+                <th>图标</th>
+                <th>代码</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="servicesTable">
+            <!-- 动态加载 -->
+        </tbody>
+    </table>
+</div>
+     
 
         <!-- 价格设置 -->
         <div class="content-card" id="pricing">
@@ -728,23 +745,24 @@
     <span id="selectedPricingCount">已选择 0 个价格规则</span>
 </div>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th width="30"><input type="checkbox" id="selectAllPricing" onchange="toggleSelectAll('pricing')"></th>
-                        <th>服务</th>
-                        <th>国家</th>
-                        <th>价格 ($)</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="pricingTable">
-                    <!-- 动态加载 -->
-                </tbody>
-            </table>
-        </div>
+           <div class="data-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th width="30"><input type="checkbox" id="selectAllPricing" onchange="toggleSelectAll('pricing')"></th>
+                <th>服务</th>
+                <th>国家</th>
+                <th>价格 ($)</th>
+                <th>状态</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="pricingTable">
+            <!-- 动态加载 -->
+        </tbody>
+    </table>
+</div>
 
         <!-- 运营商设置 -->
 <div class="content-card" id="operators">
@@ -762,6 +780,7 @@
         <span id="selectedOperatorsCount">已选择 0 个运营商</span>
     </div>
     
+    <div class="data-table-container">
     <table>
         <thead>
             <tr>
@@ -778,27 +797,29 @@
         </tbody>
     </table>
 </div>
+</div>
         
         <!-- 其他内容保持不变 -->
         <div class="content-card" id="users">
             <h3><i class="fas fa-users"></i> 用户管理</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>用户ID</th>
-                        <th>邮箱</th>
-                        <th>API Key</th>
-                        <th>余额</th>
-                        <th>注册时间</th>
-                        <th>最后登录</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTable">
-                    <!-- 动态加载 -->
-                </tbody>
-            </table>
-        </div>
+            <div class="data-table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>用户ID</th>
+                <th>邮箱</th>
+                <th>API Key</th>
+                <th>余额</th>
+                <th>注册时间</th>
+                <th>最后登录</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="usersTable">
+            <!-- 动态加载 -->
+        </tbody>
+    </table>
+</div>
 
         <div class="content-card" id="crypto">
             <h3><i class="fas fa-exchange-alt"></i> 加密货币转账</h3>
@@ -2178,14 +2199,7 @@ async function initializeAdmin() {
         setupMobileModalClose();
         setupMobileTable();
         
-        // 启动实时同步监听
-        setupRealtimeSync();
-        
-    } catch (error) {
-        console.error('初始化失败:', error);
-        alert('系统初始化失败，请刷新页面');
-    }
-}
+    
         
         // 启动实时同步监听
         setupRealtimeSync();
