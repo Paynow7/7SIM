@@ -1279,10 +1279,379 @@
     color: var(--primary);
     font-weight: 600;
 }
+
+        /* 在现有的CSS最后添加响应式样式 */
+
+/* 平板设备 (768px 到 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .dashboard-layout {
+        gap: 15px;
+    }
+    
+    .left-panel {
+        width: 300px;
+    }
+    
+    .service-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 手机设备 (小于 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    /* 导航栏适配 */
+    .navbar {
+        padding: 10px 0;
+    }
+    
+    .logo {
+        font-size: 1.2rem;
+    }
+    
+    .nav-links {
+        display: none; /* 在小屏幕上隐藏导航链接 */
+    }
+    
+    /* 移动端菜单按钮 */
+    .mobile-menu-btn {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--dark);
+        cursor: pointer;
+        padding: 5px;
+    }
+    
+    /* 主布局改为垂直排列 */
+    .dashboard-layout {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .left-panel, .right-panel {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    /* 服务选择区域优化 */
+    .panel-section {
+        margin-bottom: 20px;
+    }
+    
+    .services-list, .countries-list, .operators-list {
+        max-height: 200px;
+    }
+    
+    .service-item, .country-item, .operator-item {
+        padding: 10px 12px;
+    }
+    
+    /* 右侧面板优化 */
+    .right-panel {
+        padding: 20px 15px;
+    }
+    
+    .service-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .service-info-card {
+        padding: 20px;
+    }
+    
+    .service-info-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .service-info-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .service-stats {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .service-features {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    /* 支付覆盖层手机适配 */
+    .payment-overlay {
+        top: 60px; /* 调整顶部位置 */
+        height: calc(100% - 60px);
+    }
+    
+    .payment-overlay-content {
+        padding: 20px 15px;
+        border-radius: 0;
+    }
+    
+    .overlay-header {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+    
+    .overlay-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* 支付方法卡片手机适配 */
+    .payment-method-header {
+        padding: 20px;
+    }
+    
+    .method-icon {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+    }
+    
+    .method-info h3 {
+        font-size: 1.1rem;
+    }
+    
+    .crypto-option, .card-option, .pix-option {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .crypto-icon, .bank-icon, .pix-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+    }
+    
+    /* 支付表单手机适配 */
+    .payment-form-container {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+        border-radius: 8px;
+    }
+    
+    .payment-form-header {
+        padding: 20px;
+    }
+    
+    .payment-form-content {
+        padding: 20px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .qr-code-placeholder {
+        width: 150px;
+        height: 150px;
+    }
+    
+    /* 移动端底部操作栏 */
+    .mobile-bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 10px 15px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .mobile-bottom-bar .btn {
+        flex: 1;
+        margin: 0 5px;
+    }
+    
+    /* 语言切换器手机适配 */
+    .language-switcher {
+        margin-right: 5px;
+    }
+    
+    .language-dropdown {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 200px;
+    }
+    
+    /* 用户菜单手机适配 */
+    .user-dropdown {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 250px;
+    }
+}
+
+/* 小屏手机 (小于 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 8px;
+    }
+    
+    .logo {
+        font-size: 1.1rem;
+    }
+    
+    .left-panel, .right-panel {
+        padding: 12px;
+    }
+    
+    .service-info-card {
+        padding: 15px;
+    }
+    
+    .feature-card {
+        padding: 15px;
+    }
+    
+    .payment-overlay-content {
+        padding: 15px 10px;
+    }
+    
+    .payment-method-header {
+        padding: 15px;
+    }
+    
+    .method-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+    }
+    
+    .method-info h3 {
+        font-size: 1rem;
+    }
+    
+    .crypto-option, .card-option, .pix-option {
+        padding: 12px;
+        margin: 8px;
+    }
+    
+    /* 更好的触摸目标 */
+    .btn, .tab, .service-item, .country-item, .operator-item {
+        min-height: 44px; /* 苹果推荐的最小触摸目标尺寸 */
+    }
+    
+    .close-overlay, .close-form {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* 横屏手机适配 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .payment-overlay {
+        top: 50px;
+        height: calc(100% - 50px);
+    }
+    
+    .payment-overlay-content {
+        padding: 15px;
+    }
+    
+    .payment-methods-grid {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+}
+
+/* 防止移动端缩放 */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+}
+
+/* 改善移动端滚动体验 */
+html {
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 支付表单关闭按钮优化 */
+.close-overlay, .close-form {
+    position: relative;
+    z-index: 10001;
+    background: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+.close-overlay:hover, .close-form:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+/* 添加移动端专属的关闭区域 */
+.mobile-close-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
+    z-index: 9999;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-close-area {
+        display: block;
+    }
+    
+    .payment-overlay {
+        top: 0;
+        height: 100%;
+    }
+}
         
     </style>
 </head>
 <body>
+    <div class="mobile-close-area" id="mobileCloseArea" onclick="closePaymentOverlay()"></div>
+
     <!-- 导航栏 -->
     <header>
         <div class="container">
@@ -2406,14 +2775,34 @@ function setupWalletRecharge() {
 function showPaymentOverlay() {
     document.getElementById('paymentOverlay').style.display = 'block';
     document.body.style.overflow = 'hidden'; // 防止背景滚动
+
+    // 新增：移动端关闭区域显示
+    const mobileCloseArea = document.getElementById('mobileCloseArea');
+    if (mobileCloseArea) {
+        mobileCloseArea.style.display = 'block';
+    }
+    // 新增：添加触摸事件监听防止滚动
+    document.addEventListener('touchmove', preventScroll, { passive: false });
 }
 
 // 关闭付款覆盖层
 function closePaymentOverlay() {
+    // 保持您原有的代码
     document.getElementById('paymentOverlay').style.display = 'none';
     document.body.style.overflow = 'auto'; // 恢复滚动
+    
+    // 新增：隐藏移动端关闭区域
+    const mobileCloseArea = document.getElementById('mobileCloseArea');
+    if (mobileCloseArea) {
+        mobileCloseArea.style.display = 'none';
+    }
+    // 新增：移除触摸事件监听
+    document.removeEventListener('touchmove', preventScroll);
 }
 
+        function preventScroll(e) {
+    e.preventDefault();
+}
        // 设置事件监听器
 function setupEventListeners() {
     // 移除选择事件
