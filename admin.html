@@ -2171,76 +2171,7 @@ function showSyncNotification(message) {
     }, 3000);
 }
 
-        // 移动端菜单功能
-function setupMobileMenu() {
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    if (window.innerWidth <= 768px) {
-        menuToggle.style.display = 'block';
-        sidebar.style.left = '-280px';
-    }
-    
-    // 菜单切换
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('mobile-open');
-        overlay.classList.toggle('active');
-    });
-    
-    // 点击遮罩关闭菜单
-    overlay.addEventListener('click', function() {
-        sidebar.classList.remove('mobile-open');
-        overlay.classList.remove('active');
-    });
-    
-    // 点击菜单项关闭菜单
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function() {
-            if (window.innerWidth <= 768px) {
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-            }
-        });
-    });
-    
-    // 窗口大小变化时调整
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768px) {
-            menuToggle.style.display = 'none';
-            sidebar.style.left = '0';
-            overlay.classList.remove('active');
-        } else {
-            menuToggle.style.display = 'block';
-            sidebar.style.left = '-280px';
-        }
-    });
-}
-
-// 改善移动端模态框关闭
-function setupMobileModalClose() {
-    // 为所有模态框添加触摸关闭支持
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal(this.id);
-            }
-        });
-    });
-}
-
-// 改善移动端表格体验
-function setupMobileTable() {
-    // 为表格容器添加触摸滚动提示
-    const tableContainers = document.querySelectorAll('.data-table-container');
-    tableContainers.forEach(container => {
-        if (container.scrollWidth > container.clientWidth) {
-            container.style.background = 'linear-gradient(90deg, transparent 95%, rgba(0,0,0,0.1) 100%)';
-        }
-    });
-}
-
-                       // 页面加载完成后初始化
+       
        // 页面加载完成后初始化
 async function initializeAdmin() {
     console.log('Admin页面加载完成，开始初始化数据...');
