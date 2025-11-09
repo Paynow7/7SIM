@@ -1935,15 +1935,37 @@ function calculateServicePriceRange(serviceId) {
             });
         }
         
-              // 渲染国家列表
-        function renderCountries() {
-            const countriesList = document.getElementById('countriesList');
-            countriesList.innerHTML = '';
-            
-            if (servicesData.countries.length === 0) {
-                countriesList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">暂无国家，请在管理页面添加</div>';
-                return;
-            }
+             // 渲染国家列表 - 修改版本
+function renderCountries() {
+    const countriesList = document.getElementById('countriesList');
+    countriesList.innerHTML = '';
+    
+    if (servicesData.countries.length === 0) {
+        countriesList.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">' + 
+            (currentLanguage === 'zh' ? '暂无国家，请在管理页面添加' : 'No countries available, please add in admin page') + 
+            '</div>';
+        return;
+    }
+    
+    // 使用displayName（经过翻译的名称）进行排序和显示
+    const sortedCountries = sortByPinyin(servicesData.countries, 'displayName');
+    
+    sortedCountries.forEach(country => {
+        const item = document.createElement('div');
+        item.className = 'country-item';
+        item.dataset.id = country.id;
+        item.innerHTML = `
+            <div class="country-info">
+                <div class="country-flag-small">
+                    <img src="${country.flag}" alt="${country.displayName}" onerror="this.src='https://flagcdn.com/w40/un.png'">
+                </div>
+                <div class="country-name">${country.displayName}</div>
+            </div>
+        `;
+        item.addEventListener('click', () => selectCountry(country));
+        countriesList.appendChild(item);
+    });
+}
             
             // 按拼音排序
             const sortedCountries = sortByPinyin(servicesData.countries, 'name');
@@ -2675,16 +2697,6 @@ const languagePack = {
 
 // 当前语言
 let currentLanguage = 'zh';
-
-// 切换语言函数
-function switchLanguage(lang) {
-    if (languagePack[lang]) {
-        currentLanguage = lang;
-        localStorage.setItem('preferredLanguage', lang);
-        applyLanguage(lang);
-        updateLanguageButton();
-    }
-}
 
 // 应用语言包
 function applyLanguage(lang) {
