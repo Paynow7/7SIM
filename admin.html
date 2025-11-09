@@ -696,71 +696,67 @@ let appData = {
     users: []
 };
 
-     // 从 Firebase 和本地存储加载数据
+    // 修改 initData 函数，添加更详细的错误处理
 async function initData() {
     console.log('开始初始化数据...');
     
     try {
-        // 1. 先尝试从 Firebase 加载最新数据
         const doc = await db.collection('platformData').doc('globalSettings').get();
         
         if (doc.exists) {
             const firebaseData = doc.data();
-            console.log('从 Firebase 加载数据成功:', firebaseData);
+            console.log('Firebase 数据详情:', {
+                services: firebaseData.services,
+                countries: firebaseData.countries,
+                pricingRules: firebaseData.pricingRules,
+                operators: firebaseData.operators
+            });
             
-            // 使用 Firebase 数据，但保留本地的一些设置
+            // 确保所有数据字段都存在
             appData = {
                 countries: firebaseData.countries || [],
                 services: firebaseData.services || [],
                 operators: firebaseData.operators || [],
                 pricingRules: firebaseData.pricingRules || [],
                 paymentMethods: firebaseData.paymentMethods || [],
-                users: appData.users || [] // 保留本地的用户数据
+                users: appData.users || []
             };
             
-            // 同时更新本地存储
-            localStorage.setItem('appData', JSON.stringify(appData));
-            localStorage.setItem('pricingRules', JSON.stringify(appData.pricingRules));
-            
         } else {
-            // 2. Firebase 没有数据，使用本地存储
-            console.log('Firebase 无数据，使用本地存储');
-            const savedData = localStorage.getItem('appData');
-            
-            if (savedData) {
-                const parsedData = JSON.parse(savedData);
-                appData = {
-                    countries: parsedData.countries || [],
-                    services: parsedData.services || [],
-                    operators: parsedData.operators || [],
-                    pricingRules: parsedData.pricingRules || [],
-                    paymentMethods: parsedData.paymentMethods || [],
-                    users: parsedData.users || []
-                };
-            } else {
-                // 3. 都没有数据，使用默认数据
-                console.log('本地也无数据，使用默认数据');
-                initDefaultData();
-            }
-        }
-    } catch (error) {
-        console.error('从 Firebase 加载数据失败，使用本地数据:', error);
-        // 降级到本地存储
-        const savedData = localStorage.getItem('appData');
-        if (savedData) {
-            const parsedData = JSON.parse(savedData);
-            appData = {
-                countries: parsedData.countries || [],
-                services: parsedData.services || [],
-                operators: parsedData.operators || [],
-                pricingRules: parsedData.pricingRules || [],
-                paymentMethods: parsedData.paymentMethods || [],
-                users: parsedData.users || []
-            };
-        } else {
+            console.warn('Firebase 中没有找到数据，使用默认数据');
             initDefaultData();
         }
+    } catch (error) {
+        console.error('数据加载失败:', error);
+        initDefaultData();
     }
+    
+    // 强制确保数据结构
+    enforceDataStructure();
+    
+    console.log('最终数据状态:', {
+        servicesCount: appData.services.length,
+        countriesCount: appData.countries.length,
+        pricingCount: appData.pricingRules.length,
+        operatorsCount: appData.operators.length
+    });
+}
+
+// 添加数据完整性检查函数
+function enforceDataStructure() {
+    if (!appData.services || !Array.isArray(appData.services)) {
+        console.warn('服务数据损坏，重新初始化');
+        appData.services = [];
+    }
+    if (!appData.pricingRules || !Array.isArray(appData.pricingRules)) {
+        console.warn('价格数据损坏，重新初始化');
+        appData.pricingRules = [];
+    }
+    if (!appData.operators || !Array.isArray(appData.operators)) {
+        console.warn('运营商数据损坏，重新初始化');
+        appData.operators = [];
+    }
+}
     
     // 确保数据结构完整
     if (!appData.countries) appData.countries = [];
@@ -977,64 +973,66 @@ function loadCountriesTable() {
     
     updateSelectedCount('countries');
 }
-                      // 加载服务表格 - 修复版本
-        function loadServicesTable() {
-            const tbody = document.getElementById('servicesTable');
-            tbody.innerHTML = '';
-            
-            // 安全检查 - 添加这部分
-            if (!appData.services || !Array.isArray(appData.services)) {
-                console.error('服务数据未正确初始化:', appData.services);
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px; color: #e74c3c;">
-                            数据加载错误，请刷新页面
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            console.log('加载服务数据:', appData.services);
-            console.log('渲染服务表格，数据:', appData.services);
-            console.log('服务数量:', appData.services.length);
-            
-            if (appData.services.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">
-                            暂无服务数据，请点击"添加服务"按钮创建
-                        </td>
-                    </tr>
-                `;
-                updateSelectedCount('services'); // 添加这行
-                return;
-            }
-            
-            appData.services.forEach(service => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="checkbox" name="serviceCheckbox" value="${service.id}" onchange="updateSelectedCount('services')"></td>
-                    <td>${service.name}</td>
-                    <td><i class="${service.icon}" style="font-size: 1.2rem;"></i></td>
-                    <td>${service.code}</td>
-                    <td>
-                        <span class="badge ${service.active ? 'badge-success' : 'badge-secondary'}">
-                            ${service.active ? '启用' : '禁用'}
-                        </span>
-                    </td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-primary" onclick="toggleServiceStatus(${service.id})">
-                            ${service.active ? '禁用' : '启用'}
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">删除</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            updateSelectedCount('services');
+                      function loadServicesTable() {
+    try {
+        const tbody = document.getElementById('servicesTable');
+        if (!tbody) {
+            console.error('找不到服务表格容器');
+            return;
         }
+        
+        tbody.innerHTML = '';
+        
+        console.log('加载服务数据:', appData.services);
+        
+        if (!appData.services || appData.services.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #6c757d;">
+                        暂无服务数据，请点击"添加服务"按钮创建
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // 渲染表格行
+        appData.services.forEach(service => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" name="serviceCheckbox" value="${service.id}" onchange="updateSelectedCount('services')"></td>
+                <td>${service.name || '未命名'}</td>
+                <td><i class="${service.icon || 'fas fa-mobile-alt'}" style="font-size: 1.2rem;"></i></td>
+                <td>${service.code || '无代码'}</td>
+                <td>
+                    <span class="badge ${service.active ? 'badge-success' : 'badge-secondary'}">
+                        ${service.active ? '启用' : '禁用'}
+                    </span>
+                </td>
+                <td class="action-buttons">
+                    <button class="btn btn-sm btn-primary" onclick="toggleServiceStatus(${service.id})">
+                        ${service.active ? '禁用' : '启用'}
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">删除</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+    } catch (error) {
+        console.error('加载服务表格失败:', error);
+        const tbody = document.getElementById('servicesTable');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #e74c3c;">
+                        加载失败: ${error.message}
+                    </td>
+                </tr>
+            `;
+        }
+    }
+}
         
         // 价格管理功能
         function loadPricingPage() {
@@ -1847,27 +1845,61 @@ function showSyncNotification(message) {
 
 // ========== 移动端功能结束 ==========
        
-       // 页面加载完成后初始化
-async function initializeAdmin() {
+       async function initializeAdmin() {
     console.log('Admin页面加载完成，开始初始化数据...');
     
     try {
+        // 先等待数据加载完成
         await initData();
-        console.log('数据初始化完成，开始加载表格...');
         
-        // 强制确保数据结构完整
-        if (!appData.countries) appData.countries = [];
-        if (!appData.services) appData.services = [];
-        if (!appData.operators) appData.operators = [];
-        if (!appData.pricingRules) appData.pricingRules = [];
+        console.log('数据加载完成，开始渲染界面');
         
-        if (appData.countries && Array.isArray(appData.countries)) {
-            loadTabData('countries');
-        } else {
-            console.error('国家数据初始化失败，重新初始化...');
-            initDefaultData();
-            loadTabData('countries');
-        }
+        // 显示加载状态
+        showLoadingState();
+        
+        // 加载默认标签页
+        const currentTab = getCurrentTab();
+        await loadTabData(currentTab);
+        
+        // 隐藏加载状态
+        hideLoadingState();
+        
+        // 启动实时同步
+        setupRealtimeSync();
+        
+    } catch (error) {
+        console.error('初始化失败:', error);
+        showErrorState('系统初始化失败，请刷新页面');
+    }
+}
+
+// 添加加载状态显示
+function showLoadingState() {
+    const loadingHtml = `
+        <div id="globalLoading" style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 9999;
+        ">
+            <div style="text-align: center;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: #4361ee;"></i>
+                <p style="margin-top: 10px;">加载数据中...</p>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', loadingHtml);
+}
+
+function hideLoadingState() {
+    const loadingEl = document.getElementById('globalLoading');
+    if (loadingEl) loadingEl.remove();
+}
     
         
     
