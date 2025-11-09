@@ -245,9 +245,331 @@
             color: var(--danger);
             font-weight: 600;
         }
+
+        /* 在现有CSS的最后添加以下响应式样式 */
+
+/* 平板设备 (768px 到 1024px) */
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+    
+    .sidebar {
+        width: 220px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-width: 500px;
+    }
+}
+
+/* 手机设备 (小于 768px) */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    
+    /* 侧边栏移动端适配 */
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 1000;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar.mobile-open {
+        left: 0;
+    }
+    
+    /* 移动端菜单按钮 */
+    .mobile-menu-toggle {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        z-index: 1001;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    /* 侧边栏遮罩 */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+        padding-top: 70px; /* 为顶部按钮留出空间 */
+    }
+    
+    /* 头部适配 */
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    /* 统计卡片适配 */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    /* 内容卡片适配 */
+    .content-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    /* 表格适配 */
+    .data-table-container {
+        overflow-x: auto;
+        margin: 0 -15px;
+        padding: 0 15px;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    /* 批量操作适配 */
+    .batch-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    /* 表单适配 */
+    .form-group {
+        margin-bottom: 12px;
+    }
+    
+    .form-control {
+        padding: 12px;
+        font-size: 16px; /* 防止iOS缩放 */
+    }
+    
+    /* 按钮适配 */
+    .btn {
+        padding: 12px 16px;
+        min-height: 44px; /* 最小触摸目标 */
+        font-size: 0.9rem;
+    }
+    
+    .btn-sm {
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    /* 模态框适配 */
+    .modal {
+        padding: 10px;
+        align-items: flex-start;
+    }
+    
+    .modal-content {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 20px 15px;
+        border-radius: 10px;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 0 0 15px 0;
+        margin-bottom: 15px;
+    }
+    
+    .modal-body {
+        padding: 0;
+    }
+    
+    /* 搜索控件适配 */
+    .search-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* 多选下拉框适配 */
+    select[multiple] {
+        min-height: 120px;
+    }
+    
+    /* 徽章适配 */
+    .badge {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+}
+
+/* 小屏手机 (小于 480px) */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 10px;
+        padding-top: 60px;
+    }
+    
+    .content-card {
+        padding: 12px;
+    }
+    
+    .header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .stats-grid {
+        gap: 8px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .btn {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    /* 表格操作按钮堆叠 */
+    .action-buttons {
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* 模态框进一步优化 */
+    .modal-content {
+        padding: 15px 12px;
+        border-radius: 8px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.2rem;
+    }
+}
+
+/* 横屏手机适配 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal {
+        align-items: flex-start;
+        padding-top: 10px;
+    }
+    
+    .modal-content {
+        max-height: 90vh;
+    }
+    
+    .sidebar {
+        overflow-y: auto;
+    }
+}
+
+/* 改善移动端触摸体验 */
+@media (max-width: 768px) {
+    /* 防止点击高亮 */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* 改善滚动体验 */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* 按钮悬停效果在移动端禁用 */
+    .btn:hover {
+        transform: none;
+    }
+    
+    /* 改善表单输入 */
+    input, select, textarea {
+        font-size: 16px; /* 防止iOS缩放 */
+    }
+    
+    /* 改善表格滚动 */
+    .data-table-container {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* 高DPI屏幕优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .btn, .form-control, .modal-content {
+        border-width: 0.5px;
+    }
+}
     </style>
 </head>
 <body>
+    <!-- 在body开始处添加 -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle" style="display: none;">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
     <!-- 侧边栏 -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -1834,11 +2156,8 @@ async function initializeAdmin() {
     console.log('Admin页面加载完成，开始初始化数据...');
     
     try {
-        // 先初始化数据（现在是异步的）
         await initData();
-        
         console.log('数据初始化完成，开始加载表格...');
-        console.log('当前appData:', appData);
         
         // 强制确保数据结构完整
         if (!appData.countries) appData.countries = [];
@@ -1854,6 +2173,11 @@ async function initializeAdmin() {
             loadTabData('countries');
         }
         
+        // === 新增：启动移动端功能 ===
+        setupMobileMenu();
+        setupMobileModalClose();
+        setupMobileTable();
+        
         // 启动实时同步监听
         setupRealtimeSync();
         
@@ -1861,6 +2185,122 @@ async function initializeAdmin() {
         console.error('初始化失败:', error);
         alert('系统初始化失败，请刷新页面');
     }
+}
+        
+        // 启动实时同步监听
+        setupRealtimeSync();
+        
+    } catch (error) {
+        console.error('初始化失败:', error);
+        alert('系统初始化失败，请刷新页面');
+    }
+}
+        // 移动端菜单功能
+function setupMobileMenu() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (window.innerWidth <= 768px) {
+        menuToggle.style.display = 'block';
+        sidebar.style.left = '-280px';
+    }
+    
+    // 菜单切换
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active');
+    });
+    
+    // 点击遮罩关闭菜单
+    overlay.addEventListener('click', function() {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+    });
+    
+    // 点击菜单项关闭菜单
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            if (window.innerWidth <= 768px) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        });
+    });
+    
+    // 窗口大小变化时调整
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768px) {
+            menuToggle.style.display = 'none';
+            sidebar.style.left = '0';
+            overlay.classList.remove('active');
+        } else {
+            menuToggle.style.display = 'block';
+            sidebar.style.left = '-280px';
+        }
+    });
+}
+
+// 改善移动端模态框关闭
+function setupMobileModalClose() {
+    // 为所有模态框添加触摸关闭支持
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal(this.id);
+            }
+        });
+    });
+}
+
+// 改善移动端表格体验
+function setupMobileTable() {
+    // 为表格容器添加触摸滚动提示
+    const tableContainers = document.querySelectorAll('.data-table-container');
+    tableContainers.forEach(container => {
+        if (container.scrollWidth > container.clientWidth) {
+            container.style.background = 'linear-gradient(90deg, transparent 95%, rgba(0,0,0,0.1) 100%)';
+        }
+    });
+}
+
+// 改善模态框显示函数
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+        // 防止背景滚动
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// 更新现有的模态框显示函数（替换原有的showModal相关函数）
+function showAddCountryModal() {
+    document.getElementById('addCountryForm').reset();
+    showModal('addCountryModal');
+}
+
+function showAddServiceModal() {
+    document.getElementById('addServiceForm').reset();
+    showModal('addServiceModal');
+}
+
+function showAddPriceModal() {
+    document.getElementById('priceModalTitle').textContent = '添加价格规则';
+    document.getElementById('addPriceForm').reset();
+    document.getElementById('priceModalAction').value = 'add';
+    document.getElementById('priceRuleId').value = '';
+    loadCountriesForMultiSelect();
+    loadServicesForPricing();
+    showModal('addPriceModal');
+}
+
+function showAddOperatorModal() {
+    document.getElementById('operatorModalTitle').textContent = '添加运营商';
+    document.getElementById('addOperatorForm').reset();
+    document.getElementById('operatorModalAction').value = 'add';
+    document.getElementById('operatorId').value = '';
+    showModal('addOperatorModal');
 }
         // 使用DOMContentLoaded确保页面加载完成
         document.addEventListener('DOMContentLoaded', initializeAdmin);
