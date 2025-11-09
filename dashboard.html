@@ -2878,11 +2878,13 @@ function translateCountryName(countryName, targetLang) {
     }
 }
 
-// 切换语言函数 - 修改版本
+// 修复语言切换功能
 function switchLanguage(lang) {
     if (languagePack[lang]) {
         currentLanguage = lang;
         localStorage.setItem('preferredLanguage', lang);
+        
+        console.log('切换语言到:', lang);
         
         // 动态更新所有国家的显示名称
         if (servicesData.countries && servicesData.countries.length > 0) {
@@ -2894,24 +2896,186 @@ function switchLanguage(lang) {
         applyLanguage(lang);
         updateLanguageButton();
         
-        // 重新渲染国家列表
+        // 重新渲染所有列表以更新显示
         renderCountries();
+        renderServices();
+        renderOperators();
+        
+        console.log('语言切换完成');
     }
 }
 
-// 应用语言包函数 - 保持您现有的
+// 修复应用语言函数
 function applyLanguage(lang) {
-    // ... 您现有的applyLanguage函数代码 ...
+    const texts = languagePack[lang];
+    if (!texts) return;
+    
+    console.log('应用语言:', lang, texts);
+    
+    // 更新导航栏
+    const navLinks = document.querySelectorAll('.nav-links a');
+    if (navLinks.length > 0 && texts.nav) {
+        const navKeys = Object.keys(texts.nav);
+        navLinks.forEach((link, index) => {
+            if (texts.nav[navKeys[index]]) {
+                link.textContent = texts.nav[navKeys[index]];
+            }
+        });
+    }
+    
+    // 更新左侧面板标题
+    const panelHeaders = document.querySelectorAll('.panel-section h3');
+    if (panelHeaders.length >= 3 && texts.leftPanel) {
+        panelHeaders[0].textContent = texts.leftPanel.selectService || '选择服务';
+        panelHeaders[1].textContent = texts.leftPanel.selectCountry || '选择国家';
+        panelHeaders[2].textContent = texts.leftPanel.selectOperator || '选择运营商';
+    }
+    
+    // 更新搜索框占位符
+    const serviceSearch = document.getElementById('serviceSearch');
+    const countrySearch = document.getElementById('countrySearch');
+    const getNumberBtn = document.getElementById('getNumberBtn');
+    
+    if (serviceSearch && texts.leftPanel) {
+        serviceSearch.placeholder = texts.leftPanel.searchService || '寻找网站或者APP';
+    }
+    if (countrySearch && texts.leftPanel) {
+        countrySearch.placeholder = texts.leftPanel.searchCountry || '寻找国家';
+    }
+    if (getNumberBtn && texts.leftPanel) {
+        getNumberBtn.textContent = texts.leftPanel.getNumber || '获取号码';
+    }
+    
+    // 更新标签页
+    const tabs = document.querySelectorAll('.tab');
+    if (tabs.length >= 4 && texts.tabs) {
+        const tabKeys = Object.keys(texts.tabs);
+        tabs.forEach((tab, index) => {
+            if (texts.tabs[tabKeys[index]]) {
+                tab.textContent = texts.tabs[tabKeys[index]];
+            }
+        });
+    }
+    
+    // 更新主页内容
+    if (texts.home) {
+        const serviceMainName = document.getElementById('serviceMainName');
+        const serviceDescription = document.querySelector('.service-info-description');
+        
+        if (serviceMainName) serviceMainName.textContent = texts.home.title;
+        if (serviceDescription) serviceDescription.textContent = texts.home.description;
+        
+        // 更新统计卡片
+        const statLabels = document.querySelectorAll('.stat-label');
+        if (statLabels.length >= 4) {
+            const statKeys = ['numbersOnline', 'countries', 'support', 'startingPrice'];
+            statLabels.forEach((label, index) => {
+                if (texts.home[statKeys[index]]) {
+                    label.textContent = texts.home[statKeys[index]];
+                }
+            });
+        }
+        
+        // 更新特性卡片
+        const featureTitles = document.querySelectorAll('.feature-card h3');
+        if (featureTitles.length >= 4) {
+            const featureKeys = ['globalCoverage', 'realtimeUpdate', 'affordablePrice', 'customerSupport'];
+            featureTitles.forEach((title, index) => {
+                if (texts.home[featureKeys[index]]) {
+                    title.textContent = texts.home[featureKeys[index]];
+                }
+            });
+        }
+        
+        // 更新底部文本
+        const saveMoneyText = document.querySelector('.service-info-card + div p:first-child strong');
+        const dailyUpdateText = document.querySelector('.service-info-card + div p:last-child');
+        
+        if (saveMoneyText && texts.home.saveMoney) {
+            saveMoneyText.textContent = texts.home.saveMoney;
+        }
+        if (dailyUpdateText && texts.home.dailyUpdate) {
+            dailyUpdateText.textContent = texts.home.dailyUpdate;
+        }
+    }
+    
+    // 更新FAQ标题
+    if (texts.faq && texts.faq.title) {
+        const faqTitle = document.querySelector('#faq-tab h2');
+        if (faqTitle) faqTitle.textContent = texts.faq.title;
+    }
+    
+    // 更新API标题
+    if (texts.api && texts.api.title) {
+        const apiTitle = document.querySelector('#api-tab h2');
+        if (apiTitle) apiTitle.textContent = texts.api.title;
+    }
+    
+    // 更新购买指南标题
+    if (texts.purchase && texts.purchase.title) {
+        const purchaseTitle = document.querySelector('#purchase-tab h2');
+        if (purchaseTitle) purchaseTitle.textContent = texts.purchase.title;
+    }
+    
+    // 更新语言按钮
+    if (texts.common && texts.common.language) {
+        const currentLanguageSpan = document.getElementById('currentLanguage');
+        if (currentLanguageSpan) {
+            currentLanguageSpan.textContent = texts.common.language;
+        }
+    }
 }
 
-// 更新语言按钮状态 - 保持您现有的
+// 修复语言按钮状态更新
 function updateLanguageButton() {
-    // ... 您现有的updateLanguageButton函数代码 ...
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-lang') === currentLanguage) {
+            option.classList.add('active');
+        }
+    });
 }
 
-// 初始化语言设置 - 修改版本
+// 修复语言切换器设置
+function setupLanguageSwitcher() {
+    const languageBtn = document.getElementById('languageSwitch');
+    const languageDropdown = document.getElementById('languageDropdown');
+    
+    if (!languageBtn || !languageDropdown) {
+        console.error('语言切换器元素未找到');
+        return;
+    }
+    
+    // 切换下拉菜单显示
+    languageBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isVisible = languageDropdown.style.display === 'block';
+        languageDropdown.style.display = isVisible ? 'none' : 'block';
+    });
+    
+    // 语言选项点击事件
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const lang = this.getAttribute('data-lang');
+            console.log('选择语言:', lang);
+            switchLanguage(lang);
+            languageDropdown.style.display = 'none';
+        });
+    });
+    
+    // 点击页面其他区域关闭下拉菜单
+    document.addEventListener('click', function() {
+        languageDropdown.style.display = 'none';
+    });
+    
+    console.log('语言切换器初始化完成');
+}
+
+// 在初始化时添加调试
 function initializeLanguage() {
     const savedLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+    console.log('初始化语言:', savedLanguage);
     
     // 初始化国家显示名称
     if (servicesData.countries && servicesData.countries.length > 0) {
@@ -2921,11 +3085,6 @@ function initializeLanguage() {
     }
     
     switchLanguage(savedLanguage);
-}
-
-// 设置语言切换事件 - 保持您现有的
-function setupLanguageSwitcher() {
-    // ... 您现有的setupLanguageSwitcher函数代码 ...
 }
 
         // 支付表单功能
