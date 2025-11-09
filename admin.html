@@ -758,14 +758,6 @@ function enforceDataStructure() {
     }
 }
     
-    // 确保数据结构完整
-    if (!appData.countries) appData.countries = [];
-    if (!appData.services) appData.services = [];
-    if (!appData.operators) appData.operators = [];
-    if (!appData.pricingRules) appData.pricingRules = [];
-    
-    console.log('数据初始化完成:', appData);
-}
 function initDefaultData() {
     appData = {
         countries: [
@@ -1842,8 +1834,9 @@ function showSyncNotification(message) {
         // ========== 移动端功能 ==========
 
 
-
-// ========== 移动端功能结束 ==========
+function showErrorState(message) {
+    alert(message);
+}
        
        async function initializeAdmin() {
     console.log('Admin页面加载完成，开始初始化数据...');
@@ -1872,6 +1865,7 @@ function showSyncNotification(message) {
         showErrorState('系统初始化失败，请刷新页面');
     }
 }
+        
 
 // 添加加载状态显示
 function showLoadingState() {
@@ -1911,7 +1905,6 @@ function hideLoadingState() {
         console.error('初始化失败:', error);
         alert('系统初始化失败，请刷新页面');
     }
-}
        
         // 使用DOMContentLoaded确保页面加载完成
         document.addEventListener('DOMContentLoaded', initializeAdmin);
