@@ -95,6 +95,13 @@
             align-items: center;
         }
 
+        /* 语言切换器样式 */
+.language-switcher {
+    margin-right: 15px;
+}
+
+/* 如果需要，可以在这里添加更多语言切换相关的样式 */
+
         .btn {
             padding: 8px 20px;
             border-radius: 4px;
@@ -758,25 +765,34 @@
                     <i class="fas fa-sim-card"></i>
                     <span>7SIM</span>
                 </div>
-                <ul class="nav-links">
-                    <li><a href="#services">服务</a></li>
-                    <li><a href="#features">特性</a></li>
-                    <li><a href="#pricing">价格</a></li>
-                    <li><a href="#faq">常见问题</a></li>
-                </ul>
+                <!-- 找到现有的导航链接，添加 data-i18n 属性 -->
+<ul class="nav-links">
+    <li><a href="#services" data-i18n="navServices">服务</a></li>
+    <li><a href="#features" data-i18n="navFeatures">特性</a></li>
+    <li><a href="#pricing" data-i18n="navPricing">价格</a></li>
+    <li><a href="#faq" data-i18n="navFAQ">常见问题</a></li>
+</ul>
                 <div class="auth-buttons">
                     <!-- 未登录状态 -->
                     <div id="guestButtons">
-                        <button class="btn btn-outline" id="loginBtn">登录</button>
-                        <button class="btn btn-primary" id="registerBtn">注册</button>
-                    </div>
+    <button class="btn btn-outline" id="loginBtn" data-i18n="loginBtn">登录</button>
+    <button class="btn btn-primary" id="registerBtn" data-i18n="registerBtn">注册</button>
+</div>
+
+                    <div class="language-switcher">
+        <button id="langToggle" class="btn btn-outline">
+            <i class="fas fa-globe"></i> EN
+        </button>
+    </div>
                     
                     <!-- 已登录状态 -->
                     <div id="userInfo" style="display: none;">
-                        <div class="wallet-info">
-                            <i class="fas fa-wallet"></i>
-                            <span id="balanceAmount">$0.00</span>
-                        </div>
+                        <!-- 找到余额文本，添加 data-i18n 属性 -->
+<div class="wallet-info">
+    <i class="fas fa-wallet"></i>
+    <span data-i18n="balance">余额</span>
+    <span id="balanceAmount">$0.00</span>
+</div>
                         <button class="btn btn-primary" id="rechargeBtn">充值</button>
                         <div class="user-menu">
                             <div class="user-avatar" id="userAvatar">
@@ -806,12 +822,12 @@
     <!-- 英雄区域 -->
     <section class="hero">
         <div class="container">
-            <h1>全球接码服务，安全便捷</h1>
-            <p>7SIM提供全球手机号码接收短信验证码服务，支持数千种应用和网站，保护您的隐私安全。</p>
-            <div class="hero-buttons">
-                <button class="btn btn-light" id="startExperience">立即体验</button>
-                <button class="btn btn-outline" id="learnMore">了解更多</button>
-            </div>
+            <h1 data-i18n="heroTitle">全球接码服务，安全便捷</h1>
+<p data-i18n="heroSubtitle">7SIM提供全球手机号码接收短信验证码服务，支持数千种应用和网站，保护您的隐私安全。</p>
+<div class="hero-buttons">
+    <button class="btn btn-light" id="startExperience" data-i18n="startExperience">立即体验</button>
+    <button class="btn btn-outline" id="learnMore" data-i18n="learnMore">了解更多</button>
+</div>
         </div>
     </section>
 
@@ -891,13 +907,13 @@
                         <div class="country-price">$0.04起/条</div>
                     </div>
                     <!-- 更多国家卡片 -->
-                    <div class="country-card more-card" onclick="showAllCountries()">
-                        <div class="more-icon">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </div>
-                        <div class="country-name">更多国家</div>
-                        <div class="country-price">180+ 国家</div>
-                    </div>
+                   <div class="country-card more-card" onclick="showAllCountries()">
+    <div class="more-icon">
+        <i class="fas fa-ellipsis-h"></i>
+    </div>
+    <div class="country-name" data-i18n="moreCountries">更多国家</div>
+    <div class="country-price">180+ 国家</div>
+</div>
                 </div>
             </div>
             <div class="tab-content" id="apps-tab">
@@ -990,12 +1006,12 @@
                     </div>
                     <!-- 更多应用卡片 -->
                     <div class="app-card more-card" onclick="showAllApps()">
-                        <div class="more-icon">
-                            <i class="fas fa-ellipsis-h"></i>
-                        </div>
-                        <div class="app-name">更多应用</div>
-                        <div class="app-price">1000+ 应用</div>
-                    </div>
+    <div class="more-icon">
+        <i class="fas fa-ellipsis-h"></i>
+    </div>
+    <div class="app-name" data-i18n="moreApps">更多应用</div>
+    <div class="app-price">1000+ 应用</div>
+</div>
                 </div>
             </div>
         </div>
@@ -1004,10 +1020,11 @@
     <!-- 特性区域 -->
     <section class="features" id="features">
         <div class="container">
-            <div class="section-title">
-                <h2>为什么选择7SIM</h2>
-                <p>我们提供最安全可靠的接码服务，保护您的隐私</p>
-            </div>
+            <!-- 找到特性区域的标题，添加 data-i18n 属性 -->
+<div class="section-title">
+    <h2 data-i18n="whyChoose">为什么选择7SIM</h2>
+    <p data-i18n="whyChooseSubtitle">我们提供最安全可靠的接码服务，保护您的隐私</p>
+</div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -1319,6 +1336,55 @@
             appId: "1:276606433877:web:ac217c829ffdc735fff2dc"
         };
 
+        const translations = {
+    'zh-CN': {
+        'navServices': '服务',
+        'navFeatures': '特性',
+        'navPricing': '价格',
+        'navFAQ': '常见问题',
+        'loginBtn': '登录',
+        'registerBtn': '注册',
+        'rechargeBtn': '充值',
+        'balance': '余额',
+        'heroTitle': '全球接码服务，安全便捷',
+        'heroSubtitle': '7SIM提供全球手机号码接收短信验证码服务，支持数千种应用和网站，保护您的隐私安全。',
+        'startExperience': '立即体验',
+        'learnMore': '了解更多',
+        'servicesTitle': '我们的服务',
+        'servicesSubtitle': '选择您需要的国家或应用，获取临时手机号码接收短信验证码',
+        'byCountry': '按国家',
+        'byApp': '按应用',
+        'moreCountries': '更多国家',
+        'moreApps': '更多应用',
+        'whyChoose': '为什么选择7SIM',
+        'whyChooseSubtitle': '我们提供最安全可靠的接码服务，保护您的隐私'
+    },
+    'en': {
+        'navServices': 'Services',
+        'navFeatures': 'Features',
+        'navPricing': 'Pricing',
+        'navFAQ': 'FAQ',
+        'loginBtn': 'Login',
+        'registerBtn': 'Register',
+        'rechargeBtn': 'Recharge',
+        'balance': 'Balance',
+        'heroTitle': 'Global SMS Verification Service, Secure & Convenient',
+        'heroSubtitle': '7SIM provides global phone numbers for receiving SMS verification codes, supporting thousands of apps and websites to protect your privacy.',
+        'startExperience': 'Get Started',
+        'learnMore': 'Learn More',
+        'servicesTitle': 'Our Services',
+        'servicesSubtitle': 'Choose your desired country or app to get temporary phone numbers for receiving SMS verification codes',
+        'byCountry': 'By Country',
+        'byApp': 'By App',
+        'moreCountries': 'More Countries',
+        'moreApps': 'More Apps',
+        'whyChoose': 'Why Choose 7SIM',
+        'whyChooseSubtitle': 'We provide the most secure and reliable SMS receiving service to protect your privacy'
+    }
+};
+
+let currentLang = 'zh-CN';
+
         // 初始化Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -1363,7 +1429,7 @@
                     const tabId = btn.getAttribute('data-tab') + '-tab';
                     document.getElementById(tabId).classList.add('active');
                 });
-            });
+            }); 
             
             // 模态框功能
             const registerBtn = document.getElementById('registerBtn');
@@ -2051,6 +2117,27 @@
                 return null;
             }
         }
+
+        function toggleLanguage() {
+    currentLang = currentLang === 'zh-CN' ? 'en' : 'zh-CN';
+    updateLanguage();
+    const langToggle = document.getElementById('langToggle');
+    langToggle.innerHTML = currentLang === 'zh-CN' ? 
+        '<i class="fas fa-globe"></i> EN' : 
+        '<i class="fas fa-globe"></i> 中文';
+}
+
+function updateLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+            element.textContent = translations[currentLang][key];
+        }
+    });
+    
+    // 更新页面语言属性
+    document.documentElement.lang = currentLang;
+}
     </script>
 </body>
 </html>
