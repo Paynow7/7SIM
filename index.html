@@ -793,7 +793,7 @@
     <span data-i18n="balance">余额</span>
     <span id="balanceAmount">$0.00</span>
 </div>
-                        <button class="btn btn-primary" id="rechargeBtn">充值</button>
+                        <button class="btn btn-primary" id="rechargeBtn" data-i18n="rechargeBtn">充值</button>
                         <div class="user-menu">
                             <div class="user-avatar" id="userAvatar">
                                 <i class="fas fa-user"></i>
@@ -834,14 +834,14 @@
     <!-- 服务区域 -->
     <section class="services" id="services">
         <div class="container">
-            <div class="section-title">
-                <h2>我们的服务</h2>
-                <p>选择您需要的国家或应用，获取临时手机号码接收短信验证码</p>
-            </div>
-            <div class="service-tabs">
-                <button class="tab-btn active" data-tab="countries">按国家</button>
-                <button class="tab-btn" data-tab="apps">按应用</button>
-            </div>
+           <div class="section-title">
+    <h2 data-i18n="servicesTitle">我们的服务</h2>
+    <p data-i18n="servicesSubtitle">选择您需要的国家或应用，获取临时手机号码接收短信验证码</p>
+</div>
+<div class="service-tabs">
+    <button class="tab-btn active" data-tab="countries" data-i18n="byCountry">按国家</button>
+    <button class="tab-btn" data-tab="apps" data-i18n="byApp">按应用</button>
+</div>
             <div class="tab-content active" id="countries-tab">
                 <div class="countries-grid">
                     <!-- 国家列表 -->
@@ -1415,6 +1415,13 @@ let currentLang = 'zh-CN';
             checkFirestoreConnection().then(() => {
                 console.log('初始化完成，使用存储方式:', useLocalStorage ? 'localStorage' : 'Firestore');
             });
+
+             const langToggle = document.getElementById('langToggle');
+    if (langToggle) {
+        langToggle.addEventListener('click', toggleLanguage);
+        // 初始化语言
+        updateLanguage();
+    }
 
             // 标签切换功能
             const tabBtns = document.querySelectorAll('.tab-btn');
