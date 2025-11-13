@@ -2356,7 +2356,7 @@ function renderServices() {
     });
 }
         
-             // 渲染国家列表 - 修改版本
+           // 渲染国家列表 - 修改版本
 function renderCountries() {
     const countriesList = document.getElementById('countriesList');
     countriesList.innerHTML = '';
@@ -2400,25 +2400,6 @@ function renderCountries() {
         countriesList.appendChild(item);
     });
 }
-            
-            // 按拼音排序
-            const sortedCountries = sortByPinyin(servicesData.countries, 'name');
-            
-            sortedCountries.forEach(country => {
-                const item = document.createElement('div');
-                item.className = 'country-item';
-                item.dataset.id = country.id;
-                item.innerHTML = `
-                    <div class="country-info">
-                        <div class="country-flag-small">
-                            <img src="${country.flag}" alt="${country.name}" onerror="this.src='https://flagcdn.com/w40/un.png'">
-                        </div>
-                        <div class="country-name">${country.name}</div>
-                    </div>
-                `;
-                item.addEventListener('click', () => selectCountry(country));
-                countriesList.appendChild(item);
-            });
         
 
        // 渲染运营商列表
