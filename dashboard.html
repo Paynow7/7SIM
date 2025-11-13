@@ -1656,6 +1656,29 @@ body {
         height: 100%;
     }
 }
+
+        /* 余额不足弹窗样式 */
+.insufficient-balance-modal {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 确保价格显示正确 */
+.price-range, .operator-price, .total-price {
+    font-weight: 600;
+    color: var(--success);
+}
+
+/* 删除价格前面的0 */
+.price-range::before,
+.operator-price::before,
+.total-price::before {
+    content: none;
+}
         
     </style>
 </head>
@@ -2260,10 +2283,10 @@ function sortByPinyin(array, key = 'name') {
         let selectedCountry = null;
         let selectedOperator = null;
 
-        // 计算服务价格范围
+        // 计算服务起价
 function calculateServicePriceRange(serviceId) {
     const savedPricing = localStorage.getItem('pricingRules');
-    let minPrice = 999, maxPrice = 0;
+    let minPrice = 999;
     
     if (savedPricing) {
         try {
@@ -2274,19 +2297,19 @@ function calculateServicePriceRange(serviceId) {
             
             serviceRules.forEach(rule => {
                 if (rule.price < minPrice) minPrice = rule.price;
-                if (rule.price > maxPrice) maxPrice = rule.price;
             });
         } catch (error) {
             console.error('解析价格规则失败:', error);
         }
     }
     
-    // 如果没有找到价格规则，使用默认范围
-    if (minPrice === 999 || maxPrice === 0) {
-        return "0.10-0.60";
+    // 如果没有找到价格规则，使用默认起价
+    if (minPrice === 999) {
+        minPrice = 0.05;
     }
     
-    return `${minPrice.toFixed(2)}-${maxPrice.toFixed(2)}`;
+    // 删除前面的0，直接显示从$0.05起
+    return `从$${minPrice.toFixed(2).replace(/^0+/, '')}起`;
 }
 
                // 渲染服务列表 - 添加空值检查
@@ -2433,7 +2456,6 @@ function renderOperators() {
 // 计算运营商价格
 function calculateOperatorPrice(operator) {
     if (!selectedService || !selectedCountry) {
-        // 如果没有选择服务和国家，返回空字符串（不显示任何内容）
         return '';
     }
     
@@ -2450,7 +2472,8 @@ function calculateOperatorPrice(operator) {
     
     // 根据选择的运营商计算最终价格
     const finalPrice = basePrice * operator.multiplier;
-    return `$${finalPrice.toFixed(2)}`;
+    // 删除前面的0
+    return `$${finalPrice.toFixed(2).replace(/^0+/, '')}`;
 }
 
       // 更新所有运营商的价格显示
@@ -2552,7 +2575,22 @@ function calculateFinalPrice() {
     
     // 根据选择的运营商计算最终价格
     const finalPrice = basePrice * selectedOperator.multiplier;
-    return finalPrice.toFixed(2);
+    // 删除前面的0
+    return finalPrice.toFixed(2).replace(/^0+/, '');
+}
+
+function updatePriceCalculation() {
+    const priceCalculation = document.getElementById('priceCalculation');
+    
+    if (selectedService && selectedCountry && selectedOperator) {
+        priceCalculation.style.display = 'block';
+        
+        // 直接计算最终售价
+        const finalPrice = calculateFinalPrice();
+        document.getElementById('totalPriceValue').textContent = `售价: $${finalPrice}`;
+    } else {
+        priceCalculation.style.display = 'none';
+    }
 }
 
         // 查找价格规则
@@ -2605,13 +2643,12 @@ function calculateFinalPrice() {
       // 获取号码
 function getNumber() {
     if (!selectedService || !selectedCountry || !selectedOperator) {
-        alert('请先选择服务、国家和运营商');
         return;
     }
     
-    // 计算最终价格
     const finalPrice = calculateFinalPrice();
     
+    // 显示成功消息
     alert(`成功获取号码！\n服务: ${selectedService.name}\n国家: ${selectedCountry.name}\n运营商: ${selectedOperator.name}\n售价: $${finalPrice}`);
     
     // 这里可以添加实际的获取号码逻辑
@@ -2733,6 +2770,122 @@ async function regenerateApiKey() {
     }
 }
 
+        // 检查用户余额是否足够
+async function checkBalanceAndGetNumber() {
+    if (!selectedService || !selectedCountry || !selectedOperator) {
+        alert('请先选择服务、国家和运营商');
+        return;
+    }
+    
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        alert('请先登录');
+        return;
+    }
+    
+    try {
+        // 获取用户余额
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+            alert('用户信息不存在');
+            return;
+        }
+        
+        const userData = userDoc.data();
+        const userBalance = userData.balance || 0;
+        
+        // 计算所需金额
+        const requiredAmount = parseFloat(calculateFinalPrice());
+        
+        // 检查余额是否足够
+        if (userBalance < requiredAmount) {
+            showInsufficientBalanceModal(userBalance, requiredAmount);
+            return;
+        }
+        
+        // 余额足够，执行获取号码操作
+        getNumber();
+        
+    } catch (error) {
+        console.error('检查余额失败:', error);
+        alert('检查余额失败，请重试');
+    }
+}
+
+// 显示余额不足弹窗
+function showInsufficientBalanceModal(currentBalance, requiredAmount) {
+    // 创建余额不足弹窗
+    const modalHtml = `
+        <div class="insufficient-balance-modal" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        ">
+            <div style="
+                background: white;
+                padding: 30px;
+                border-radius: 12px;
+                max-width: 400px;
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            ">
+                <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 15px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">余额不足</h3>
+                <p style="margin-bottom: 10px;">当前余额: <strong>$${currentBalance.toFixed(2)}</strong></p>
+                <p style="margin-bottom: 10px;">所需金额: <strong>$${requiredAmount.toFixed(2)}</strong></p>
+                <p style="margin-bottom: 20px; color: #666;">您的余额不足，请先充值</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeInsufficientBalanceModal()" style="
+                        padding: 10px 20px;
+                        border: 1px solid #ddd;
+                        background: white;
+                        border-radius: 6px;
+                        cursor: pointer;
+                    ">取消</button>
+                    <button onclick="goToRecharge()" style="
+                        padding: 10px 20px;
+                        background: #4361ee;
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                    ">立即充值</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 添加到页面
+    const modalContainer = document.createElement('div');
+    modalContainer.id = 'insufficientBalanceModal';
+    modalContainer.innerHTML = modalHtml;
+    document.body.appendChild(modalContainer);
+}
+
+// 关闭余额不足弹窗
+function closeInsufficientBalanceModal() {
+    const modal = document.getElementById('insufficientBalanceModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// 跳转到充值页面
+function goToRecharge() {
+    closeInsufficientBalanceModal();
+    showPaymentOverlay();
+}
+
        // 钱包充值按钮功能
 // 钱包充值按钮功能 - 使用覆盖层方案
 function setupWalletRecharge() {
@@ -2820,7 +2973,7 @@ function setupEventListeners() {
     document.getElementById('removeCountrySelection').addEventListener('click', removeCountrySelection);
     
     // 获取号码按钮
-    document.getElementById('getNumberBtn').addEventListener('click', getNumber);
+    document.getElementById('getNumberBtn').addEventListener('click', checkBalanceAndGetNumber);
     
     // 标签切换功能 - 修复版本
     document.querySelectorAll('.tab').forEach(tab => {
