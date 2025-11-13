@@ -3844,17 +3844,17 @@ function setupPaymentOptions() {
         });
 
         // 监听 localStorage 变化（多标签页同步）
-        window.addEventListener('storage', function(e) {
+        /*window.addEventListener('storage', function(e) {
             if (e.key === 'lastUpdate' || e.key === 'appData' || e.key === 'pricingRules') {
                 console.log('检测到存储数据变化，重新加载数据...');
                 loadDataFromAdmin();
                 renderServices();
                 renderCountries();
             }
-        });
+        });*/
 
         // 监听页面可见性变化（当用户切换回这个标签页时检查更新）
-        document.addEventListener('visibilitychange', function() {
+       /* document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
                 // 页面变为可见时检查数据更新
                 const lastUpdate = localStorage.getItem('lastUpdate');
@@ -3867,6 +3867,7 @@ function setupPaymentOptions() {
                 }
             }
         });
+        */
 
         // 初始化最后更新时间
         window.lastDataUpdate = localStorage.getItem('lastUpdate');
