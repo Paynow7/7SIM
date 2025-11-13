@@ -1684,6 +1684,25 @@ body {
 .service-numbers {
     display: none;
 }
+
+        /* 添加到现有的CSS中 */
+.insufficient-balance-modal {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.insufficient-balance-modal button {
+    transition: all 0.3s ease;
+}
+
+.insufficient-balance-modal button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
         
     </style>
 </head>
@@ -2547,9 +2566,7 @@ function calculateFinalPrice() {
     
     // 根据选择的运营商计算最终价格
     const finalPrice = basePrice * selectedOperator.multiplier;
-    // 删除前面的0
-    return finalPrice.toFixed(2).replace(/^0+/, '');
-}
+
 
 function updatePriceCalculation() {
     const priceCalculation = document.getElementById('priceCalculation');
@@ -2742,35 +2759,33 @@ async function regenerateApiKey() {
     }
 }
 
-        // 检查用户余额是否足够
+       // 修改 checkBalanceAndGetNumber 函数
 async function checkBalanceAndGetNumber() {
     if (!selectedService || !selectedCountry || !selectedOperator) {
-        alert('请先选择服务、国家和运营商');
+        alert(currentLanguage === 'zh' ? '请先选择服务、国家和运营商' : 'Please select service, country and operator first');
         return;
     }
     
     const user = firebase.auth().currentUser;
     if (!user) {
-        alert('请先登录');
+        alert(currentLanguage === 'zh' ? '请先登录' : 'Please login first');
         return;
     }
     
     try {
-        // 获取用户余额
         const userDoc = await db.collection('users').doc(user.uid).get();
         if (!userDoc.exists) {
-            alert('用户信息不存在');
+            alert(currentLanguage === 'zh' ? '用户信息不存在' : 'User information not found');
             return;
         }
         
         const userData = userDoc.data();
         const userBalance = userData.balance || 0;
         
-        // 计算所需金额
         const requiredAmount = parseFloat(calculateFinalPrice());
         
-        // 检查余额是否足够
         if (userBalance < requiredAmount) {
+            // 余额不足，显示充值弹窗
             showInsufficientBalanceModal(userBalance, requiredAmount);
             return;
         }
@@ -2780,13 +2795,12 @@ async function checkBalanceAndGetNumber() {
         
     } catch (error) {
         console.error('检查余额失败:', error);
-        alert('检查余额失败，请重试');
+        alert(currentLanguage === 'zh' ? '检查余额失败，请重试' : 'Balance check failed, please try again');
     }
 }
 
-// 显示余额不足弹窗
+// 完善 showInsufficientBalanceModal 函数
 function showInsufficientBalanceModal(currentBalance, requiredAmount) {
-    // 创建余额不足弹窗
     const modalHtml = `
         <div class="insufficient-balance-modal" style="
             position: fixed;
@@ -2812,10 +2826,22 @@ function showInsufficientBalanceModal(currentBalance, requiredAmount) {
                 <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 15px;">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                <h3 style="color: #e74c3c; margin-bottom: 15px;">余额不足</h3>
-                <p style="margin-bottom: 10px;">当前余额: <strong>$${currentBalance.toFixed(2)}</strong></p>
-                <p style="margin-bottom: 10px;">所需金额: <strong>$${requiredAmount.toFixed(2)}</strong></p>
-                <p style="margin-bottom: 20px; color: #666;">您的余额不足，请先充值</p>
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">
+                    ${currentLanguage === 'zh' ? '余额不足' : 'Insufficient Balance'}
+                </h3>
+                <p style="margin-bottom: 10px;">
+                    ${currentLanguage === 'zh' ? '当前余额' : 'Current Balance'}: 
+                    <strong>$${currentBalance.toFixed(2)}</strong>
+                </p>
+                <p style="margin-bottom: 10px;">
+                    ${currentLanguage === 'zh' ? '所需金额' : 'Required Amount'}: 
+                    <strong>$${requiredAmount.toFixed(2)}</strong>
+                </p>
+                <p style="margin-bottom: 20px; color: #666;">
+                    ${currentLanguage === 'zh' ? 
+                        '您的余额不足，请先充值' : 
+                        'Your balance is insufficient, please recharge first'}
+                </p>
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button onclick="closeInsufficientBalanceModal()" style="
                         padding: 10px 20px;
@@ -2823,25 +2849,32 @@ function showInsufficientBalanceModal(currentBalance, requiredAmount) {
                         background: white;
                         border-radius: 6px;
                         cursor: pointer;
-                    ">取消</button>
-                    <button onclick="goToRecharge()" style="
+                        flex: 1;
+                    ">${currentLanguage === 'zh' ? '取消' : 'Cancel'}</button>
+                    <button onclick="goToRechargeFromModal()" style="
                         padding: 10px 20px;
                         background: #4361ee;
                         color: white;
                         border: none;
                         border-radius: 6px;
                         cursor: pointer;
-                    ">立即充值</button>
+                        flex: 1;
+                    ">${currentLanguage === 'zh' ? '立即充值' : 'Recharge Now'}</button>
                 </div>
             </div>
         </div>
     `;
     
-    // 添加到页面
     const modalContainer = document.createElement('div');
     modalContainer.id = 'insufficientBalanceModal';
     modalContainer.innerHTML = modalHtml;
     document.body.appendChild(modalContainer);
+}
+
+// 从余额不足弹窗跳转到充值
+function goToRechargeFromModal() {
+    closeInsufficientBalanceModal();
+    showPaymentOverlay();
 }
 
 // 关闭余额不足弹窗
@@ -3255,6 +3288,15 @@ const languagePack = {
             close: "关闭"
         }
     },
+
+       insufficient: '余额不足',
+            currentBalance: '当前余额',
+            requiredAmount: '所需金额',
+            insufficientMessage: '您的余额不足，请先充值',
+            cancel: '取消',
+            rechargeNow: '立即充值'
+        }
+    },
     
     en: {
         // Navigation
@@ -3355,6 +3397,15 @@ const languagePack = {
             cancel: "Cancel",
             copy: "Copy",
             close: "Close"
+};
+
+        balance: {
+            insufficient: 'Insufficient Balance',
+            currentBalance: 'Current Balance', 
+            requiredAmount: 'Required Amount',
+            insufficientMessage: 'Your balance is insufficient, please recharge first',
+            cancel: 'Cancel',
+            rechargeNow: 'Recharge Now'
         }
     }
 };
