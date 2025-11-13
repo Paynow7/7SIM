@@ -3032,28 +3032,53 @@ function setupEventListeners() {
 
 
         // 设置 Firebase 实时数据同步
+let isInitialLoad = true;
 function setupRealtimeSync() {
     // 监听 Firebase 数据变化
     db.collection('platformData').doc('globalSettings')
         .onSnapshot((doc) => {
             if (doc.exists) {
                 const firebaseData = doc.data();
-                console.log('检测到云端数据更新，重新加载...');
+                console.log('检测到云端数据更新');
                 
-                // 重新加载数据
-                loadDataFromAdmin().then(() => {
-                    // 重新渲染界面
-                    renderServices();
-                    renderCountries();
-                    renderOperators();
-                    updateOperatorPrices();
-                    
-                    
-                });
+                // 如果是初次加载，直接使用数据
+                if (isInitialLoad) {
+                    isInitialLoad = false;
+                    return; // 初次加载已经在初始化时处理过了
+                }
+                
+                // 只更新数据，不重新渲染界面
+                updateDataFromFirebase(firebaseData);
+                
             }
         }, (error) => {
             console.error('实时同步错误:', error);
         });
+}
+
+// 只更新数据，不重新渲染
+function updateDataFromFirebase(firebaseData) {
+    // 更新 servicesData 但不重新渲染
+    if (firebaseData.services) {
+        servicesData.services = firebaseData.services.filter(service => service.active !== false);
+    }
+    if (firebaseData.countries) {
+        servicesData.countries = firebaseData.countries.filter(country => country.active !== false);
+    }
+    if (firebaseData.operators) {
+        servicesData.operators = firebaseData.operators.filter(operator => operator.active !== false);
+    }
+    
+    // 只更新价格显示，不重新创建DOM元素
+    updatePriceDisplays();
+}
+
+// 只更新价格显示
+function updatePriceDisplays() {
+    // 更新运营商价格显示
+    updateOperatorPrices();
+    // 更新总价计算
+    updatePriceCalculation();
 }
 
         // ========== 多语言支持 ==========
@@ -3777,6 +3802,7 @@ function setupPaymentOptions() {
         // 初始化最后更新时间
         window.lastDataUpdate = localStorage.getItem('lastUpdate');
        // 初始化页面
+// 初始化页面
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Dashboard 页面加载完成，开始初始化...');
     
@@ -3802,20 +3828,18 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         }
         
-        // 渲染界面
+        // 渲染界面（只执行一次）
         renderServices();
-        renderCountries(); // 这会使用翻译后的名称
+        renderCountries();
         renderOperators();
         updateOperatorPrices();
         setupEventListeners();
 
-       // 确保这一行存在且位置正确
-        setupWalletRecharge(); // <-- 这行必须在所有DOM元素加载后调用
-
-        // 新增：初始化支付选项
+        // 钱包充值功能
+        setupWalletRecharge();
         setupPaymentOptions();  
         
-        // 启动实时同步
+        // 启动实时同步（修改后的版本）
         setupRealtimeSync();
         
         console.log('Dashboard 初始化完成');
