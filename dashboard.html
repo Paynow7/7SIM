@@ -1679,6 +1679,11 @@ body {
 .total-price::before {
     content: none;
 }
+
+        /* 隐藏服务数量显示 */
+.service-numbers {
+    display: none;
+}
         
     </style>
 </head>
@@ -2541,20 +2546,6 @@ function selectCountry(country) {
             
             updateGetNumberButton();
         }
-
-      function updatePriceCalculation() {
-    const priceCalculation = document.getElementById('priceCalculation');
-    
-    if (selectedService && selectedCountry && selectedOperator) {
-        priceCalculation.style.display = 'block';
-        
-        // 直接计算最终售价
-        const finalPrice = calculateFinalPrice();
-        document.getElementById('totalPriceValue').textContent = `售价: $${finalPrice}`;
-    } else {
-        priceCalculation.style.display = 'none';
-    }
-}
 
 // 计算最终价格
 function calculateFinalPrice() {
