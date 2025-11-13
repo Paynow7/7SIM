@@ -2957,7 +2957,40 @@ function closePaymentOverlay() {
         function preventScroll(e) {
     e.preventDefault();
 }
+
+        // 设置列表事件监听器
+function setupListEventListeners() {
+    // 服务列表事件
+    document.querySelectorAll('.service-item').forEach(item => {
+        const serviceId = parseInt(item.dataset.id);
+        const service = servicesData.services.find(s => s.id === serviceId);
+        if (service) {
+            item.addEventListener('click', () => selectService(service));
+        }
+    });
+    
+    // 国家列表事件
+    document.querySelectorAll('.country-item').forEach(item => {
+        const countryId = parseInt(item.dataset.id);
+        const country = servicesData.countries.find(c => c.id === countryId);
+        if (country) {
+            item.addEventListener('click', () => selectCountry(country));
+        }
+    });
+    
+    // 运营商列表事件
+    document.querySelectorAll('.operator-item').forEach(item => {
+        const operatorId = parseInt(item.dataset.id);
+        const operator = servicesData.operators.find(o => o.id === operatorId);
+        if (operator) {
+            item.addEventListener('click', function() {
+                selectOperator(operator, this);
+            });
+        }
+    });
+}
        // 设置事件监听器
+// 设置事件监听器（一次性设置）
 function setupEventListeners() {
     // 移除选择事件
     document.getElementById('removeServiceSelection').addEventListener('click', removeServiceSelection);
@@ -2966,7 +2999,7 @@ function setupEventListeners() {
     // 获取号码按钮
     document.getElementById('getNumberBtn').addEventListener('click', checkBalanceAndGetNumber);
     
-    // 标签切换功能 - 修复版本
+    // 标签切换功能
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', function() {
             // 移除所有active类
@@ -2986,6 +3019,36 @@ function setupEventListeners() {
             }
         });
     });
+    
+    // FAQ展开/收起
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', function() {
+            const item = this.parentElement;
+            item.classList.toggle('active');
+        });
+    });
+    
+    // 搜索功能
+    document.getElementById('serviceSearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        filterItems('servicesList', searchTerm);
+    });
+
+    document.getElementById('countrySearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        filterItems('countriesList', searchTerm);
+    });
+
+    // 模态框事件监听
+    const apiKeyModal = document.getElementById('apiKeyModal');
+    if (apiKeyModal) {
+        apiKeyModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeApiKeyModal();
+            }
+        });
+    }
+}
     
     // FAQ展开/收起
     document.querySelectorAll('.faq-question').forEach(question => {
@@ -3032,55 +3095,80 @@ function setupEventListeners() {
 
 
         // 设置 Firebase 实时数据同步
-let isInitialLoad = true;
+let currentDataHash = '';
 function setupRealtimeSync() {
     // 监听 Firebase 数据变化
     db.collection('platformData').doc('globalSettings')
         .onSnapshot((doc) => {
             if (doc.exists) {
                 const firebaseData = doc.data();
-                console.log('检测到云端数据更新');
                 
-                // 如果是初次加载，直接使用数据
-                if (isInitialLoad) {
-                    isInitialLoad = false;
-                    return; // 初次加载已经在初始化时处理过了
+                // 生成数据哈希来检测真正的内容变化
+                const newHash = generateDataHash(firebaseData);
+                
+                if (newHash !== currentDataHash) {
+                    console.log('检测到云端数据真正更新，重新加载...');
+                    currentDataHash = newHash;
+                    
+                    // 重新加载数据并渲染
+                    loadDataFromAdmin().then(() => {
+                        // 重新渲染界面但保留事件监听器
+                        smartRerender();
+                    });
                 }
-                
-                // 只更新数据，不重新渲染界面
-                updateDataFromFirebase(firebaseData);
-                
             }
         }, (error) => {
             console.error('实时同步错误:', error);
         });
 }
 
-// 只更新数据，不重新渲染
-function updateDataFromFirebase(firebaseData) {
-    // 更新 servicesData 但不重新渲染
-    if (firebaseData.services) {
-        servicesData.services = firebaseData.services.filter(service => service.active !== false);
-    }
-    if (firebaseData.countries) {
-        servicesData.countries = firebaseData.countries.filter(country => country.active !== false);
-    }
-    if (firebaseData.operators) {
-        servicesData.operators = firebaseData.operators.filter(operator => operator.active !== false);
+// 生成数据哈希
+function generateDataHash(data) {
+    return JSON.stringify({
+        services: data.services ? data.services.map(s => ({id: s.id, name: s.name})) : [],
+        countries: data.countries ? data.countries.map(c => ({id: c.id, name: c.name})) : [],
+        operators: data.operators ? data.operators.map(o => ({id: o.id, name: o.name})) : []
+    });
+}
+
+// 智能重新渲染，不丢失事件监听器
+function smartRerender() {
+    // 保存当前选择状态
+    const currentSelectedService = selectedService;
+    const currentSelectedCountry = selectedCountry;
+    const currentSelectedOperator = selectedOperator;
+    
+    // 重新渲染列表
+    renderServices();
+    renderCountries();
+    renderOperators();
+    updateOperatorPrices();
+    
+    // 恢复之前的选择状态
+    if (currentSelectedService) {
+        const serviceElement = document.querySelector(`.service-item[data-id="${currentSelectedService.id}"]`);
+        if (serviceElement) {
+            selectService(currentSelectedService);
+        }
     }
     
-    // 只更新价格显示，不重新创建DOM元素
-    updatePriceDisplays();
+    if (currentSelectedCountry) {
+        const countryElement = document.querySelector(`.country-item[data-id="${currentSelectedCountry.id}"]`);
+        if (countryElement) {
+            selectCountry(currentSelectedCountry);
+        }
+    }
+    
+    if (currentSelectedOperator) {
+        const operatorElement = document.querySelector(`.operator-item[data-id="${currentSelectedOperator.id}"]`);
+        if (operatorElement) {
+            selectOperator(currentSelectedOperator, operatorElement);
+        }
+    }
+    
+    // 重新设置事件监听器（确保新增的项目也有事件）
+    setupListEventListeners();
 }
-
-// 只更新价格显示
-function updatePriceDisplays() {
-    // 更新运营商价格显示
-    updateOperatorPrices();
-    // 更新总价计算
-    updatePriceCalculation();
-}
-
         // ========== 多语言支持 ==========
 
 // 语言包
@@ -3828,18 +3916,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         }
         
-        // 渲染界面（只执行一次）
+        // 渲染界面
         renderServices();
         renderCountries();
         renderOperators();
         updateOperatorPrices();
+        
+        // 设置事件监听器
         setupEventListeners();
+        setupListEventListeners(); // 新增这一行
 
         // 钱包充值功能
         setupWalletRecharge();
         setupPaymentOptions();  
         
-        // 启动实时同步（修改后的版本）
+        // 启动实时同步
         setupRealtimeSync();
         
         console.log('Dashboard 初始化完成');
