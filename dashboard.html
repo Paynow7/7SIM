@@ -3286,18 +3286,19 @@ const languagePack = {
             cancel: "取消",
             copy: "复制",
             close: "关闭"
-        }
-    },
-
-       insufficient: '余额不足',
+        },
+        
+        // 余额不足提示
+        balance: {
+            insufficient: '余额不足',
             currentBalance: '当前余额',
             requiredAmount: '所需金额',
             insufficientMessage: '您的余额不足，请先充值',
             cancel: '取消',
             rechargeNow: '立即充值'
         }
-    },
-    
+    }, // zh 语言结束
+
     en: {
         // Navigation
         nav: {
@@ -3397,8 +3398,9 @@ const languagePack = {
             cancel: "Cancel",
             copy: "Copy",
             close: "Close"
-},
-
+        }, // 这里添加逗号
+        
+        // Balance - 英文
         balance: {
             insufficient: 'Insufficient Balance',
             currentBalance: 'Current Balance', 
@@ -3407,8 +3409,8 @@ const languagePack = {
             cancel: 'Cancel',
             rechargeNow: 'Recharge Now'
         }
-    }
-};
+    } // en 语言结束
+}; // languagePack 对象结束s
 
 // 当前语言
 let currentLanguage = 'zh';
