@@ -3184,7 +3184,7 @@ function smartRerender() {
     setupListEventListeners();
 }
         // ========== 多语言支持 ==========
-/*
+
 // 语言包 - 完整修复版本
 const languagePack = {
     zh: {
@@ -3611,7 +3611,7 @@ function applyLanguage(lang) {
             }
         });
     }
-    */
+    
     
     // 更新左侧面板标题
     const panelHeaders = document.querySelectorAll('.panel-section h3');
@@ -3931,8 +3931,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     try {
         // 先初始化语言系统
-       /* initializeLanguage();
-        setupLanguageSwitcher();*/
+        initializeLanguage();
+        setupLanguageSwitcher();
         
         updateUserDropdown();
 
