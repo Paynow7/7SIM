@@ -3185,7 +3185,7 @@ function smartRerender() {
 }
         // ========== 多语言支持 ==========
 
-// 语言包
+// 语言包 - 完整修复版本
 const languagePack = {
     zh: {
         // 导航栏
@@ -3297,9 +3297,9 @@ const languagePack = {
             cancel: '取消',
             rechargeNow: '立即充值'
         }
-    } // zh 语言结束
+    },
 
-        en: {
+    en: {
         // Navigation
         nav: {
             home: "Home",
@@ -3398,9 +3398,9 @@ const languagePack = {
             cancel: "Cancel",
             copy: "Copy",
             close: "Close"
-        }, // ← 这里必须有逗号
+        },
         
-        // Balance - 英文
+        // Balance
         balance: {
             insufficient: 'Insufficient Balance',
             currentBalance: 'Current Balance', 
@@ -3409,8 +3409,8 @@ const languagePack = {
             cancel: 'Cancel',
             rechargeNow: 'Recharge Now'
         }
-    } // en 语言结束
-
+    }
+}; // languagePack 结束
 // 当前语言
 let currentLanguage = 'zh';
 
