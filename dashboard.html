@@ -2566,6 +2566,8 @@ function calculateFinalPrice() {
     
     // 根据选择的运营商计算最终价格
     const finalPrice = basePrice * selectedOperator.multiplier;
+    return finalPrice.toFixed(2); // 添加 return 语句
+} // 添加这个闭合大括号
 
 
 function updatePriceCalculation() {
@@ -4283,7 +4285,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>
     </div>
 </div>
-                </script>
 
                 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
