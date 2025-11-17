@@ -2307,7 +2307,7 @@ function sortByPinyin(array, key = 'name') {
         let selectedCountry = null;
         let selectedOperator = null;
 
-        // 计算服务起价
+       // 计算服务起价
 function calculateServicePriceRange(serviceId) {
     const savedPricing = localStorage.getItem('pricingRules');
     let minPrice = 999;
@@ -2332,8 +2332,8 @@ function calculateServicePriceRange(serviceId) {
         minPrice = 0.05;
     }
     
-    // 删除前面的0，直接显示从$0.05起
-    return `从$${minPrice.toFixed(2).replace(/^0+/, '')}起`;
+    // 修复：显示"从$0.xx开始"的格式
+    return `从$${minPrice.toFixed(2)}开始`;
 }
 
                // 渲染服务列表 - 添加空值检查
@@ -2368,7 +2368,7 @@ function renderServices() {
                 <div class="service-name">${service.name}</div>
             </div>
             <div class="service-numbers">${service.numbers}</div>
-            <div class="price-range">$${priceRange}</div>
+            <div class="price-range">${priceRange}</div>  <!-- 移除前面的$符号 -->
         `;
         item.addEventListener('click', () => selectService(service));
         servicesList.appendChild(item);
@@ -2477,8 +2477,8 @@ function calculateOperatorPrice(operator) {
     
     // 根据选择的运营商计算最终价格
     const finalPrice = basePrice * operator.multiplier;
-    // 删除前面的0
-    return `$${finalPrice.toFixed(2).replace(/^0+/, '')}`;
+    // 修复：显示完整价格格式
+    return `$${finalPrice.toFixed(2)}`;
 }
 
       // 更新所有运营商的价格显示
@@ -2566,9 +2566,8 @@ function calculateFinalPrice() {
     
     // 根据选择的运营商计算最终价格
     const finalPrice = basePrice * selectedOperator.multiplier;
-    return finalPrice.toFixed(2); // 添加 return 语句
-} // 添加这个闭合大括号
-
+    return finalPrice.toFixed(2); // 返回格式化后的字符串
+}
 
 function updatePriceCalculation() {
     const priceCalculation = document.getElementById('priceCalculation');
@@ -2578,6 +2577,7 @@ function updatePriceCalculation() {
         
         // 直接计算最终售价
         const finalPrice = calculateFinalPrice();
+        // 修复：显示完整价格格式
         document.getElementById('totalPriceValue').textContent = `售价: $${finalPrice}`;
     } else {
         priceCalculation.style.display = 'none';
